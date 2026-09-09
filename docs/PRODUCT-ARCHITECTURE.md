@@ -11,20 +11,26 @@ This is the authoritative end-to-end view of the Infrastructure Product Works™
 flowchart TB
   DEV["Developer or product team"]
   STORE["Backstage storefront<br/>Browse • configure • order"]
-  CONSOLE["IaaP Console<br/>Track • review • decide"]
-  FORGE["IaaP Forge<br/>Translate intent into an inert proposal"]
-  GUARD["IaaP Guard<br/>Validate architecture, policy, and evidence"]
-  HUMAN["Authorized human<br/>Approve the exact bound proposal"]
-  CONTROL["Crossplane product control plane<br/>Reconcile approved desired state"]
+  ORDER["InfrastructureProductOrder"]
+  GUARD["IaaP Guard GitHub App<br/>Architecture and evidence assessment"]
+  CONSOLE["IaaP Console<br/>Evidence and selection experience"]
+  SELECT["Authorized human selection"]
+  FORGE["IaaP Forge<br/>Create inert bound proposal"]
+  APPROVE["Authorized human approval"]
+  DELIVERY["Protected merge and GitOps delivery"]
+  CONTROL["Crossplane in Kubernetes<br/>Reconcile approved product claim"]
   OUTCOME["Infrastructure product outcome<br/>Kubernetes • network • data • identity • connectivity"]
   ASSURE["IaaP Assurance<br/>Custody • continuity • rollback • evidence"]
 
   DEV --> STORE
-  STORE --> CONSOLE
-  CONSOLE --> FORGE
-  FORGE --> GUARD
-  GUARD --> HUMAN
-  HUMAN --> CONTROL
+  STORE --> ORDER
+  GUARD --> CONSOLE
+  CONSOLE --> SELECT
+  ORDER --> FORGE
+  SELECT --> FORGE
+  FORGE --> APPROVE
+  APPROVE --> DELIVERY
+  DELIVERY --> CONTROL
   CONTROL --> OUTCOME
   OUTCOME --> ASSURE
   ASSURE --> CONSOLE
@@ -37,16 +43,17 @@ flowchart TB
   classDef outcome fill:#123A24,stroke:#22C55E,stroke-width:2px,color:#F8FAFC
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class DEV,STORE,CONSOLE experience
-  class FORGE product
+  class ORDER,FORGE product
   class GUARD governance
-  class HUMAN human
+  class SELECT,APPROVE human
+  class DELIVERY governance
   class CONTROL control
   class OUTCOME outcome
   class ASSURE evidence
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
 
-The developer orders an **outcome**, not a collection of provider resources. Backstage presents the catalog. Console presents the lifecycle. Forge proposes the implementation. Guard determines whether the proposal is admissible. An authorized person controls the material decision. Crossplane performs reconciliation only after the approved desired state crosses the execution boundary. Assurance keeps the evidence and custody chain intact.
+The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. An authorized person approves the exact bound proposal, and a separate protected merge and GitOps step delivers the approved claim to Crossplane. Assurance keeps the authority and custody chain intact.
 
 ## Technical deployment and reconciliation view
 
@@ -57,22 +64,29 @@ flowchart TB
     UI["IaaP Console<br/>Lifecycle and evidence experience"]
   end
 
-  subgraph SVC["Customer-hosted IaaP services"]
+  subgraph GUARDPLANE["GitHub-native assessment boundary"]
+    GPR["GitHub pull request"]
+    GAPP["IaaP Guard GitHub App<br/>Bounded AWS runtime"]
+    GE["Versioned Guard evidence"]
+  end
+
+  subgraph SVC["Customer-hosted Forge boundary"]
     FH["Forge HTTP adapter<br/>Bounded transport"]
     FE["Forge engine<br/>Deterministic proposal"]
-    GD["Guard and Guard Core<br/>Fail-closed validation"]
-    IA["IaaP Assurance<br/>Authority and custody evidence"]
+    FA["Target status adapter<br/>Normalize operational facts"]
   end
 
   subgraph GOV["Governed change boundary"]
-    GH["GitHub<br/>Versioned desired state and evidence"]
+    GH["GitHub proposal<br/>Versioned desired state and evidence"]
     HA["Human approval<br/>Exact digest and revision"]
-    GC["Authorized GitOps delivery<br/>No implicit approval"]
+    PM["Protected merge or promotion"]
+    GC["Authorized GitOps delivery"]
   end
 
   subgraph MGMT["Kubernetes management cluster"]
+    CLAIM["Approved product claim<br/>Per-order desired state"]
     XP["Crossplane"]
-    PKG["XRDs and Compositions<br/>Stable product APIs"]
+    PKG["Installed XRDs and Compositions<br/>Stable product APIs"]
     PRV["Provider packages<br/>Workload identity"]
   end
 
@@ -88,15 +102,21 @@ flowchart TB
     MS["Managed services<br/>Network • data • identity • DNS • connectivity"]
   end
 
-  BS --> UI
-  UI --> FH
+  IA["IaaP Assurance<br/>Authority and custody evidence"]
+
+  BS -. future adapter .-> FH
+  GPR --> GAPP
+  GAPP --> GE
+  GE --> UI
+  UI -. future adapter .-> FH
   FH --> FE
-  FE --> GD
-  GD --> GH
+  FE --> GH
   GH --> HA
-  HA --> GC
-  GC --> PKG
-  PKG --> XP
+  HA --> PM
+  PM --> GC
+  GC --> CLAIM
+  CLAIM --> XP
+  PKG -.-> XP
   XP --> PRV
   PRV --> C1
   PRV --> C2
@@ -110,9 +130,10 @@ flowchart TB
   C2 --> MS
   C3 --> MS
   C4 --> MS
-  XP --> IA
-  WK --> IA
-  MS --> IA
+  XP --> FA
+  WK --> FA
+  MS --> FA
+  FA --> IA
   IA --> UI
 
   classDef experience fill:#0D2438,stroke:#38BDF8,stroke-width:2px,color:#F8FAFC
@@ -123,9 +144,9 @@ flowchart TB
   classDef outcome fill:#123A24,stroke:#22C55E,stroke-width:2px,color:#F8FAFC
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class BS,UI experience
-  class FH,FE,GD service
-  class GH,HA,GC governance
-  class XP,PKG,PRV control
+  class FH,FE,FA service
+  class GPR,GAPP,GE,GH,HA,PM,GC governance
+  class CLAIM,XP,PKG,PRV control
   class C1,C2,C3,C4 cloud
   class WK,MS outcome
   class IA evidence
@@ -158,40 +179,52 @@ Crossplane can also deliver managed services that do not run inside Kubernetes, 
 
 ## Order-to-outcome sequence
 
-### Plan and authorize
+### Accepted synthetic Guard-to-Forge chain
 
 ```mermaid
 sequenceDiagram
-  actor Developer
-  participant Backstage
-  participant Console
-  participant Forge
   participant Guard
+  participant Console
+  actor Selector
+  participant Forge
 
-  Developer->>Backstage: Choose product and allowed parameters
-  Backstage->>Console: Create bounded product order
-  Console->>Forge: Submit order through customer-hosted API
-  Forge-->>Console: Return inert digest-bound proposal
-  Console->>Guard: Request deterministic validation
-  Guard-->>Console: Return verdict and evidence
+  Guard->>Console: Import pinned evidence and planning report
+  Console->>Selector: Present traceable findings and candidates
+  Selector->>Console: Select the exact planning item
+  Console->>Forge: Submit digest-bound selection evidence
+  Forge-->>Console: Return inert product proposal
 ```
 
-### Approve, reconcile, and report
+### Target authorization and delivery handoff
 
 ```mermaid
 sequenceDiagram
-  participant Console
   actor Approver
   participant GitHub
+  participant GitOps
+  participant Crossplane
+
+  Approver->>GitHub: Approve the exact proposal
+  GitHub->>GitHub: Protected merge or promotion
+  GitHub->>GitOps: Release approved product claim
+  GitOps->>Crossplane: Apply claim to management cluster
+```
+
+### Target runtime evidence return
+
+```mermaid
+sequenceDiagram
   participant Crossplane
   participant Cloud
+  participant ForgeAdapter as Forge status adapter
+  participant Assurance
+  participant Console
 
-  Console->>Approver: Present exact proposal and evidence
-  Approver->>GitHub: Approve versioned desired state
-  GitHub->>Crossplane: Deliver approved declaration
   Crossplane->>Cloud: Reconcile through scoped provider identity
   Cloud-->>Crossplane: Return conditions and resource status
-  Crossplane-->>Console: Return sanitized status and evidence
+  Crossplane-->>ForgeAdapter: Supply bounded status facts
+  ForgeAdapter-->>Assurance: Normalize and bind evidence
+  Assurance-->>Console: Present custody-bound status and evidence
 ```
 
 ## Implementation status boundary
