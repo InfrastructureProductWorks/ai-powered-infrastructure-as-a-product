@@ -1,0 +1,13 @@
+name: Root README link integrity
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  root-readme-links:
+    uses: InfrastructureProductWorks/.github/.github/workflows/root-readme-links.yml@a431313396683df3ed13307ad1ddd8b9429adf63
