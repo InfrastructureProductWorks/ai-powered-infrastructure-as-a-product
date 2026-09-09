@@ -3,7 +3,7 @@
 This is the authoritative end-to-end view of the Infrastructure Product Works™ Infrastructure-as-a-Product portfolio. It separates the **product experience** from the **runtime implementation** so developers can order outcomes without inheriting cloud, Kubernetes, or provider complexity.
 
 > [!IMPORTANT]
-> This is the target operating model. Current portfolio evidence remains bounded and synthetic. IaaP Guard is the supported GitHub-native product. Forge has passed a protected bounded loopback HTTP-parity gate, but a distributable customer-hosted Forge service remains a target. Direct Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.
+> This is the target operating model. Current portfolio evidence remains bounded and synthetic. IaaP Guard is the supported GitHub-native product. Forge ships an installable, loopback-only, nonproduction HTTP preview. Network-exposed service distribution and Console or Backstage client adapters remain targets. Direct Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.
 
 ## Product view
 
@@ -16,6 +16,7 @@ flowchart TB
   CONSOLE["IaaP Console<br/>Evidence and selection experience"]
   SELECT["Authorized human selection"]
   FORGE["IaaP Forge<br/>Create inert bound proposal"]
+  VALIDATE["Forge deterministic gates<br/>Schema • contract • policy • tests"]
   APPROVE["Authorized human approval"]
   DELIVERY["Protected merge and GitOps delivery"]
   CONTROL["Crossplane in Kubernetes<br/>Reconcile approved product claim"]
@@ -28,7 +29,8 @@ flowchart TB
   CONSOLE --> SELECT
   ORDER --> FORGE
   SELECT --> FORGE
-  FORGE --> APPROVE
+  FORGE --> VALIDATE
+  VALIDATE --> APPROVE
   APPROVE --> DELIVERY
   DELIVERY --> CONTROL
   CONTROL --> OUTCOME
@@ -44,7 +46,7 @@ flowchart TB
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class DEV,STORE,CONSOLE experience
   class ORDER,FORGE product
-  class GUARD governance
+  class GUARD,VALIDATE governance
   class SELECT,APPROVE human
   class DELIVERY governance
   class CONTROL control
@@ -73,6 +75,7 @@ flowchart TB
   subgraph SVC["Customer-hosted Forge boundary"]
     FH["Forge HTTP adapter<br/>Bounded transport"]
     FE["Forge engine<br/>Deterministic proposal"]
+    FV["Forge deterministic validation<br/>Schema • contract • policy • tests"]
     FA["Target status adapter<br/>Normalize operational facts"]
   end
 
@@ -110,7 +113,8 @@ flowchart TB
   GE --> UI
   UI -. future adapter .-> FH
   FH --> FE
-  FE --> GH
+  FE --> FV
+  FV --> GH
   GH --> HA
   HA --> PM
   PM --> GC
@@ -145,7 +149,7 @@ flowchart TB
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class BS,UI experience
   class FH,FE,FA service
-  class GPR,GAPP,GE,GH,HA,PM,GC governance
+  class GPR,GAPP,GE,FV,GH,HA,PM,GC governance
   class CLAIM,XP,PKG,PRV control
   class C1,C2,C3,C4 cloud
   class WK,MS outcome
@@ -233,7 +237,7 @@ sequenceDiagram
 |---|---|
 | Backstage product ordering | Bounded POC with runtime dry-run evidence; no infrastructure apply authority |
 | Console | Customer-hosted synthetic visibility and evidence projections; non-authoritative |
-| Forge | Deterministic proposal engine with accepted bounded loopback HTTP parity; no customer-hosted distribution or deployment authority is claimed |
+| Forge | Deterministic proposal engine with an installable loopback-only nonproduction HTTP preview; no network-exposed service, client adapter, or deployment authority is claimed |
 | Guard | Supported GitHub-native deterministic architecture and evidence check |
 | Crossplane | Credential-free contracts, bundles, simulations, and bounded reconciliation evidence |
 | Live end-to-end provisioning | Separately governed target; not authorized or claimed by this diagram |
