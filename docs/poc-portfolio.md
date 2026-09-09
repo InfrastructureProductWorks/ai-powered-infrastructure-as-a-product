@@ -83,9 +83,9 @@ Operational authorization is recorded separately:
 | IaaP Console | POC | Synthetic Only; evidence, review, selection, and traceability projections | Validate an authenticated bounded Forge adapter and separately authorize external evaluation. |
 | Backstage Storefront | POC | Synthetic Only; catalog and dry-run order generation | Validate a bounded client adapter and an authorized human-reviewed order submission path. |
 | IaaP Assurance | Preview | Synthetic Only; bounded prerelease custody and authority proof | Validate customer-hosted identity, custody, operational evidence, recovery, and support before any named pilot. |
-| Crossplane bootstrap and product APIs | POC | Bounded Evaluation in controlled sandboxes; no production delivery authority | Establish a named pilot target, scoped identity, SLOs, recovery, support ownership, and explicit pilot authorization. |
+| Crossplane bootstrap and product APIs | POC | Synthetic Only; completed sandbox runs are retained evidence, not standing authorization | Authorize a time-bounded sandbox evaluation with an exact target, scope, identity, owner, and expiry. |
 | Composite AI capability | POC | Synthetic Only, including bounded synthetic fixtures through the limited live-model adapter | Validate repeatable evaluation quality, cost controls, model governance, and human-review safeguards for a named evaluation. |
-| Complete Backstage-to-Crossplane journey | POC | Synthetic Only; no pilot or production authority | Obtain separate named-pilot authorization with exact revision, digest, target, delivery window, SLOs, recovery, support, monitoring, and rollback. |
+| Complete Backstage-to-Crossplane journey | POC | Synthetic Only; no active integrated evaluation, pilot, or production authority | Validate and authorize a bounded integrated evaluation with exact revision, digest, target, window, identity, monitoring, recovery, support, and rollback; pilot authorization remains a later decision. |
 
 A component advances only when its stated exit gate has objective evidence and the required authority decision is recorded. A lifecycle advance does not silently expand credentials, target environments, customer-data access, spending, approval, apply, provisioning, pilot, or production authority.
 
