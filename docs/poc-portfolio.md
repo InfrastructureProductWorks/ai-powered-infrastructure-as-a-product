@@ -64,6 +64,31 @@ flowchart TB
 - [`iaap-guard-adopter-validation`](https://github.com/InfrastructureProductWorks/iaap-guard-adopter-validation) is archived clean-adopter proof, not an active runtime or supported distribution.
 - [`ai-powered-infrastructure-as-a-product`](https://github.com/InfrastructureProductWorks/ai-powered-infrastructure-as-a-product) remains the public thesis, architecture, evidence, and portfolio front door.
 
+## Portfolio lifecycle register
+
+Evidence status, product maturity, and permission to operate are separate decisions. A passed test or evidence gate does not by itself make a capability a supported release, authorize a pilot, or authorize production use.
+
+The controlled product lifecycle is:
+
+`Concept → POC → Preview → Release Candidate → Supported Release → Maintenance → Retired`
+
+Operational authorization is recorded separately:
+
+`Synthetic Only → Bounded Evaluation → Pilot Authorized → Production Authorized`
+
+| Application or capability | Product lifecycle | Current operational authorization | Next exit gate |
+|---|---|---|---|
+| IaaP Guard and Guard Core | Supported Release | Bounded Evaluation through the supported GitHub-native product boundary | Continue release, security, support, and adoption evidence; any broader operating authority requires a separate decision. |
+| IaaP Forge | Preview | Synthetic Only; installable loopback-only nonproduction HTTP transport and inert proposals | Validate and authorize a network-exposed customer-hosted evaluation surface without adding provisioning authority. |
+| IaaP Console | POC | Synthetic Only; evidence, review, selection, and traceability projections | Validate an authenticated bounded Forge adapter and separately authorize external evaluation. |
+| Backstage Storefront | POC | Synthetic Only; catalog and dry-run order generation | Validate a bounded client adapter and an authorized human-reviewed order submission path. |
+| IaaP Assurance | Preview | Synthetic Only; bounded prerelease custody and authority proof | Validate customer-hosted identity, custody, operational evidence, recovery, and support before any named pilot. |
+| Crossplane bootstrap and product APIs | POC | Bounded Evaluation in controlled sandboxes; no production delivery authority | Establish a named pilot target, scoped identity, SLOs, recovery, support ownership, and explicit pilot authorization. |
+| Composite AI capability | POC | Synthetic Only, including bounded synthetic fixtures through the limited live-model adapter | Validate repeatable evaluation quality, cost controls, model governance, and human-review safeguards for a named evaluation. |
+| Complete Backstage-to-Crossplane journey | POC | Synthetic Only; no pilot or production authority | Obtain separate named-pilot authorization with exact revision, digest, target, delivery window, SLOs, recovery, support, monitoring, and rollback. |
+
+A component advances only when its stated exit gate has objective evidence and the required authority decision is recorded. A lifecycle advance does not silently expand credentials, target environments, customer-data access, spending, approval, apply, provisioning, pilot, or production authority.
+
 ## Supporting POC governance
 
 As of September 3, 2026, the default branches of `crossplane-multicloud-seed-poc`, `multicloud-foundation-product-poc`, and `composite-ai-infrastructure-product-poc` are protected by active rulesets with no bypass actors. Each requires pull requests, resolved review conversations, and an up-to-date `validate` check; branch deletion and force pushes are blocked. These controls change repository governance only and add no collaborator, credential, token scope, visibility, runtime, or production access.
