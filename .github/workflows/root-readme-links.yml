@@ -2,15 +2,8 @@ name: Root README link integrity
 
 on:
   pull_request:
-    paths:
-      - README.md
-      - .github/workflows/root-readme-links.yml
   push:
-    branches:
-      - main
-    paths:
-      - README.md
-      - .github/workflows/root-readme-links.yml
+    branches: [main]
 
 permissions:
   contents: read
