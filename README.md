@@ -166,6 +166,9 @@ See [Infrastructure-as-a-Product Thesis](docs/THESIS.md) for the durable positio
 
 ## Strategic architecture
 
+> [!TIP]
+> See the [complete product and runtime architecture](docs/PRODUCT-ARCHITECTURE.md) for the portfolio product view, the customer-hosted service boundary, Kubernetes management-cluster topology, Crossplane reconciliation path, delivery targets, and order-to-outcome sequence.
+
 ```mermaid
 flowchart TB
   DEV[Developer / product team]
