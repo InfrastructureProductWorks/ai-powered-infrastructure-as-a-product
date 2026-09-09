@@ -116,7 +116,7 @@
     },
     {
       "path": "docs/poc-portfolio.md",
-      "sha256": "9a5a0eaa4a3118c6ebbb724d995411423a759d13a748be2adf82661be79e544c"
+      "sha256": "a83c276220a4dc324c18ccd53bafb8f0981f1b11114e006e6edd9b20323fd0fd"
     },
     {
       "path": "provenance/portfolio-provenance.schema.json",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "d6d20234a09c9ba74bfe44a286bac79d3a302a91e6ec4248f43c1d171b70841b"
+    "digest": "5022114fb8764b7ee63c91c55ee2931b0911a8bc7e93068fc33a3604cc97a409"
   }
 }
