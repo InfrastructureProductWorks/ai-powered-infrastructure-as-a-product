@@ -16,7 +16,8 @@ flowchart TB
   CONSOLE["IaaP Console<br/>Evidence and selection experience"]
   SELECT["Authorized human selection"]
   FORGE["IaaP Forge<br/>Create inert bound proposal"]
-  VALIDATE["Forge deterministic gates<br/>Schema • contract • policy • tests"]
+  REVISION["Versioned GitHub proposal<br/>Immutable revision and digest"]
+  VALIDATE["Forge deterministic gates<br/>Validate exact GitHub revision"]
   APPROVE["Authorized human approval"]
   DELIVERY["Protected merge and GitOps delivery"]
   CONTROL["Crossplane in Kubernetes<br/>Reconcile approved product claim"]
@@ -29,7 +30,8 @@ flowchart TB
   CONSOLE --> SELECT
   ORDER --> FORGE
   SELECT --> FORGE
-  FORGE --> VALIDATE
+  FORGE --> REVISION
+  REVISION --> VALIDATE
   VALIDATE --> APPROVE
   APPROVE --> DELIVERY
   DELIVERY --> CONTROL
@@ -46,7 +48,7 @@ flowchart TB
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class DEV,STORE,CONSOLE experience
   class ORDER,FORGE product
-  class GUARD,VALIDATE governance
+  class GUARD,REVISION,VALIDATE governance
   class SELECT,APPROVE human
   class DELIVERY governance
   class CONTROL control
@@ -55,7 +57,7 @@ flowchart TB
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
 
-The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. An authorized person approves the exact bound proposal, and a separate protected merge and GitOps step delivers the approved claim to Crossplane. Assurance keeps the authority and custody chain intact.
+The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal becomes an immutable GitHub revision, Forge’s deterministic gates validate that exact revision and digest, and only then can an authorized person approve it. A separate protected merge and GitOps step delivers the approved claim to Crossplane. Assurance keeps the authority and custody chain intact.
 
 ## Technical deployment and reconciliation view
 
@@ -75,7 +77,7 @@ flowchart TB
   subgraph SVC["Customer-hosted Forge boundary"]
     FH["Forge HTTP adapter<br/>Bounded transport"]
     FE["Forge engine<br/>Deterministic proposal"]
-    FV["Forge deterministic validation<br/>Schema • contract • policy • tests"]
+    FV["Forge deterministic validation<br/>Validate exact GitHub revision"]
     FA["Target status adapter<br/>Normalize operational facts"]
   end
 
@@ -113,9 +115,9 @@ flowchart TB
   GE --> UI
   UI -. future adapter .-> FH
   FH --> FE
-  FE --> FV
-  FV --> GH
-  GH --> HA
+  FE --> GH
+  GH --> FV
+  FV --> HA
   HA --> PM
   PM --> GC
   GC --> CLAIM
