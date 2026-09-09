@@ -3,7 +3,7 @@
 This is the authoritative end-to-end view of the Infrastructure Product Works™ Infrastructure-as-a-Product portfolio. It separates the **product experience** from the **runtime implementation** so developers can order outcomes without inheriting cloud, Kubernetes, or provider complexity.
 
 > [!IMPORTANT]
-> This is the target operating model. Current portfolio evidence remains bounded and synthetic. IaaP Guard is the supported GitHub-native product; the customer-hosted Forge HTTP transport is under review in Forge PR #96. Direct Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.
+> This is the target operating model. Current portfolio evidence remains bounded and synthetic. IaaP Guard is the supported GitHub-native product; the bounded customer-hosted Forge HTTP transport was accepted through Forge PR #96 and merged to protected `main` at `fd6452fcb7e4934695b8ed73657daf98c4f0bc28`. Direct Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.
 
 ## Product view
 
@@ -200,7 +200,7 @@ sequenceDiagram
 |---|---|
 | Backstage product ordering | Bounded POC with runtime dry-run evidence; no infrastructure apply authority |
 | Console | Customer-hosted synthetic visibility and evidence projections; non-authoritative |
-| Forge | Deterministic proposal engine; customer-hosted HTTP parity tranche under review in PR #96 |
+| Forge | Deterministic proposal engine with bounded loopback-only customer-hosted HTTP parity accepted through PR #96; no deployment authority |
 | Guard | Supported GitHub-native deterministic architecture and evidence check |
 | Crossplane | Credential-free contracts, bundles, simulations, and bounded reconciliation evidence |
 | Live end-to-end provisioning | Separately governed target; not authorized or claimed by this diagram |
