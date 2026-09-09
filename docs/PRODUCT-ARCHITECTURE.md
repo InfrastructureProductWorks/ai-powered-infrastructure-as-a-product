@@ -18,8 +18,9 @@ flowchart TB
   FORGE["IaaP Forge<br/>Create inert bound proposal"]
   REVISION["Versioned GitHub proposal<br/>Immutable revision and digest"]
   VALIDATE["Forge deterministic gates<br/>Validate exact GitHub revision"]
-  APPROVE["Authorized human approval"]
-  DELIVERY["Protected merge and GitOps delivery"]
+  APPROVE["Authorized human approval<br/>Exact revision and artifact digest"]
+  PROMOTE["Protected digest-preserving promotion<br/>No content change"]
+  DELIVERY["Authorized GitOps delivery<br/>Enforce approved artifact digest"]
   CONTROL["Crossplane in Kubernetes<br/>Reconcile approved product claim"]
   OUTCOME["Infrastructure product outcome<br/>Kubernetes • network • data • identity • connectivity"]
   ASSURE["IaaP Assurance<br/>Custody • continuity • rollback • evidence"]
@@ -33,7 +34,8 @@ flowchart TB
   FORGE --> REVISION
   REVISION --> VALIDATE
   VALIDATE --> APPROVE
-  APPROVE --> DELIVERY
+  APPROVE --> PROMOTE
+  PROMOTE --> DELIVERY
   DELIVERY --> CONTROL
   CONTROL --> OUTCOME
   OUTCOME --> ASSURE
@@ -50,14 +52,14 @@ flowchart TB
   class ORDER,FORGE product
   class GUARD,REVISION,VALIDATE governance
   class SELECT,APPROVE human
-  class DELIVERY governance
+  class PROMOTE,DELIVERY governance
   class CONTROL control
   class OUTCOME outcome
   class ASSURE evidence
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
 
-The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal becomes an immutable GitHub revision, Forge’s deterministic gates validate that exact revision and digest, and only then can an authorized person approve it. A separate protected merge and GitOps step delivers the approved claim to Crossplane. Assurance keeps the authority and custody chain intact.
+The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal becomes an immutable GitHub revision, Forge’s deterministic gates validate that exact revision and artifact digest, and only then can an authorized person approve it. Protected promotion must preserve that approved artifact digest, and GitOps verifies the digest before delivering the claim to Crossplane. Any content, revision, or digest change invalidates the prior validation and approval and restarts the gate. Assurance keeps the authority and custody chain intact.
 
 ## Technical deployment and reconciliation view
 
@@ -84,8 +86,8 @@ flowchart TB
   subgraph GOV["Governed change boundary"]
     GH["GitHub proposal<br/>Versioned desired state and evidence"]
     HA["Human approval<br/>Exact digest and revision"]
-    PM["Protected merge or promotion"]
-    GC["Authorized GitOps delivery"]
+    PM["Protected digest-preserving promotion<br/>No content change"]
+    GC["Authorized GitOps delivery<br/>Verify approved artifact digest"]
   end
 
   subgraph MGMT["Kubernetes management cluster"]
@@ -119,8 +121,8 @@ flowchart TB
   GH --> FV
   FV --> HA
   HA --> PM
-  PM --> GC
-  GC --> CLAIM
+  PM -- same approved digest --> GC
+  GC -- verified claim --> CLAIM
   CLAIM --> XP
   PKG -.-> XP
   XP --> PRV
@@ -205,15 +207,19 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
+  participant ForgeGate as Forge validation
   actor Approver
   participant GitHub
   participant GitOps
   participant Crossplane
 
-  Approver->>GitHub: Approve the exact proposal
-  GitHub->>GitHub: Protected merge or promotion
-  GitHub->>GitOps: Release approved product claim
-  GitOps->>Crossplane: Apply claim to management cluster
+  GitHub->>ForgeGate: Present final revision and artifact digest
+  ForgeGate-->>GitHub: Bind passing validation to exact revision
+  Approver->>GitHub: Approve exact revision and artifact digest
+  GitHub->>GitHub: Digest-preserving protected promotion
+  GitHub->>GitOps: Release artifact with approved digest
+  GitOps->>GitOps: Verify artifact matches approved digest
+  GitOps->>Crossplane: Apply verified claim to management cluster
 ```
 
 ### Target runtime evidence return
