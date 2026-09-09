@@ -16,11 +16,11 @@ flowchart TB
   CONSOLE["IaaP Console<br/>Evidence and selection experience"]
   SELECT["Authorized human selection"]
   FORGE["IaaP Forge<br/>Create inert bound proposal"]
-  REVISION["Versioned GitHub proposal<br/>Immutable revision and digest"]
-  VALIDATE["Forge deterministic gates<br/>Validate exact GitHub revision"]
-  APPROVE["Authorized human approval<br/>Exact revision and artifact digest"]
-  PROMOTE["Protected digest-preserving promotion<br/>No content change"]
-  DELIVERY["Authorized GitOps delivery<br/>Enforce approved artifact digest"]
+  REVISION["Versioned GitHub proposal<br/>Reviewable candidate"]
+  FINAL["Protected finalization<br/>Immutable delivery revision"]
+  VALIDATE["Forge deterministic gates<br/>Final revision • digest • target • window"]
+  APPROVE["Authorized human approval<br/>Same revision • digest • target • window"]
+  DELIVERY["Authorized GitOps delivery<br/>Enforce complete approval binding"]
   CONTROL["Crossplane in Kubernetes<br/>Reconcile approved product claim"]
   OUTCOME["Infrastructure product outcome<br/>Kubernetes • network • data • identity • connectivity"]
   ASSURE["IaaP Assurance<br/>Custody • continuity • rollback • evidence"]
@@ -32,10 +32,10 @@ flowchart TB
   ORDER --> FORGE
   SELECT --> FORGE
   FORGE --> REVISION
-  REVISION --> VALIDATE
+  REVISION --> FINAL
+  FINAL --> VALIDATE
   VALIDATE --> APPROVE
-  APPROVE --> PROMOTE
-  PROMOTE --> DELIVERY
+  APPROVE --> DELIVERY
   DELIVERY --> CONTROL
   CONTROL --> OUTCOME
   OUTCOME --> ASSURE
@@ -50,16 +50,16 @@ flowchart TB
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class DEV,STORE,CONSOLE experience
   class ORDER,FORGE product
-  class GUARD,REVISION,VALIDATE governance
+  class GUARD,REVISION,FINAL,VALIDATE governance
   class SELECT,APPROVE human
-  class PROMOTE,DELIVERY governance
+  class DELIVERY governance
   class CONTROL control
   class OUTCOME outcome
   class ASSURE evidence
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
 
-The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal becomes an immutable GitHub revision, Forge’s deterministic gates validate that exact revision and artifact digest, and only then can an authorized person approve it. Protected promotion must preserve that approved artifact digest, and GitOps verifies the digest before delivering the claim to Crossplane. Any content, revision, or digest change invalidates the prior validation and approval and restarts the gate. Assurance keeps the authority and custody chain intact.
+The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal is finalized through the protected GitHub path into an immutable delivery revision before approval. Forge’s deterministic gates validate that final revision, artifact digest, authorized target, and delivery window; an authorized person approves the same complete binding. GitOps verifies all four values before delivering the claim to Crossplane. There is no content-changing merge after approval. Any change to content, revision, digest, target, or window invalidates the prior validation and approval and restarts the gate. Assurance keeps the authority and custody chain intact.
 
 ## Technical deployment and reconciliation view
 
@@ -79,15 +79,15 @@ flowchart TB
   subgraph SVC["Customer-hosted Forge boundary"]
     FH["Forge HTTP adapter<br/>Bounded transport"]
     FE["Forge engine<br/>Deterministic proposal"]
-    FV["Forge deterministic validation<br/>Validate exact GitHub revision"]
+    FV["Forge deterministic validation<br/>Final revision • digest • target • window"]
     FA["Target status adapter<br/>Normalize operational facts"]
   end
 
   subgraph GOV["Governed change boundary"]
     GH["GitHub proposal<br/>Versioned desired state and evidence"]
-    HA["Human approval<br/>Exact digest and revision"]
-    PM["Protected digest-preserving promotion<br/>No content change"]
-    GC["Authorized GitOps delivery<br/>Verify approved artifact digest"]
+    PM["Protected finalization<br/>Create immutable delivery revision"]
+    HA["Human approval<br/>Same revision • digest • target • window"]
+    GC["Authorized GitOps delivery<br/>Verify complete approval binding"]
   end
 
   subgraph MGMT["Kubernetes management cluster"]
@@ -118,11 +118,11 @@ flowchart TB
   UI -. future adapter .-> FH
   FH --> FE
   FE --> GH
-  GH --> FV
+  GH --> PM
+  PM --> FV
   FV --> HA
-  HA --> PM
-  PM -- same approved digest --> GC
-  GC -- verified claim --> CLAIM
+  HA --> GC
+  GC -- verified revision, digest, target, window --> CLAIM
   CLAIM --> XP
   PKG -.-> XP
   XP --> PRV
@@ -213,13 +213,13 @@ sequenceDiagram
   participant GitOps
   participant Crossplane
 
-  GitHub->>ForgeGate: Present final revision and artifact digest
-  ForgeGate-->>GitHub: Bind passing validation to exact revision
-  Approver->>GitHub: Approve exact revision and artifact digest
-  GitHub->>GitHub: Digest-preserving protected promotion
-  GitHub->>GitOps: Release artifact with approved digest
-  GitOps->>GitOps: Verify artifact matches approved digest
-  GitOps->>Crossplane: Apply verified claim to management cluster
+  GitHub->>GitHub: Protected finalization creates delivery revision
+  GitHub->>ForgeGate: Present final revision, digest, target, and window
+  ForgeGate-->>GitHub: Bind passing validation to all four values
+  Approver->>GitHub: Approve the same complete binding
+  GitHub->>GitOps: Release exact revision and approval envelope
+  GitOps->>GitOps: Verify revision, digest, target, and window
+  GitOps->>Crossplane: Apply within window to approved management cluster
 ```
 
 ### Target runtime evidence return
