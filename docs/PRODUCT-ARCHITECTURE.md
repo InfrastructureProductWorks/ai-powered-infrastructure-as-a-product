@@ -3,14 +3,15 @@
 This is the authoritative end-to-end view of the Infrastructure Product Works™ Infrastructure-as-a-Product portfolio. It separates the **product experience** from the **runtime implementation** so developers can order outcomes without inheriting cloud, Kubernetes, or provider complexity.
 
 > [!IMPORTANT]
-> This is the target operating model. Current portfolio evidence remains bounded and synthetic. IaaP Guard is the supported GitHub-native product. Forge ships an installable, loopback-only, nonproduction HTTP preview. Network-exposed service distribution and Console or Backstage client adapters remain targets. Direct Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.
+> This is the target operating model. Current portfolio evidence remains bounded. IaaP Guard is the supported GitHub-native product. The [September 11 Storefront evidence](evidence/storefront-drive-thru-2026-09-11.md) pins first-class Storefront `0.2.0` and Backstage Storefront Adapter `0.1.1` as bounded experience surfaces; it does not authorize authenticated downstream transport, pilot, or production operation. Forge remains bounded, and direct Storefront/Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.
 
 ## Product view
 
 ```mermaid
 flowchart TB
   DEV["Developer or product team"]
-  STORE["Backstage storefront<br/>Browse • configure • order"]
+  STORE["InfrastructureProductWorks Storefront<br/>Browse • configure • order"]
+  BS["Backstage Storefront Adapter<br/>Same order contract"]
   ORDER["InfrastructureProductOrder"]
   GUARD["IaaP Guard GitHub App<br/>Architecture and evidence assessment"]
   CONSOLE["IaaP Console<br/>Evidence and selection experience"]
@@ -26,7 +27,9 @@ flowchart TB
   ASSURE["IaaP Assurance<br/>Custody • continuity • rollback • evidence"]
 
   DEV --> STORE
+  DEV --> BS
   STORE --> ORDER
+  BS --> ORDER
   GUARD --> CONSOLE
   CONSOLE --> SELECT
   ORDER --> FORGE
@@ -48,7 +51,7 @@ flowchart TB
   classDef control fill:#102D55,stroke:#3B82F6,stroke-width:3px,color:#F8FAFC
   classDef outcome fill:#123A24,stroke:#22C55E,stroke-width:2px,color:#F8FAFC
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
-  class DEV,STORE,CONSOLE experience
+  class DEV,STORE,BS,CONSOLE experience
   class ORDER,FORGE product
   class GUARD,REVISION,FINAL,VALIDATE governance
   class SELECT,APPROVE human
@@ -59,7 +62,7 @@ flowchart TB
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
 
-The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal is finalized through the protected GitHub path into an immutable delivery revision before approval. Forge’s deterministic gates validate that final revision, artifact digest, authorized target, and delivery window; an authorized person approves the same complete binding. GitOps verifies all four values before delivering the claim to Crossplane. There is no content-changing merge after approval. Any change to content, revision, digest, target, or window invalidates the prior validation and approval and restarts the gate. Assurance keeps the authority and custody chain intact.
+The developer orders an **outcome**, not a collection of provider resources. The first-class Storefront captures product intent; the Backstage Storefront Adapter can capture the same intent through the same closed order contract. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal is finalized through the protected GitHub path into an immutable delivery revision before approval. Forge’s deterministic gates validate that final revision, artifact digest, authorized target, and delivery window; an authorized person approves the same complete binding. GitOps verifies all four values before delivering the claim to Crossplane. There is no content-changing merge after approval. Any change to content, revision, digest, target, or window invalidates the prior validation and approval and restarts the gate. Assurance keeps the authority and custody chain intact.
 
 ## Technical deployment and reconciliation view
 

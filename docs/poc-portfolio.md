@@ -81,11 +81,12 @@ Operational authorization is recorded separately:
 | IaaP Guard and Guard Core | Supported Release | Bounded Evaluation through the supported GitHub-native product boundary | Continue release, security, support, and adoption evidence; any broader operating authority requires a separate decision. |
 | IaaP Forge | Preview | Synthetic Only; installable loopback-only nonproduction HTTP transport and inert proposals | Validate and authorize a network-exposed customer-hosted evaluation surface without adding provisioning authority. |
 | IaaP Console | POC | Synthetic Only; evidence, review, selection, and traceability projections | Validate an authenticated bounded Forge adapter and separately authorize external evaluation. |
-| Backstage Storefront | POC | Synthetic Only; catalog and dry-run order generation | Validate a bounded client adapter and an authorized human-reviewed order submission path. |
+| InfrastructureProductWorks Storefront | Preview | Bounded Evaluation at pinned protected-main `1b0af539d62a569fe48bcb1f140682a1f9be0c20`; order/session/handoff evidence only | Add durable customer persistence/authentication and authenticated downstream transport only through separately accepted gates. |
+| Backstage Storefront Adapter | Preview | Bounded Evaluation through released `storefront-distribution-v0.1.1`; real Backstage registration/dry-run, no provisioning | Retain configurable customer target ownership and prove any future GHES/live publication support separately. |
 | IaaP Assurance | Preview | Synthetic Only; bounded prerelease custody and authority proof | Validate customer-hosted identity, custody, operational evidence, recovery, and support before any named pilot. |
 | Crossplane bootstrap and product APIs | POC | Synthetic Only; completed sandbox runs are retained evidence, not standing authorization | Authorize a time-bounded sandbox evaluation with an exact target, scope, identity, owner, and expiry. |
 | Composite AI capability | POC | Synthetic Only, including bounded synthetic fixtures through the limited live-model adapter | Validate repeatable evaluation quality, cost controls, model governance, and human-review safeguards for a named evaluation. |
-| Complete Backstage-to-Crossplane journey | POC | Synthetic Only; no active integrated evaluation, pilot, or production authority | Validate and authorize a bounded integrated evaluation with exact revision, digest, target, window, identity, monitoring, recovery, support, and rollback; pilot authorization remains a later decision. |
+| Complete Storefront/Backstage-to-Crossplane journey | POC | Synthetic Only; no active integrated evaluation, pilot, or production authority | Validate and authorize a bounded integrated evaluation with exact revision, digest, target, window, identity, monitoring, recovery, support, and rollback; pilot authorization remains a later decision. |
 
 A component advances only when its stated exit gate has objective evidence and the required authority decision is recorded. A lifecycle advance does not silently expand credentials, target environments, customer-data access, spending, approval, apply, provisioning, pilot, or production authority.
 
@@ -97,7 +98,7 @@ As of September 3, 2026, the default branches of `crossplane-multicloud-seed-poc
 
 ### `backstage-infrastructure-product-storefront-poc`
 
-Owns the optional reference **consumer experience** for infrastructure products: browse, configure, order, and track.
+Owns the **first-class InfrastructureProductWorks Storefront application** and the **Backstage Storefront Adapter** over one closed consumer order contract: browse, configure, order, track, and inspect bounded handoff evidence.
 
 The storefront:
 
@@ -107,7 +108,7 @@ The storefront:
 - hides Crossplane, ProviderConfig, cloud credentials, IAM JSON, Terraform/TFE, and composition internals; and
 - never becomes the provisioning control plane.
 
-Backstage is therefore a replaceable experience layer. A CLI, API, service portal, or conversational interface could submit the same product intent without changing the product-control-plane architecture.
+The experience layer is therefore replaceable. The first-class Storefront is canonical, Backstage is a supported adapter, and a CLI, API, service portal, or conversational interface could submit the same product intent without changing the product-control-plane architecture.
 
 The storefront repository now also carries a bounded runtime smoke that starts an actual Backstage backend, registers the reference template in the Software Catalog, and executes `fetch:template` plus `publish:github:pull-request` through Backstage's supported dry-run path. That runtime evidence deliberately provides no real GitHub write credential and creates no real order PR.
 
