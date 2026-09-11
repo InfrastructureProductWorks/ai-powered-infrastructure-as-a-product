@@ -8,7 +8,7 @@
 
 <p align="center"><strong>IaaS is what we buy; infrastructure-as-a-product is what we build.</strong></p>
 
-<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; Crossplane is the authorized control plane.</strong></p>
+<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; authorized people decide; Crossplane reconciles authorized product state.</strong></p>
 
 <p align="center">Composite AI • Crossplane • InfrastructureProductWorks Storefront • Backstage adapter • GitHub governance • deterministic policy • multi-cloud evidence</p>
 
@@ -31,7 +31,7 @@ Application developers should order a finished infrastructure product—not asse
 
 <p align="center"><em>Same great clouds. A better way to order.</em></p>
 
-The drive-thru is an **experience metaphor, not an authority model**. The consumer path is intentionally simple: **Pick product → Configure bounded intent → Contract validation → Governed review**. The current Storefront can create a digest-bound order and inspect an independently verified inert handoff, but it does not approve, merge, apply, deploy, provision, remediate, or transmit the order into an operational path by itself.
+The drive-thru is an **experience metaphor, not an authority model**. The consumer path is intentionally simple: **Pick product → Configure bounded intent → Contract validation → Governed review**. The bounded implementation is pinned in [Storefront protected-main evidence](docs/evidence/storefront-drive-thru-2026-09-11.md): Storefront `0.2.0` can create a digest-bound order and inspect an independently verified inert handoff, but it does not approve, merge, apply, deploy, provision, remediate, or transmit the order into an operational path by itself.
 
 Only **Cloud Foundation Environment** is currently orderable through the first-class Storefront. Managed Interconnect, Data Platform Environment, Security Services, and Kubernetes Platform may appear as explicitly **Coming soon** product-direction cards; their presence in the experience is not a release, readiness, production, or authority claim.
 
@@ -138,7 +138,7 @@ The maintained reference architecture is intentionally small and opinionated:
 
 The earlier accelerator embedded Backstage together with Terraform/TFE, Azure Arc, legacy execution MCP servers, and cloud-specific implementation code. That embedded stack is superseded and preserved on `archive/legacy-accelerator-v1`.
 
-A **first-class standalone Storefront** and independently versioned **Backstage Storefront Adapter** now live in [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc). Both remain experience layers over the same order contract; neither is an inherited control-plane dependency.
+The [pinned Storefront protected-main evidence](docs/evidence/storefront-drive-thru-2026-09-11.md) records a **first-class standalone Storefront** and independently versioned **Backstage Storefront Adapter** in [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc). Both remain bounded experience layers over the same order contract; neither is an inherited control-plane dependency or an operational-authority claim.
 
 > **The accelerator demonstrates the product model without requiring the historical implementation stack.**
 
