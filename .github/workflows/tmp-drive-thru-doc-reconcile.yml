@@ -1,0 +1,103 @@
+name: Temporary Storefront documentation reconciliation
+
+on:
+  push:
+    branches:
+      - docs/drive-thru-storefront-visuals
+    paths:
+      - .github/workflows/tmp-drive-thru-doc-reconcile.yml
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: docs/drive-thru-storefront-visuals
+      - name: Reconcile bounded Storefront documentation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if old not in text:
+                  raise SystemExit(f'expected text not found in {path}: {old[:100]!r}')
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          replace(
+              'README.md',
+              '<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; Crossplane is the authorized control plane.</strong></p>',
+              '<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; authorized people decide; Crossplane reconciles authorized product state.</strong></p>'
+          )
+
+          replace(
+              'README.md',
+              'The drive-thru is an **experience metaphor, not an authority model**. The consumer path is intentionally simple: **Pick product → Configure bounded intent → Contract validation → Governed review**. The current Storefront can create a digest-bound order and inspect an independently verified inert handoff, but it does not approve, merge, apply, deploy, provision, remediate, or transmit the order into an operational path by itself.',
+              'The drive-thru is an **experience metaphor, not an authority model**. The consumer path is intentionally simple: **Pick product → Configure bounded intent → Contract validation → Governed review**. The bounded implementation is pinned in [Storefront protected-main evidence](docs/evidence/storefront-drive-thru-2026-09-11.md): Storefront `0.2.0` can create a digest-bound order and inspect an independently verified inert handoff, but it does not approve, merge, apply, deploy, provision, remediate, or transmit the order into an operational path by itself.'
+          )
+
+          replace(
+              'README.md',
+              'A **first-class standalone Storefront** and independently versioned **Backstage Storefront Adapter** now live in [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc). Both remain experience layers over the same order contract; neither is an inherited control-plane dependency.',
+              'The [pinned Storefront protected-main evidence](docs/evidence/storefront-drive-thru-2026-09-11.md) records a **first-class standalone Storefront** and independently versioned **Backstage Storefront Adapter** in [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc). Both remain bounded experience layers over the same order contract; neither is an inherited control-plane dependency or an operational-authority claim.'
+          )
+
+          old_important = '> [!IMPORTANT]\n> This is the target operating model. Current portfolio evidence remains bounded and synthetic. IaaP Guard is the supported GitHub-native product. Forge ships an installable, loopback-only, nonproduction HTTP preview. Network-exposed service distribution and Console or Backstage client adapters remain targets. Direct Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.'
+          new_important = '> [!IMPORTANT]\n> This is the target operating model. Current portfolio evidence remains bounded. IaaP Guard is the supported GitHub-native product. The [September 11 Storefront evidence](evidence/storefront-drive-thru-2026-09-11.md) pins first-class Storefront `0.2.0` and Backstage Storefront Adapter `0.1.1` as bounded experience surfaces; it does not authorize authenticated downstream transport, pilot, or production operation. Forge remains bounded, and direct Storefront/Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.'
+          replace('docs/PRODUCT-ARCHITECTURE.md', old_important, new_important)
+
+          replace(
+              'docs/PRODUCT-ARCHITECTURE.md',
+              '  STORE["Backstage storefront<br/>Browse • configure • order"]',
+              '  STORE["InfrastructureProductWorks Storefront<br/>Browse • configure • order"]\n  BS["Backstage Storefront Adapter<br/>Same order contract"]'
+          )
+          replace(
+              'docs/PRODUCT-ARCHITECTURE.md',
+              '  DEV --> STORE\n  STORE --> ORDER',
+              '  DEV --> STORE\n  DEV --> BS\n  STORE --> ORDER\n  BS --> ORDER'
+          )
+          replace(
+              'docs/PRODUCT-ARCHITECTURE.md',
+              '  class DEV,STORE,CONSOLE experience',
+              '  class DEV,STORE,BS,CONSOLE experience'
+          )
+          replace(
+              'docs/PRODUCT-ARCHITECTURE.md',
+              'The developer orders an **outcome**, not a collection of provider resources. Backstage captures product intent.',
+              'The developer orders an **outcome**, not a collection of provider resources. The first-class Storefront captures product intent; the Backstage Storefront Adapter can capture the same intent through the same closed order contract.'
+          )
+
+          replace(
+              'docs/poc-portfolio.md',
+              '| Backstage Storefront | POC | Synthetic Only; catalog and dry-run order generation | Validate a bounded client adapter and an authorized human-reviewed order submission path. |',
+              '| InfrastructureProductWorks Storefront | Preview | Bounded Evaluation at pinned protected-main `1b0af539d62a569fe48bcb1f140682a1f9be0c20`; order/session/handoff evidence only | Add durable customer persistence/authentication and authenticated downstream transport only through separately accepted gates. |\n| Backstage Storefront Adapter | Preview | Bounded Evaluation through released `storefront-distribution-v0.1.1`; real Backstage registration/dry-run, no provisioning | Retain configurable customer target ownership and prove any future GHES/live publication support separately. |'
+          )
+          replace(
+              'docs/poc-portfolio.md',
+              '| Complete Backstage-to-Crossplane journey | POC | Synthetic Only; no active integrated evaluation, pilot, or production authority | Validate and authorize a bounded integrated evaluation with exact revision, digest, target, window, identity, monitoring, recovery, support, and rollback; pilot authorization remains a later decision. |',
+              '| Complete Storefront/Backstage-to-Crossplane journey | POC | Synthetic Only; no active integrated evaluation, pilot, or production authority | Validate and authorize a bounded integrated evaluation with exact revision, digest, target, window, identity, monitoring, recovery, support, and rollback; pilot authorization remains a later decision. |'
+          )
+          replace(
+              'docs/poc-portfolio.md',
+              'Owns the optional reference **consumer experience** for infrastructure products: browse, configure, order, and track.',
+              'Owns the **first-class InfrastructureProductWorks Storefront application** and the **Backstage Storefront Adapter** over one closed consumer order contract: browse, configure, order, track, and inspect bounded handoff evidence.'
+          )
+          replace(
+              'docs/poc-portfolio.md',
+              'Backstage is therefore a replaceable experience layer. A CLI, API, service portal, or conversational interface could submit the same product intent without changing the product-control-plane architecture.',
+              'The experience layer is therefore replaceable. The first-class Storefront is canonical, Backstage is a supported adapter, and a CLI, API, service portal, or conversational interface could submit the same product intent without changing the product-control-plane architecture.'
+          )
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md docs/PRODUCT-ARCHITECTURE.md docs/poc-portfolio.md
+          git diff --cached --quiet && exit 0
+          git commit -m "docs: reconcile Storefront architecture evidence"
+          git push origin HEAD:docs/drive-thru-storefront-visuals
