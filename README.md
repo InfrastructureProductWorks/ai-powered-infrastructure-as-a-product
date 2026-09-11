@@ -8,9 +8,9 @@
 
 <p align="center"><strong>IaaS is what we buy; infrastructure-as-a-product is what we build.</strong></p>
 
-<p align="center"><strong>Backstage is where developers shop; Crossplane is where the product is controlled.</strong></p>
+<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; Crossplane is the authorized control plane.</strong></p>
 
-<p align="center">Composite AI • Crossplane • Backstage storefront • GitHub governance • deterministic policy • multi-cloud evidence</p>
+<p align="center">Composite AI • Crossplane • InfrastructureProductWorks Storefront • Backstage adapter • GitHub governance • deterministic policy • multi-cloud evidence</p>
 
 <details>
 <summary><strong>Original multi-cloud reference visual</strong></summary>
@@ -23,10 +23,28 @@
 
 ## Infrastructure is experienced as a product
 
-Application developers should order a finished infrastructure product—not assemble the raw cloud resources used to build it. Backstage is the storefront: developers choose a standard product with a stable contract, while Forge, Guard, GitHub governance, Crossplane, and the cloud providers handle the governed lifecycle behind that contract.
+Application developers should order a finished infrastructure product—not assemble the raw cloud resources used to build it. The **InfrastructureProductWorks Storefront** is the canonical first-class product experience. Customers already invested in Backstage can use the **Backstage Storefront Adapter** against the same stable `InfrastructureProductOrder` contract, while Forge, Guard, GitHub governance, Crossplane, and the cloud providers handle the governed lifecycle behind that contract.
 
 <p align="center">
-  <img src="docs/assets/showcase/iaap-drive-thru-product-model.webp" alt="Infrastructure-as-a-Product drive-through model: developers order outcomes from Backstage while Forge, Guard, Crossplane, and cloud providers manage the product lifecycle" width="1100"/>
+  <img src="docs/assets/showcase/storefront-drive-thru.svg" alt="InfrastructureProductWorks Cloud Infrastructure Drive-Thru storefront: pick a product, configure bounded intent, validate the order contract, and enter governed review" width="1150"/>
+</p>
+
+<p align="center"><em>Same great clouds. A better way to order.</em></p>
+
+The drive-thru is an **experience metaphor, not an authority model**. The consumer path is intentionally simple: **Pick product → Configure bounded intent → Contract validation → Governed review**. The current Storefront can create a digest-bound order and inspect an independently verified inert handoff, but it does not approve, merge, apply, deploy, provision, remediate, or transmit the order into an operational path by itself.
+
+Only **Cloud Foundation Environment** is currently orderable through the first-class Storefront. Managed Interconnect, Data Platform Environment, Security Services, and Kubernetes Platform may appear as explicitly **Coming soon** product-direction cards; their presence in the experience is not a release, readiness, production, or authority claim.
+
+<p align="center">
+  <img src="docs/assets/showcase/storefront-drive-thru-dashboard.svg" alt="InfrastructureProductWorks Storefront dashboard concept showing the drive-thru journey, bounded order form, human-review queue, and governed handoff inspection" width="1150"/>
+</p>
+
+<p align="center"><em>You choose the outcome. The platform owns the implementation. Human review remains the authority boundary.</em></p>
+
+The original product-model visual remains useful because it shows the implementation hidden behind the consumer boundary:
+
+<p align="center">
+  <img src="docs/assets/showcase/iaap-drive-thru-product-model.webp" alt="Infrastructure-as-a-Product drive-through model: developers order outcomes while Forge, Guard, Crossplane, and cloud providers manage the product lifecycle" width="1100"/>
 </p>
 
 <p align="center"><em>Developers order the outcome—not the ingredients.</em></p>
@@ -109,7 +127,8 @@ This repository is the **thesis, architecture, governance, operating-model, and 
 The maintained reference architecture is intentionally small and opinionated:
 
 - **Infrastructure product contracts** define the stable consumer boundary.
-- **Backstage** is the optional reference storefront for browse, configure, order, and track.
+- **InfrastructureProductWorks Storefront** is the canonical first-class browse, configure, order, track, and handoff-inspection experience.
+- **Backstage Storefront Adapter** gives enterprises already using Backstage the same governed order contract without making Backstage the product boundary.
 - **Crossplane** is the product control plane and reconciliation layer.
 - **Composite AI** interprets intent, proposes changes, explains policy, diagnoses sanitized status, and assembles evidence.
 - **GitHub** governs product change, review, traceability, and evidence.
@@ -119,7 +138,7 @@ The maintained reference architecture is intentionally small and opinionated:
 
 The earlier accelerator embedded Backstage together with Terraform/TFE, Azure Arc, legacy execution MCP servers, and cloud-specific implementation code. That embedded stack is superseded and preserved on `archive/legacy-accelerator-v1`.
 
-A **new bounded Backstage storefront** now lives independently in [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc). It is an experience layer, not an inherited control-plane dependency.
+A **first-class standalone Storefront** and independently versioned **Backstage Storefront Adapter** now live in [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc). Both remain experience layers over the same order contract; neither is an inherited control-plane dependency.
 
 > **The accelerator demonstrates the product model without requiring the historical implementation stack.**
 
@@ -172,7 +191,8 @@ See [Infrastructure-as-a-Product Thesis](docs/THESIS.md) for the durable positio
 ```mermaid
 flowchart TB
   DEV[Developer / product team]
-  STORE[Backstage storefront\nbrowse • configure • order • track]
+  STORE[InfrastructureProductWorks Storefront\nbrowse • configure • order • track]
+  BS[Backstage Storefront Adapter\nsame order contract]
   ALT[Other experience\nCLI • API • service portal • conversation]
   ORDER[InfrastructureProductOrder]
   AI[Bounded Composite AI]
@@ -185,8 +205,10 @@ flowchart TB
   STATUS[Product status and evidence]
 
   DEV --> STORE
+  DEV --> BS
   DEV --> ALT
   STORE --> ORDER
+  BS --> ORDER
   ALT --> ORDER
   ORDER --> AI
   AI --> GIT
@@ -209,7 +231,7 @@ flowchart TB
   classDef control fill:#102D55,stroke:#3B82F6,stroke-width:3px,color:#F8FAFC
   classDef cloud fill:#12303A,stroke:#14B8A6,stroke-width:2px,color:#F8FAFC
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
-  class DEV,STORE,ALT experience
+  class DEV,STORE,BS,ALT experience
   class ORDER intent
   class AI intelligence
   class GIT governance
@@ -222,7 +244,7 @@ flowchart TB
 
 The architectural center is the **product contract**, not a workspace, module, portal, pipeline, or execution engine.
 
-Backstage is deliberately replaceable. A different storefront can submit the same product intent without changing the product contract or Crossplane control plane.
+The experience surface is deliberately replaceable. The first-class Storefront, Backstage adapter, CLI, API, service portal, or conversational interface can submit the same product intent without changing the product contract or Crossplane control plane.
 
 ### Authority chain
 
@@ -561,7 +583,7 @@ flowchart TB
 
 | Repository | Visibility / status | Responsibility |
 |---|---|---|
-| [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc) | Internal · active | Optional developer storefront for browse, configure, order, and track. It has no provisioning authority. |
+| [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc) | Internal · active | First-class customer-hosted InfrastructureProductWorks Storefront plus reusable Backstage Storefront Adapter over the same governed order contract; no provisioning authority. |
 | [`crossplane-multicloud-seed-poc`](https://github.com/InfrastructureProductWorks/crossplane-multicloud-seed-poc) | Internal · active | Minimal trusted Crossplane seed and control-plane bootstrap boundary. |
 | [`multicloud-foundation-product-poc`](https://github.com/InfrastructureProductWorks/multicloud-foundation-product-poc) | Internal · active | Stable `CloudFoundationEnvironment` product API and cloud-specific implementations. |
 | [`composite-ai-infrastructure-product-poc`](https://github.com/InfrastructureProductWorks/composite-ai-infrastructure-product-poc) | Internal · active | Bounded request, review, operations, and evidence agents without autonomous execution authority. |
@@ -578,11 +600,12 @@ See [POC Portfolio](docs/poc-portfolio.md) for the implementation boundaries and
 ### Product-system shorthand
 
 ```text
-Backstage = where the consumer shops
+InfrastructureProductWorks Storefront = first-class product experience
+Backstage Storefront Adapter = enterprise portal adapter over the same order contract
 Product API = what the consumer is ordering
 Composite AI = where intent and evidence are interpreted
 GitHub = where change is governed
-Crossplane = where the product lifecycle is controlled
+Crossplane = where authorized product state is reconciled
 Cloud = where the product is realized
 ```
 
@@ -594,8 +617,10 @@ The integration harness already contains the storefront handoff as a bounded ups
 
 ```mermaid
 flowchart LR
-  DEV[Developer] --> STORE[Backstage]
+  DEV[Developer] --> STORE[InfrastructureProductWorks Storefront]
+  DEV --> BS[Backstage Storefront Adapter]
   STORE --> ORDER[InfrastructureProductOrder]
+  BS --> ORDER
   ORDER --> AI[Composite AI review]
   AI --> POLICY[Deterministic policy]
   POLICY --> HUMAN[Human approval boundary]
@@ -612,7 +637,7 @@ flowchart LR
   classDef contract fill:#123A24,stroke:#22C55E,stroke-width:3px,color:#F8FAFC
   classDef control fill:#102D55,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
-  class DEV,STORE consumer
+  class DEV,STORE,BS consumer
   class ORDER intent
   class AI intelligence
   class POLICY governance
@@ -623,7 +648,7 @@ flowchart LR
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
 
-The harness verifies that storefront and AI-rendered runtime contracts remain equivalent, implementation details do not leak into the product manifest, invalid storefront requests fail closed, and the human-approval boundary remains intact.
+The harness verifies that storefront and AI-rendered runtime contracts remain equivalent, implementation details do not leak into the product manifest, invalid storefront requests fail closed, and the human-approval boundary remains intact. The standalone Storefront additionally exposes an inert digest-bound handoff with independent issuance verification; external authenticated transport remains a separate governed step.
 
 This closes the **consumer-experience gap** without weakening the control-plane boundary.
 
@@ -646,7 +671,7 @@ The frozen credential-free baseline passed across Kubernetes **1.34, 1.35, and 1
 - reconciliation to Ready simulated products; and
 - teardown with zero simulated product-component orphans.
 
-The integration harness has since been extended to include the independent Backstage storefront as a pinned upstream and requires a `storefront-order-handoff` acceptance control.
+The integration harness has since been extended to include the Storefront order/handoff path as a pinned upstream and requires a bounded `storefront-order-handoff` acceptance control.
 
 That proves **TFE is not mandatory for the demonstrated product path**. Forge has additionally demonstrated bounded non-production cloud reconciliation and teardown across AWS, Azure, and GCP, plus a synthetic-only Vertex AI adapter and an HCP Terraform Free remote-run proxy. These results do not validate Terraform Enterprise, production readiness, certification, an assessment conclusion, or an ATO.
 
@@ -662,7 +687,7 @@ Those components were removed from the maintained branch because carrying them b
 
 They are **not declared bad technologies**. They are simply no longer dependencies of this accelerator.
 
-The independent Backstage storefront POC is different from the removed embedded Backstage stack: it has one bounded responsibility and no provisioning authority.
+The independent Storefront/Backstage repository is different from the removed embedded Backstage stack: it has a first-class standalone experience plus one bounded Backstage adapter, and neither owns provisioning authority.
 
 - Recovery branch: `archive/legacy-accelerator-v1`
 - Frozen pre-supersession commit: `be5fa73c72f77043ac666d32868ec7b82f9e83b1`
@@ -675,7 +700,7 @@ The independent Backstage storefront POC is different from the removed embedded 
 
 An enterprise may still use TFE, Terraform/OpenTofu, Backstage, Arc, cloud-native account factories, ticketing, CMDB, or other systems. The accelerator treats them as **external integrations or implementation choices**, not inherited product dependencies.
 
-For Backstage specifically, the program now provides a bounded reference storefront that demonstrates the integration contract without putting Backstage inside the product control plane.
+For Backstage specifically, the program provides a bounded Storefront Adapter that demonstrates the same governed order contract without putting Backstage inside the product control plane. Enterprises that do not use Backstage can deploy the first-class InfrastructureProductWorks Storefront instead.
 
 See [Interoperability](docs/INTEROPERABILITY.md).
 
