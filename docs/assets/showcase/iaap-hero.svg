@@ -1,162 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="760" viewBox="0 0 1600 760" role="img" aria-labelledby="title desc">
-  <title id="title">AI-Powered Infrastructure as a Product</title>
-  <desc id="desc">A product-centered multi-cloud architecture showing developer experience, bounded AI, GitHub governance, a stable product contract, Crossplane control plane, AWS Azure and GCP, and evidence.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Infrastructure Product Works governed human and agent architecture</title>
+  <desc id="desc">Humans use Storefront and enterprise portals while AI agents use an MCP-compatible discovery surface. Both converge on one governed product catalog and stable product contracts before deterministic governance, Forge realization, and replaceable Crossplane Terraform or native API fulfillment across AWS Azure and GCP.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#07111f"/>
-      <stop offset="0.55" stop-color="#0b1730"/>
-      <stop offset="1" stop-color="#111827"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="50%" cy="48%" r="58%">
-      <stop offset="0" stop-color="#22c55e" stop-opacity="0.18"/>
-      <stop offset="0.42" stop-color="#3ddcff" stop-opacity="0.10"/>
-      <stop offset="1" stop-color="#0b1020" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="contract" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#16a34a"/>
-      <stop offset="1" stop-color="#22c55e"/>
-    </linearGradient>
-    <linearGradient id="control" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2563eb"/>
-      <stop offset="1" stop-color="#06b6d4"/>
-    </linearGradient>
-    <linearGradient id="ai" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#7c3aed"/>
-      <stop offset="1" stop-color="#a855f7"/>
-    </linearGradient>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity="0.32"/>
-    </filter>
-    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="22"/>
-    </filter>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#7dd3fc"/>
-    </marker>
-    <style>
-      .kicker{font:700 18px Inter,Segoe UI,Arial,sans-serif;letter-spacing:3px;fill:#7dd3fc}
-      .title{font:800 56px Inter,Segoe UI,Arial,sans-serif;fill:#f8fafc}
-      .tag{font:600 24px Inter,Segoe UI,Arial,sans-serif;fill:#cbd5e1}
-      .small{font:600 16px Inter,Segoe UI,Arial,sans-serif;fill:#cbd5e1}
-      .nodeTitle{font:800 21px Inter,Segoe UI,Arial,sans-serif;fill:#f8fafc}
-      .nodeSub{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#dbeafe}
-      .pill{font:700 14px Inter,Segoe UI,Arial,sans-serif;fill:#e2e8f0}
-      .cloud{font:800 21px Inter,Segoe UI,Arial,sans-serif;fill:#f8fafc}
-    </style>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061426"/><stop offset=".55" stop-color="#08213b"/><stop offset="1" stop-color="#071728"/></linearGradient>
+    <linearGradient id="catalog" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#079447"/><stop offset="1" stop-color="#16c45d"/></linearGradient>
+    <linearGradient id="ai" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#a855f7"/></linearGradient>
+    <linearGradient id="control" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#087df1"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L0 6 L9 3 Z" fill="#7dd3fc"/></marker>
+    <style>.k{font:700 17px Arial,sans-serif;letter-spacing:4px;fill:#38bdf8}.title{font:800 54px Arial,sans-serif;fill:#f8fafc}.tag{font:600 22px Arial,sans-serif;fill:#e2e8f0}.pill{font:700 13px Arial,sans-serif;fill:#f8fafc}.ct{font:800 23px Arial,sans-serif;fill:#fff}.cs{font:500 16px Arial,sans-serif;fill:#e5eef8}.tiny{font:600 13px Arial,sans-serif;fill:#cbd5e1}.proof{font:800 25px Arial,sans-serif;fill:#f8fafc}.cloud{font:800 22px Arial,sans-serif;fill:#f8fafc}.foot{font:500 14px Arial,sans-serif;fill:#bae6fd}</style>
   </defs>
+  <rect x="25" y="25" width="1550" height="850" rx="46" fill="url(#bg)" stroke="#1e6b94" stroke-width="2"/>
+  <text x="90" y="85" class="k">INFRASTRUCTURE-AS-A-PRODUCT</text>
+  <text x="90" y="145" class="title">One governed product system. Multiple consumption surfaces.</text>
+  <text x="90" y="187" class="tag">Humans and agents discover the same governed products. Authority stays explicit.</text>
 
-  <rect width="1600" height="760" rx="34" fill="url(#bg)"/>
-  <rect width="1600" height="760" rx="34" fill="url(#glow)"/>
-  <circle cx="800" cy="420" r="300" fill="#22c55e" opacity="0.035" filter="url(#soft)"/>
+  <g transform="translate(90 235)"><rect width="300" height="42" rx="21" fill="#092238" stroke="#0ea5e9" stroke-width="2"/><text x="150" y="27" text-anchor="middle" class="pill">HUMAN CONSUMPTION</text></g>
+  <g transform="translate(90 300)"><rect width="300" height="145" rx="24" fill="#08223a" stroke="#22bdf2" stroke-width="2"/><text x="28" y="48" class="ct">Storefront / Backstage</text><text x="28" y="83" class="cs">browse • configure • order</text><text x="28" y="112" class="cs">stable product experience</text></g>
 
-  <text x="80" y="72" class="kicker">INFRASTRUCTURE-AS-A-PRODUCT</text>
-  <text x="80" y="134" class="title">Build the product boundary first.</text>
-  <text x="80" y="178" class="tag">IaaS is what we buy; Infrastructure-as-a-Product is what we build.</text>
+  <g transform="translate(90 485)"><rect width="300" height="42" rx="21" fill="#211333" stroke="#a855f7" stroke-width="2"/><text x="150" y="27" text-anchor="middle" class="pill">AGENT CONSUMPTION</text></g>
+  <g transform="translate(90 550)"><rect width="300" height="145" rx="24" fill="url(#ai)" stroke="#c084fc" stroke-width="2"/><text x="28" y="48" class="ct">IPW MCP Surface</text><text x="28" y="83" class="cs">discover governed products</text><text x="28" y="112" class="cs">structured agent interface</text></g>
 
-  <g transform="translate(80,214)">
-    <rect width="260" height="40" rx="20" fill="#0f2942" stroke="#38bdf8" stroke-opacity="0.55"/>
-    <text x="130" y="26" text-anchor="middle" class="pill">EXPERIENCE — REPLACEABLE</text>
-  </g>
-  <g transform="translate(360,214)">
-    <rect width="265" height="40" rx="20" fill="#23163a" stroke="#a855f7" stroke-opacity="0.6"/>
-    <text x="132" y="26" text-anchor="middle" class="pill">INTELLIGENCE — BOUNDED</text>
-  </g>
-  <g transform="translate(645,214)">
-    <rect width="255" height="40" rx="20" fill="#3b2a0d" stroke="#f59e0b" stroke-opacity="0.65"/>
-    <text x="127" y="26" text-anchor="middle" class="pill">GOVERNANCE — TESTABLE</text>
-  </g>
-  <g transform="translate(920,214)">
-    <rect width="265" height="40" rx="20" fill="#10341f" stroke="#22c55e" stroke-opacity="0.65"/>
-    <text x="132" y="26" text-anchor="middle" class="pill">CONTRACT — STABLE</text>
-  </g>
-  <g transform="translate(1205,214)">
-    <rect width="315" height="40" rx="20" fill="#10294b" stroke="#3b82f6" stroke-opacity="0.65"/>
-    <text x="157" y="26" text-anchor="middle" class="pill">CONTROL PLANE — AUTHORITATIVE</text>
+  <g transform="translate(500 330)"><rect width="355" height="270" rx="30" fill="url(#catalog)" stroke="#34d399" stroke-width="2.5"/><text x="34" y="52" class="ct">Governed Product Catalog</text><text x="34" y="90" class="cs">one product identity + version</text><text x="34" y="120" class="cs">security baseline + evidence</text><text x="34" y="150" class="cs">entitlements + cost boundaries</text><text x="34" y="180" class="cs">lifecycle + bounded inputs</text><rect x="34" y="204" width="286" height="42" rx="13" fill="#052e16" opacity=".48"/><text x="177" y="231" text-anchor="middle" class="tiny">OUTCOMES, NOT IMPLEMENTATION TOPOLOGY</text></g>
+
+  <g transform="translate(930 275)"><rect width="250" height="175" rx="25" fill="#33240d" stroke="#f59e0b" stroke-width="2"/><text x="28" y="48" class="ct">Governance</text><text x="28" y="82" class="cs">Guard + entitlements</text><text x="28" y="111" class="cs">policy + evidence</text><text x="28" y="140" class="cs">human/material review</text></g>
+  <g transform="translate(930 495)"><rect width="250" height="175" rx="25" fill="#2b1748" stroke="#a855f7" stroke-width="2"/><text x="28" y="48" class="ct">Forge + Assurance</text><text x="28" y="82" class="cs">realize governed products</text><text x="28" y="111" class="cs">preserve authority</text><text x="28" y="140" class="cs">custody + provenance</text></g>
+
+  <g transform="translate(1270 330)"><rect width="240" height="270" rx="30" fill="url(#control)" stroke="#38bdf8" stroke-width="2.5"/><text x="28" y="52" class="ct">Fulfillment</text><text x="28" y="90" class="cs">Crossplane</text><text x="28" y="120" class="cs">Terraform</text><text x="28" y="150" class="cs">Native APIs</text><text x="28" y="190" class="tiny">replaceable implementation</text><text x="28" y="216" class="tiny">behind the product boundary</text></g>
+
+  <g stroke="#7dd3fc" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M390 372 C438 372 454 400 500 418"/>
+    <path d="M390 622 C438 622 454 560 500 538"/>
+    <path d="M855 420 C890 408 900 382 930 370"/>
+    <path d="M855 515 C890 528 900 560 930 575"/>
+    <path d="M1180 370 C1220 390 1230 420 1270 435"/>
+    <path d="M1180 575 C1220 552 1230 520 1270 500"/>
   </g>
 
-  <!-- experience -->
-  <g transform="translate(80,314)" filter="url(#shadow)">
-    <rect width="230" height="118" rx="24" fill="#0d2438" stroke="#38bdf8" stroke-width="2"/>
-    <circle cx="34" cy="34" r="12" fill="#38bdf8"/>
-    <text x="58" y="42" class="nodeTitle">Backstage</text>
-    <text x="28" y="72" class="nodeSub">browse • configure</text>
-    <text x="28" y="96" class="nodeSub">order • track</text>
-  </g>
-  <g transform="translate(80,454)" filter="url(#shadow)">
-    <rect width="230" height="102" rx="24" fill="#0b1f32" stroke="#1e9ed2" stroke-width="1.6"/>
-    <text x="28" y="40" class="nodeTitle">CLI / API / Portal</text>
-    <text x="28" y="68" class="nodeSub">same product intent</text>
-  </g>
+  <g transform="translate(500 640)"><rect width="680" height="88" rx="22" fill="#092035" stroke="#ec4899" stroke-width="2"/><text x="28" y="38" class="proof">MCP is interoperability, not infrastructure authority.</text><text x="28" y="65" class="cs">MCP → direct apply / privileged cloud / IAM / self-approval = denied by architecture</text></g>
 
-  <!-- AI -->
-  <g transform="translate(365,350)" filter="url(#shadow)">
-    <rect width="245" height="170" rx="28" fill="url(#ai)"/>
-    <text x="28" y="48" class="nodeTitle">Composite AI</text>
-    <text x="28" y="80" class="nodeSub">interpret intent</text>
-    <text x="28" y="104" class="nodeSub">propose • explain</text>
-    <text x="28" y="128" class="nodeSub">diagnose • assemble evidence</text>
-    <rect x="28" y="142" width="188" height="4" rx="2" fill="#e9d5ff" opacity="0.7"/>
-  </g>
+  <g transform="translate(930 760)"><rect width="120" height="58" rx="17" fill="#17202d" stroke="#f59e0b" stroke-width="2"/><text x="60" y="36" text-anchor="middle" class="cloud">AWS</text></g>
+  <g transform="translate(1070 760)"><rect width="130" height="58" rx="17" fill="#17202d" stroke="#38bdf8" stroke-width="2"/><text x="65" y="36" text-anchor="middle" class="cloud">Azure</text></g>
+  <g transform="translate(1220 760)"><rect width="120" height="58" rx="17" fill="#17202d" stroke="#22c55e" stroke-width="2"/><text x="60" y="36" text-anchor="middle" class="cloud">GCP</text></g>
+  <path d="M1390 600 C1390 700 1150 700 1150 755" fill="none" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#arrow)"/>
 
-  <!-- governance -->
-  <g transform="translate(665,335)" filter="url(#shadow)">
-    <rect width="235" height="200" rx="28" fill="#33240d" stroke="#f59e0b" stroke-width="2"/>
-    <text x="28" y="46" class="nodeTitle">GitHub Governance</text>
-    <text x="28" y="79" class="nodeSub">schema + policy + tests</text>
-    <text x="28" y="106" class="nodeSub">human authorization</text>
-    <text x="28" y="133" class="nodeSub">change traceability</text>
-    <text x="28" y="160" class="nodeSub">evidence</text>
-    <circle cx="201" cy="164" r="10" fill="#fbbf24"/>
-  </g>
-
-  <!-- contract -->
-  <g transform="translate(960,330)" filter="url(#shadow)">
-    <rect width="245" height="210" rx="30" fill="url(#contract)"/>
-    <text x="28" y="50" class="nodeTitle">Product Contract</text>
-    <text x="28" y="84" class="nodeSub">stable consumer API</text>
-    <text x="28" y="112" class="nodeSub">outcomes, not topology</text>
-    <rect x="28" y="136" width="188" height="42" rx="12" fill="#052e16" opacity="0.42"/>
-    <text x="122" y="162" text-anchor="middle" class="small">CloudFoundationEnvironment</text>
-  </g>
-
-  <!-- control plane -->
-  <g transform="translate(1260,350)" filter="url(#shadow)">
-    <rect width="260" height="170" rx="28" fill="url(#control)"/>
-    <text x="28" y="50" class="nodeTitle">Crossplane</text>
-    <text x="28" y="84" class="nodeSub">product control plane</text>
-    <text x="28" y="112" class="nodeSub">continuous reconciliation</text>
-    <text x="28" y="140" class="nodeSub">one authoritative reconciler</text>
-  </g>
-
-  <!-- arrows -->
-  <g stroke="#7dd3fc" stroke-width="3" fill="none" marker-end="url(#arrow)" opacity="0.9">
-    <path d="M310 400 C335 400 340 415 365 415"/>
-    <path d="M610 435 C635 435 640 435 665 435"/>
-    <path d="M900 435 C930 435 932 435 960 435"/>
-    <path d="M1205 435 C1232 435 1235 435 1260 435"/>
-  </g>
-
-  <!-- clouds + evidence -->
-  <g transform="translate(1110,590)">
-    <rect width="120" height="58" rx="18" fill="#1f2937" stroke="#f59e0b"/>
-    <text x="60" y="36" text-anchor="middle" class="cloud">AWS</text>
-  </g>
-  <g transform="translate(1248,590)">
-    <rect width="120" height="58" rx="18" fill="#1f2937" stroke="#38bdf8"/>
-    <text x="60" y="36" text-anchor="middle" class="cloud">Azure</text>
-  </g>
-  <g transform="translate(1386,590)">
-    <rect width="120" height="58" rx="18" fill="#1f2937" stroke="#22c55e"/>
-    <text x="60" y="36" text-anchor="middle" class="cloud">GCP</text>
-  </g>
-  <path d="M1390 520 C1390 552 1320 555 1320 587" fill="none" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#arrow)"/>
-
-  <g transform="translate(80,632)">
-    <rect width="770" height="70" rx="22" fill="#0b1f2d" stroke="#ec4899" stroke-width="1.7"/>
-    <circle cx="36" cy="35" r="12" fill="#ec4899"/>
-    <text x="62" y="30" class="nodeTitle">Portable by evidence, not by assertion.</text>
-    <text x="62" y="53" class="nodeSub">change → validation → approval → reconciliation → status → evidence</text>
-  </g>
-
-  <text x="1520" y="714" text-anchor="end" class="small" fill="#64748b">Infrastructure Product Works™ • reference architecture</text>
+  <g transform="translate(90 760)"><rect width="720" height="58" rx="18" fill="#0b1f2d" stroke="#22c55e" stroke-width="1.7"/><text x="28" y="25" class="tiny">Productize first: raw cloud service → governed service product → composite product → discovery.</text><text x="28" y="45" class="tiny">Security, architecture, FinOps, entitlements, lifecycle and evidence remain part of the product definition.</text></g>
+  <text x="1510" y="845" text-anchor="end" class="foot">Infrastructure Product Works™ • governed agentic interoperability reference architecture</text>
 </svg>
