@@ -4,6 +4,50 @@
 
 Infrastructure-as-a-Product does not jump from raw cloud APIs directly to a developer-facing portal. A cloud capability becomes consumable only after it has been productized into a governed service product with a stable contract, minimum security baseline, bounded configuration envelope, entitlements, evidence requirements, lifecycle rules, and exception policy.
 
+## Visual model
+
+```mermaid
+flowchart TB
+  subgraph GRS[Governance, Risk & Security]
+    G1[Define minimum baselines]
+    G2[Set policies and standards]
+    G3[Require evidence and approvals]
+    G4[Manage exceptions and oversight]
+  end
+
+  RAW[Raw cloud services\nCompute • Network • Storage • Database • Kubernetes • DNS • Messaging • Identity]
+  SERVICE[Governed service products\nNetwork • Object Storage • Database • Kubernetes • DNS • Identity • Logging • Messaging]
+  COMPOSITE[Composite infrastructure products\nCloud Foundation • Application Platform • Data Platform • Managed Interconnect]
+  OUTCOME[Developer outcomes\nApp • Data • Platform environments]
+
+  RAW -->|productize| SERVICE
+  SERVICE -->|compose| COMPOSITE
+  COMPOSITE --> OUTCOME
+
+  GRS --> SERVICE
+
+  SERVICE --- BASE[Minimum security baseline]
+  SERVICE --- PAT[Approved patterns]
+  SERVICE --- ENT[Entitlements and cost guardrails]
+  SERVICE --- EVD[Evidence requirements]
+  SERVICE --- LIFE[Lifecycle and exception rules]
+
+  subgraph OPERATING[Portfolio operating path]
+    STORE[Storefront\nbounded intent]
+    GUARD[Guard\ndeterministic validation]
+    CONSOLE[Console + human review\nverified evidence]
+    FORGE[Forge\ngoverned composition]
+    ASSURE[Assurance\nauthority and safeguards]
+    XP[Crossplane\nauthorized reconciliation]
+    STORE --> GUARD --> CONSOLE --> FORGE --> ASSURE --> XP
+  end
+
+  ENT --> STORE
+  SERVICE --> FORGE
+```
+
+The operating path is a responsibility map, not a requirement that every deployment execute every component in one rigid linear sequence.
+
 ## Product hierarchy
 
 ```text
@@ -105,8 +149,6 @@ Assurance
 Crossplane
   → reconciliation of authorized product state
 ```
-
-This is a responsibility map, not a requirement that every deployment execute every component in one rigid sequence.
 
 ## Operating principle
 
