@@ -1,0 +1,69 @@
+name: AI-powered IaaP self-hosted validation
+
+on:
+  repository_dispatch:
+    types: [ghe04-self-hosted-validation]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: [self-hosted, linux, x64, iaap-accelerator-ghe04]
+    timeout-minutes: 30
+    env:
+      BASH_ENV: ''
+      SHELLOPTS: ''
+      BASHOPTS: ''
+      PYTHONPATH: ''
+      PYTHONHOME: ''
+      PYTHONSTARTUP: ''
+      PYTHONUSERBASE: ''
+      PYTHONINSPECT: ''
+      MAKEFLAGS: ''
+      GNUMAKEFLAGS: ''
+      MAKEFILES: ''
+      PIP_TARGET: ''
+      PIP_PREFIX: ''
+      PIP_USER: ''
+      PIP_REQUIRE_VIRTUALENV: ''
+      PIP_CONFIG_FILE: /dev/null
+      PATH: /usr/bin:/bin
+    steps:
+      - name: Checkout immutable dispatch commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Run bounded AI-powered IaaP validation
+        shell: /usr/bin/bash --noprofile --norc -euo pipefail {0}
+        run: |
+          /usr/bin/python3 -I - <<'PYTHON'
+          import platform, struct, sys
+          if platform.python_implementation() != 'CPython' or sys.version_info[:2] != (3, 12):
+              raise SystemExit('CPython 3.12 required')
+          if platform.system() != 'Linux' or platform.machine() not in {'x86_64', 'AMD64'} or struct.calcsize('P') * 8 != 64:
+              raise SystemExit('64-bit Linux x64 CPython required')
+          PYTHON
+          /usr/bin/python3 -E -s scripts/validate_self_hosted_workflow.py
+          /usr/bin/bash --noprofile --norc -euo pipefail scripts/validate-modern-accelerator.sh
+          /usr/bin/python3 -E -s scripts/verify_portfolio_provenance.py
+          /usr/bin/python3 -E -s -m unittest discover -s tests -p 'test_*.py'
+          /usr/bin/python3 -E -s scripts/validate_self_hosted_evidence.py
+          # Keep installed documentation dependencies and build output outside source scans.
+          [[ "${RUNNER_TEMP:?}" = /* ]]
+          [[ "${GITHUB_RUN_ID:?}" =~ ^[0-9]+$ ]]
+          [[ "${GITHUB_RUN_ATTEMPT:?}" =~ ^[0-9]+$ ]]
+          job_root="$RUNNER_TEMP/iaap-accelerator-ghe04-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          /usr/bin/rm -rf -- "$job_root"
+          /usr/bin/python3 -I -m venv "$job_root/venv"
+          "$job_root/venv/bin/python" -I -m pip --isolated install --disable-pip-version-check --no-input -r requirements-docs.txt
+          "$job_root/venv/bin/python" -E -s -m mkdocs build --strict --site-dir "$job_root/site"
+      - name: Remove job-local documentation environment
+        if: always()
+        shell: /usr/bin/bash --noprofile --norc -euo pipefail {0}
+        run: |
+          [[ "${RUNNER_TEMP:?}" = /* ]]
+          [[ "${GITHUB_RUN_ID:?}" =~ ^[0-9]+$ ]]
+          [[ "${GITHUB_RUN_ATTEMPT:?}" =~ ^[0-9]+$ ]]
+          /usr/bin/rm -rf -- "$RUNNER_TEMP/iaap-accelerator-ghe04-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
