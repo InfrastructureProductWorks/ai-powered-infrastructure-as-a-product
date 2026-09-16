@@ -31,11 +31,13 @@ jobs:
       PATH: /usr/bin:/bin
     steps:
       - name: Checkout immutable dispatch commit
+        timeout-minutes: 2
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
       - name: Run bounded AI-powered IaaP validation
+        timeout-minutes: 20
         shell: /usr/bin/bash --noprofile --norc -euo pipefail {0}
         run: |
           /usr/bin/python3 -I - <<'PYTHON'
@@ -60,6 +62,7 @@ jobs:
           "$job_root/venv/bin/python" -I -m pip --isolated install --disable-pip-version-check --no-input -r requirements-docs.txt
           "$job_root/venv/bin/python" -E -s -m mkdocs build --strict --site-dir "$job_root/site"
       - name: Remove job-local documentation environment
+        timeout-minutes: 5
         if: always()
         shell: /usr/bin/bash --noprofile --norc -euo pipefail {0}
         run: |

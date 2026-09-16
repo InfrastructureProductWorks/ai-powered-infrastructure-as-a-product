@@ -17,6 +17,8 @@ class SelfHostedContractTests(unittest.TestCase):
     def test_workflow_mutations_fail_closed(self):
         accepted = contract.WORKFLOW.read_text()
         substitutions = [
+            ("timeout-minutes: 20", "timeout-minutes: 30"),
+            ("timeout-minutes: 2", "timeout-minutes: 30"),
             ("repository_dispatch:", "workflow_dispatch:"),
             ("contents: read", "contents: write"),
             ("ref: ${{ github.sha }}", "ref: main"),

@@ -11,3 +11,5 @@ Documentation dependencies and generated site files live under a run-specific di
 The hosted CI enforces the complete workflow contract; Make exposes the same contract check. Hosted documentation publication, dependency/security scanning, and provenance attestation remain separate baselines. This bounded path does not publish a site, mint an attestation, install infrastructure, or invoke cloud/AI services.
 
 Implementation and local synthetic validation are not evidence of customer-runner execution or live GHES acceptance. Private CA, proxy, and restricted-network acceptance remain GHE-05/GHE-06 work. No approval, merge, provisioning, cloud, privilege, production, or policy authority is added.
+
+Checkout is limited to 2 minutes, validation to 20 minutes, and workflow-level cleanup to 5 minutes within the 30-minute job. These limits reserve time for cleanup when a validation command stalls; abrupt host loss remains an operator recovery responsibility.
