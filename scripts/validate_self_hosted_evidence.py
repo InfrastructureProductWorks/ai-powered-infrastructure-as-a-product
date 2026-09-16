@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 for path in ROOT.rglob("*.json"):
     if ".git" not in path.relative_to(ROOT).parts:
-        json.loads(path.read_text())
+        json.loads(path.read_text(encoding="utf-8"))
 expected = {"artifacts/phase-23/MANIFEST.sha256", "artifacts/phase-24/MANIFEST.sha256"}
 actual = {p.relative_to(ROOT).as_posix() for p in (ROOT / "artifacts").rglob("MANIFEST.sha256")}
 if actual != expected:
