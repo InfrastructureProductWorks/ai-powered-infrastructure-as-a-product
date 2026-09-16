@@ -20,6 +20,7 @@ jobs:
       PYTHONSTARTUP: ''
       PYTHONUSERBASE: ''
       PYTHONINSPECT: ''
+      PYTHONNOUSERSITE: '1'
       MAKEFLAGS: ''
       GNUMAKEFLAGS: ''
       MAKEFILES: ''
@@ -38,7 +39,7 @@ jobs:
           persist-credentials: false
       - name: Run bounded AI-powered IaaP validation
         timeout-minutes: 20
-        shell: /usr/bin/bash --noprofile --norc -euo pipefail {0}
+        shell: /usr/bin/bash --noprofile --norc -p -euo pipefail {0}
         run: |
           /usr/bin/python3 -I - <<'PYTHON'
           import platform, struct, sys
@@ -48,7 +49,7 @@ jobs:
               raise SystemExit('64-bit Linux x64 CPython required')
           PYTHON
           /usr/bin/python3 -E -s scripts/validate_self_hosted_workflow.py
-          /usr/bin/bash --noprofile --norc -euo pipefail scripts/validate-modern-accelerator.sh
+          /usr/bin/bash --noprofile --norc -p -euo pipefail scripts/validate-modern-accelerator.sh
           /usr/bin/python3 -E -s scripts/verify_portfolio_provenance.py
           /usr/bin/python3 -E -s -m unittest discover -s tests -p 'test_*.py'
           /usr/bin/python3 -E -s scripts/validate_self_hosted_evidence.py
@@ -64,7 +65,7 @@ jobs:
       - name: Remove job-local documentation environment
         timeout-minutes: 5
         if: always()
-        shell: /usr/bin/bash --noprofile --norc -euo pipefail {0}
+        shell: /usr/bin/bash --noprofile --norc -p -euo pipefail {0}
         run: |
           [[ "${RUNNER_TEMP:?}" = /* ]]
           [[ "${GITHUB_RUN_ID:?}" =~ ^[0-9]+$ ]]
