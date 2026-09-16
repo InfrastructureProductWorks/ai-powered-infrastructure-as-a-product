@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate self-hosted workflow contract
+        run: python3 scripts/validate_self_hosted_workflow.py
       - name: Validate modern accelerator boundary
         run: ./scripts/validate-modern-accelerator.sh
       - name: Preview intentional Portfolio Provenance refresh
