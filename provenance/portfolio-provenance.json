@@ -92,7 +92,7 @@
     },
     {
       "path": "Makefile",
-      "sha256": "daf3fd2b4e70f7a9a6ba7ea5b4eb166df1b76e50dfa2d2e2fa5c383e1a9c580e"
+      "sha256": "e50b6ffd628cae9726720eaf4a0d18c0c75b91865f4fae61cdf3062eb27545a5"
     },
     {
       "path": "README.md",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "6aab080d68da0964ba5d4d604caa17f1e371f49d0fafef2f861ee8c818d3048c"
+    "digest": "5f621fc37f75c2db6e5f1fc25726f8337d0e30bc6f61cbef58192cf496617906"
   }
 }
