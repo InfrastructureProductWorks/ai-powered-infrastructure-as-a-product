@@ -38,6 +38,7 @@ Earlier Terraform, TFE, Azure Arc, Backstage, and legacy execution-MCP implement
 - [Operating Model](OPERATING-MODEL.md)
 - [Product Outcome Telemetry](product-outcomes/README.md)
 - [Product-Control-Plane Architecture](architecture/product-control-plane.md)
+- [Multi-Customer Isolation Architecture](architecture/multi-customer-isolation.md)
 - [IaaP Bootstrap and Foundation Readiness](bootstrap-foundation-readiness/README.md)
 - [Interoperability](INTEROPERABILITY.md)
 
