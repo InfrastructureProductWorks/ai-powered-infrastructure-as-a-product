@@ -164,6 +164,12 @@ See [identity and access](../foundation-domains/identity-and-access.md),
 [workload identity](../foundation-domains/workload-identity.md), and
 [secrets management](../foundation-domains/secrets-management.md).
 
+## Multi-customer deployment boundary
+
+Customer-hosted support does not imply one shared runtime for every customer. The target deployment model supports dedicated-enterprise and managed-isolated customer instances first, with shared multi-tenant SaaS separately gated.
+
+Any customer-scoped identity, profile, product definition, approval, evidence package, secret, integration, audit record, backup, or recovery artifact must preserve explicit customer, organization, and environment context. Cross-customer substitution must fail closed. See [Multi-Customer Isolation Architecture](../../architecture/multi-customer-isolation.md).
+
 ## Data custody and separation
 
 The customer must classify and assign ownership for:
