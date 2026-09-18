@@ -13,8 +13,8 @@ jobs:
   policy-evals:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: open-policy-agent/setup-opa@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: open-policy-agent/setup-opa@34a30e8a924d1b03ce2cf7abe97250bbb1f332b5
         with:
           version: v0.64.1
       - name: Validate policy source
@@ -35,7 +35,7 @@ jobs:
           jq -e '.result[0].expressions[0].value | type == "array" and length > 0' ssrf-deny.json >/dev/null
       - name: Prove prompt-injection fixture remains detectable
         run: grep -E -i '<script|on[a-z]+\=|data:|Ignore all prior instructions' tests/agents-evals/prompt-injection/hidden-html.md
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: composite-ai-policy-evidence
           path: |
