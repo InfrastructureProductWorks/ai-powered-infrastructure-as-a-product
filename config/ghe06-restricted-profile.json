@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "accelerator-ghe06-restricted-profile/v1",
+  "supportClaim": false,
+  "executionClaimed": true,
+  "acceptedCore": [
+    "scripts/validate-modern-accelerator.sh",
+    "scripts/verify_portfolio_provenance.py",
+    "tests/test_portfolio_provenance.py"
+  ],
+  "documentationToolchainDisposition": "disabled_not_required_for_restricted_core",
+  "opaCliDisposition": "disabled_not_required_for_restricted_core",
+  "mermaidCdnDisposition": "disabled_not_required_for_restricted_core",
+  "githubPagesDisposition": "disabled",
+  "attestationServiceDisposition": "disabled",
+  "githubActionsDisposition": "hosted_orchestration_only_customer_runner_belongs_to_ghe07",
+  "externalModelDisposition": "disabled",
+  "liveCloudDisposition": "fixture_only_or_disabled",
+  "telemetryDisposition": "disabled"
+}

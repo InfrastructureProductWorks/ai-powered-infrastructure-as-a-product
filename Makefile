@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 
-.PHONY: validate docs policy guard provenance provenance-test
+.PHONY: validate docs policy guard provenance provenance-test ghe06-check
 
-validate: ghe04-check guard provenance provenance-test policy docs
+validate: ghe04-check ghe06-check guard provenance provenance-test policy docs
 
 guard:
 	@./scripts/validate-modern-accelerator.sh
@@ -23,3 +23,7 @@ docs:
 ghe04-check:
 	@python3 scripts/validate_self_hosted_workflow.py
 	@python3 -m unittest discover -s tests -p test_self_hosted_workflow.py -v
+
+.PHONY: ghe06-check
+ghe06-check:
+	@python3 scripts/validate_ghe06_restricted_profile.py
