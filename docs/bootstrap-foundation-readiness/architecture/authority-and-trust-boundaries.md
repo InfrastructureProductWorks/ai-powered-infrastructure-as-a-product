@@ -31,9 +31,12 @@ implemented.
 flowchart LR
   INTENT[Approved customer intent] --> AI[Composite AI proposes]
   AI --> CONTROL[Schema, policy, and tests validate]
-  CONTROL --> HUMAN[Authorized people decide]
-  HUMAN --> PACKAGE[Product plane issues authenticated execution package]
-  PACKAGE --> RECONCILE[Customer Execution Layer reconciles]
+  CONTROL --> PREQ[Product plane issues authenticated planning package\nNo mutation authority]
+  PREQ --> PLANEXEC[Customer Execution Layer computes no-write plan/effects]
+  PLANEXEC --> PLAN[Reviewable immutable plan/effect artifact\nEffects • resources • state preconditions]
+  PLAN --> HUMAN[Authorized people decide exact material/destructive effects]
+  HUMAN --> GRANT[Product plane issues authenticated execution grant]
+  GRANT --> RECONCILE[Customer Execution Layer reconciles exact authorized effects]
   RECONCILE --> CLOUD[Cloud-native controls enforce]
   CLOUD --> EVIDENCE[Status and evidence]
 
@@ -46,10 +49,9 @@ flowchart LR
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class INTENT experience
   class AI ai
-  class CONTROL governance
+  class CONTROL,PREQ,PLAN,GRANT governance
   class HUMAN human
-  class PACKAGE governance
-  class RECONCILE control
+  class PLANEXEC,RECONCILE control
   class CLOUD enforcement
   class EVIDENCE evidence
   linkStyle default stroke:#94A3B8,stroke-width:2px
