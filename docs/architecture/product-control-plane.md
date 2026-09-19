@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The current architecture makes the **infrastructure product contract** the stable boundary and Crossplane the maintained product control plane.
+The current architecture makes the **infrastructure product contract and governed product state** the stable product-control boundary. Provider mutation is delegated only through the customer-controlled execution boundary; Crossplane is the maintained reference reconciler inside that execution boundary, not the holder of product-plane approval or credential authority.
 
 Backstage is now represented through a separate bounded repository as the optional reference **storefront**. It is deliberately outside the control plane.
 
@@ -33,25 +33,36 @@ flowchart TB
     PR[GitHub proposal / order history]
     SCHEMA[Schema and contract validation]
     POLICY[Deterministic policy and tests]
-    HUMAN[Authorized approval]
-    AI --> PR --> SCHEMA --> POLICY --> HUMAN
+    HUMAN[Authorized approval of exact plan/effects]
+    AI --> PR --> SCHEMA --> POLICY
   end
 
   subgraph ControlPlane[Product Control Plane]
     API[Stable infrastructure product API]
-    XP[Crossplane]
-    COMP[Compositions and Functions]
+    PREQ[Authenticated planning package\nNo mutation authority]
+    PLAN[Reviewable plan/effect artifact]
+    GRANT[Authenticated execution grant]
     STATUS[Product conditions and status]
-    HUMAN --> API --> XP --> COMP
-    XP --> STATUS
+    POLICY --> API --> PREQ
+    PLAN --> HUMAN --> GRANT
     STATUS --> AI
     STATUS --> STORE
   end
 
+  subgraph CustomerExecution[Customer-Controlled Execution Layer]
+    CELPLAN[No-write planning / preflight]
+    CELEXEC[Execution admission]
+    XP[Reference reconciler: Crossplane]
+    COMP[Compositions / provider adapters]
+    PREQ --> CELPLAN --> PLAN
+    GRANT --> CELEXEC --> XP --> COMP
+    XP --> STATUS
+  end
+
   subgraph Clouds[Cloud Implementations]
-    AWS[AWS]
-    AZ[Azure]
-    GCP[GCP]
+    AWS[AWS / AWS GovCloud]
+    AZ[Azure / Azure Government]
+    GCP[Google Cloud]
     COMP --> AWS
     COMP --> AZ
     COMP --> GCP
@@ -102,13 +113,19 @@ remains available without cloud credentials or this runtime.
 
 ### Layer 1 — minimal trusted seed
 
-The seed installs Crossplane, establishes its namespace/security boundary, package/version controls, identity path, and basic auditability. The seed remains deliberately small and independently governed.
+The seed establishes the customer-controlled execution runtime, including Crossplane where selected, and its namespace/security boundary, package/version controls, identity path, and basic auditability. Product definitions, policy, authorization, and execution-package provenance remain logically separate from reconciliation credentials. The seed remains deliberately small and independently governed.
 
 The technical seed is only one subset of the broader
 [customer bootstrap](../bootstrap-foundation-readiness/architecture/bootstrap-reference-architecture.md),
 which also covers the customer-controlled hosting, authority, data custody,
 operations, recovery, and integration decisions required by the requested
 stage.
+
+### Layer 1.5 — customer-controlled execution boundary
+
+The [Customer Execution Layer](customer-execution-layer.md) is the only write-capable bridge from an authorized IPW execution package to provider APIs. It runs under customer-controlled workload identity, target scope, network controls, and evidence requirements. Crossplane is the reference reconciler inside this boundary, but the execution engine remains replaceable.
+
+A deployment that needs federal-oriented controls may apply the [Government Security Profile](../bootstrap-foundation-readiness/security/government-security-profile.md), which adds explicit identity, least-privilege, network, cryptographic, audit, supply-chain, and government-cloud/environment requirements without itself making an authorization claim.
 
 ### Layer 2 — foundation products
 
@@ -154,18 +171,22 @@ flowchart LR
   STORE[Storefront captures product intent]
   AI[AI proposes and explains]
   D[Schema, policy, and tests validate]
-  H[Authorized people approve]
-  X[Crossplane reconciles]
+  PREQ[Authenticated planning package\nNo mutation authority]
+  CELPLAN[CEL no-write planning / preflight]
+  PLAN[Reviewable immutable plan/effect artifact\nEffects • resources • state preconditions]
+  H[Authorized people approve exact plan/effects]
+  GRANT[Product plane issues authenticated execution grant]
+  X[Customer Execution Layer reconciles exact authorized effects]
   C[Cloud-native controls enforce]
 
-  STORE --> AI --> D --> H --> X --> C
+  STORE --> AI --> D --> PREQ --> CELPLAN --> PLAN --> H --> GRANT --> X --> C
 ```
 
-The storefront does not gain infrastructure authority merely because it initiates a request. Composite AI does not gain authority merely because it interprets the request.
+The storefront does not gain infrastructure authority merely because it initiates a request. Composite AI does not gain authority merely because it interprets the request. For write-capable changes, human execution approval occurs only after the CEL returns the reviewable plan/effect artifact or an authenticated retrievable reference to it. Human approval does not place cloud credentials into the product plane; provider mutation occurs only through the customer-controlled execution boundary.
 
 ## Resource ownership
 
-One external resource has one authoritative reconciler. Crossplane may observe dependencies owned elsewhere, but the accelerator does not support active co-management.
+One external resource has one authoritative reconciler. Crossplane or another approved CEL execution engine may observe dependencies owned elsewhere, but the accelerator does not support active co-management.
 
 The same rule applies to experience systems: Backstage owns the storefront experience, not the cloud resource.
 
@@ -180,6 +201,7 @@ GitHub is the product-development and change-governance plane: source, order/pro
 | Program thesis and evidence | `ai-powered-infrastructure-as-a-product` |
 | Consumer storefront | `backstage-infrastructure-product-storefront-poc` |
 | Minimal trusted bootstrap | `crossplane-multicloud-seed-poc` |
+| Customer execution architecture | this repository + protected Forge successor work |
 | Infrastructure product contract | `multicloud-foundation-product-poc` |
 | Bounded composite AI | `composite-ai-infrastructure-product-poc` |
 | End-to-end acceptance/evidence | `multicloud-foundation-poc-integration` |

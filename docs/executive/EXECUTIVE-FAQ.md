@@ -38,7 +38,7 @@ AI can reduce friction in translating intent, detecting missing information, exp
 
 AI is deliberately not the final authority.
 
-> **AI proposes and explains. Deterministic controls validate. Authorized people approve. The control plane reconciles. Cloud-native controls enforce.**
+> **AI proposes and explains. Deterministic controls validate. Authorized people approve. The product plane binds execution authority. The Customer Execution Layer reconciles only the current authorized effects. Cloud-native controls enforce.**
 
 The product model remains useful even if a customer limits or removes AI capabilities.
 

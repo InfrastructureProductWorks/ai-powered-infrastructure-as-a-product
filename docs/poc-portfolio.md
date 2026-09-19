@@ -138,7 +138,7 @@ The repository also retains the trusted-main managed-interconnect safety proof. 
 
 The trusted-main Phase 24 proof also preserves Forge's `v1alpha1` renderer byte-for-byte while validating a detached selection-evidence envelope across Guard, Console, recorded human selection, Forge, and the existing IaaP Assurance custody reference. The accepted Guard source revision and the distinct synthetic subject revision are separately bound; producer, journey, custody, tamper, cross-selection, and source-substitution failures are rejected. The proof establishes canonical byte relationships, not a cryptographically authenticated human identity or operational authority.
 
-The integrated consumer path is:
+The integrated consumer path is shown below. The current POC proof remains synthetic; the Customer Execution Layer and authenticated finite execution grant are target architecture boundaries, not a claim of live provider execution:
 
 ```mermaid
 flowchart LR
@@ -148,7 +148,9 @@ flowchart LR
   AI --> POLICY[Deterministic validation]
   POLICY --> HUMAN[Human approval boundary]
   HUMAN --> API[CloudFoundationEnvironment]
-  API --> XP[Crossplane]
+  API --> GRANT[Authenticated finite execution grant]
+  GRANT --> CEL[Customer Execution Layer]
+  CEL --> XP[Reference reconciler: Crossplane]
   XP --> STATUS[Status + evidence]
   STATUS --> STORE
   STATUS --> OUTCOMES[Product outcome evidence]

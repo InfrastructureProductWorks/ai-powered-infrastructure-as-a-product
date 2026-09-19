@@ -6,14 +6,16 @@
 
 Infrastructure as a Product (IaaP) turns cloud and infrastructure capabilities into governed, supported, measurable products with stable consumer contracts, explicit lifecycle ownership, bounded authority, and evidence.
 
-The maintained accelerator is centered on **stable product contracts, Crossplane, bounded composite AI, GitHub governance, deterministic policy, and evidence**.
+The maintained accelerator is centered on **stable product contracts, a customer-controlled execution boundary, Crossplane as the reference reconciler, bounded composite AI, GitHub governance, deterministic policy, and evidence**.
 
 ```mermaid
 flowchart LR
   I[Intent] --> AI[Composite AI]
   AI --> G[GitHub governance]
   G --> P[Product API]
-  P --> X[Crossplane]
+  P --> A[Authenticated execution grant]
+  A --> CEL[Customer Execution Layer]
+  CEL --> X[Reference reconciler: Crossplane]
   X --> C[Clouds]
   C --> E[Status and evidence]
   E --> AI

@@ -8,7 +8,7 @@
 
 <p align="center"><strong>IaaS is what we buy; infrastructure-as-a-product is what we build.</strong></p>
 
-<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; authorized people decide; Crossplane reconciles authorized product state.</strong></p>
+<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; authorized people decide; the product plane binds execution authority; the Customer Execution Layer reconciles exact authorized effects.</strong></p>
 
 <p align="center">Composite AI • Crossplane • InfrastructureProductWorks Storefront • Backstage adapter • GitHub governance • deterministic policy • multi-cloud evidence</p>
 
@@ -129,7 +129,9 @@ The maintained reference architecture is intentionally small and opinionated:
 - **Infrastructure product contracts** define the stable consumer boundary.
 - **InfrastructureProductWorks Storefront** is the canonical first-class browse, configure, order, track, and handoff-inspection experience.
 - **Backstage Storefront Adapter** gives enterprises already using Backstage the same governed order contract without making Backstage the product boundary.
-- **Crossplane** is the product control plane and reconciliation layer.
+- **The product control plane** binds governed product state, provenance, and authenticated execution authority without holding provider credentials.
+- **The Customer Execution Layer** owns provider-mutation preflight and execution authority inside the customer boundary.
+- **Crossplane** is the maintained reference reconciler inside that execution layer, with writes limited to a current plan-bound execution grant.
 - **Composite AI** interprets intent, proposes changes, explains policy, diagnoses sanitized status, and assembles evidence.
 - **GitHub** governs product change, review, traceability, and evidence.
 - **Deterministic policy and tests** decide what is valid.
@@ -198,7 +200,9 @@ flowchart TB
   AI[Bounded Composite AI]
   GIT[GitHub proposal, tests, policy, approval, evidence]
   API[Stable infrastructure product API]
-  XP[Crossplane product control plane]
+  GRANT[Authenticated execution grant]
+  CEL[Customer Execution Layer]
+  XP[Reference reconciler: Crossplane]
   AWS[AWS]
   AZ[Azure]
   GCP[GCP]
@@ -213,7 +217,9 @@ flowchart TB
   ORDER --> AI
   AI --> GIT
   GIT --> API
-  API --> XP
+  API --> GRANT
+  GRANT --> CEL
+  CEL --> XP
   XP --> AWS
   XP --> AZ
   XP --> GCP
@@ -236,7 +242,8 @@ flowchart TB
   class AI intelligence
   class GIT governance
   class API contract
-  class XP control
+  class GRANT governance
+  class CEL,XP control
   class AWS,AZ,GCP cloud
   class STATUS evidence
   linkStyle default stroke:#7DD3FC,stroke-width:2px
@@ -244,7 +251,7 @@ flowchart TB
 
 The architectural center is the **product contract**, not a workspace, module, portal, pipeline, or execution engine.
 
-The experience surface is deliberately replaceable. The first-class Storefront, Backstage adapter, CLI, API, service portal, or conversational interface can submit the same product intent without changing the product contract or Crossplane control plane.
+The experience surface is deliberately replaceable. The first-class Storefront, Backstage adapter, CLI, API, service portal, or conversational interface can submit the same product intent without changing the product contract or the selected Customer Execution Layer/reconciler implementation.
 
 ### Authority chain
 
@@ -252,8 +259,12 @@ The experience surface is deliberately replaceable. The first-class Storefront, 
 flowchart TB
   S[Storefront captures product intent] --> A[AI proposes and explains]
   A --> D[Schema, policy, and tests validate]
-  D --> H[Authorized people approve]
-  H --> X[Crossplane reconciles]
+  D --> Q[Authenticated planning package\nNo mutation authority]
+  Q --> L[Customer Execution Layer computes no-write plan/effects]
+  L --> R[Reviewable plan/effect artifact\nEffects • resources • state preconditions]
+  R --> H[Authorized people approve exact plan/effects]
+  H --> P[Product plane binds authenticated execution grant]
+  P --> X[Customer Execution Layer reconciles exact authorized effects]
   X --> C[Cloud-native controls enforce]
 
   classDef experience fill:#0D2438,stroke:#38BDF8,stroke-width:2px,color:#F8FAFC
@@ -264,9 +275,9 @@ flowchart TB
   classDef enforcement fill:#123A24,stroke:#22C55E,stroke-width:2px,color:#F8FAFC
   class S experience
   class A intelligence
-  class D governance
+  class D,Q,R,P governance
   class H human
-  class X control
+  class L,X control
   class C enforcement
   linkStyle default stroke:#94A3B8,stroke-width:2px
 ```
@@ -441,15 +452,25 @@ flowchart LR
   AI[Bounded Composite AI]
   CONTRACT[Stable product contract]
   POLICY[Deterministic policy]
-  APPROVAL[Human authorization]
-  CONTROL[Crossplane control plane]
+  PREQ[Authenticated planning package\nNo mutation authority]
+  CELPLAN[CEL no-write plan / preflight]
+  PLAN[Reviewable plan/effect artifact]
+  APPROVAL[Human authorization of exact plan/effects]
+  GRANT[Product plane binds authenticated execution authority]
+  CEL[Customer Execution Layer execution admission]
+  CONTROL[Reference reconciler: Crossplane]
   CLOUD[Cloud implementation]
 
   INTENT --> AI
   AI --> CONTRACT
   CONTRACT --> POLICY
-  POLICY --> APPROVAL
-  APPROVAL --> CONTROL
+  POLICY --> PREQ
+  PREQ --> CELPLAN
+  CELPLAN --> PLAN
+  PLAN --> APPROVAL
+  APPROVAL --> GRANT
+  GRANT --> CEL
+  CEL --> CONTROL
   CONTROL --> CLOUD
 
   classDef intent fill:#0D2438,stroke:#38BDF8,stroke-width:2px,color:#F8FAFC
@@ -462,9 +483,9 @@ flowchart LR
   class INTENT intent
   class AI intelligence
   class CONTRACT contract
-  class POLICY governance
+  class POLICY,PREQ,PLAN,GRANT governance
   class APPROVAL human
-  class CONTROL control
+  class CELPLAN,CEL,CONTROL control
   class CLOUD cloud
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```

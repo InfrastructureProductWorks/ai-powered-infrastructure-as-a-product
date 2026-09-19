@@ -63,13 +63,20 @@ flowchart TB
   subgraph Governance["Deterministic governance"]
     SOURCE[Versioned source and proposals]
     POLICY[Schema, policy, and tests]
-    APPROVAL[Recorded authorization]
+    PREQ[Authenticated planning package\nNo mutation authority]
+    PLAN[Reviewable immutable plan/effect artifact]
+    APPROVAL[Recorded authorization of exact plan/effects]
   end
 
-  subgraph Seed["Minimal trusted seed"]
-    RUNTIME[Bounded management runtime]
-    XP[Crossplane product control plane]
+  subgraph ProductPlane["Product control plane"]
+    PACKAGE[Authenticated execution grant]
     STATUS[Product status]
+  end
+
+  subgraph Seed["Customer Execution Layer / minimal trusted seed"]
+    PLANEXEC[No-write planning / preflight]
+    RUNTIME[Bounded customer runtime / execution admission]
+    XP[Reference reconciler: Crossplane]
   end
 
   subgraph Foundation["Foundation products"]
@@ -87,9 +94,13 @@ flowchart TB
   GUARD --> AI
   AI --> SOURCE
   SOURCE --> POLICY
-  POLICY --> REVIEW
+  POLICY --> PREQ
+  PREQ --> PLANEXEC
+  PLANEXEC --> PLAN
+  PLAN --> REVIEW
   REVIEW --> APPROVAL
-  APPROVAL --> XP
+  APPROVAL --> PACKAGE
+  PACKAGE --> RUNTIME
   RUNTIME --> XP
   XP --> IDENTITY
   XP --> NETWORK
@@ -109,8 +120,8 @@ flowchart TB
   class REPO,DOCS,CLOUDVIEW input
   class CONSOLE,ALT experience
   class AI ai
-  class REVIEW,SOURCE,POLICY,APPROVAL governance
-  class RUNTIME,XP control
+  class REVIEW,SOURCE,POLICY,PREQ,PLAN,APPROVAL,PACKAGE governance
+  class PLANEXEC,RUNTIME,XP control
   class IDENTITY,NETWORK,OBSERVE,DATA foundation
   class GUARD,STATUS evidence
   linkStyle default stroke:#94A3B8,stroke-width:2px
@@ -197,8 +208,8 @@ See
 
 ## Layer 1 — minimal trusted seed
 
-The minimal trusted seed is the bounded technical runtime required before
-Crossplane can establish and manage foundation products. It contains:
+The minimal trusted seed is the bounded technical runtime for the Customer Execution Layer. It is required before
+Crossplane or another selected CEL engine can establish and manage foundation products. The product control plane remains logically upstream and does not hold provider credentials. The minimal trusted seed contains:
 
 - an approved management-cluster or equivalent runtime;
 - Crossplane and required package lifecycle controls;
@@ -256,7 +267,9 @@ See [foundation domains](../README.md#foundation-domains) and the
 | Customer documents to advisory | Approved, classified inputs | Data minimization, redaction, access control, and retention |
 | Advisory to proposal | Labeled AI-generated or human-authored proposal | Source attribution, deterministic validation, and human review |
 | Proposal to product API | Approved product-level intent | Schema, policy, tests, recorded authorization, and change identity |
-| Product control plane to cloud | Only the authorized lifecycle operation | Workload identity, target restriction, cloud-native enforcement, and audit |
+| Product control plane to Customer Execution Layer | Authenticated, audience-bound execution package plus evidence references | Trusted issuer, human-decision provenance, desired-state/effect digests, replay protection, and fail-closed verification |
+| Customer Execution Layer to cloud | Only the exact authorized lifecycle effects | Workload identity, target restriction, destructive-effect gating, cloud-native enforcement, and audit |
+| CEL to External Execution Authority, when selected | Exact authorized package/effect subset only | Separate approved trust zone, credential/data/network/evidence boundary, and revocation |
 | Product status to experience | Sanitized product status and evidence references | Data classification, integrity, and least disclosure |
 
 Customer content must not be silently used to expand the model, tool, tenant,
@@ -322,8 +335,8 @@ authorize a pilot or production workload.
 
 ## Product handoff
 
-The future Forge-compatible handoff contains only approved product intent and
-evidence references, such as:
+The future Forge-compatible handoff into the product plane contains only approved product intent and
+evidence references. A later CEL execution package is a separately authenticated, audience-bound artifact that binds the exact authorized desired state and planned effects. The product-intent handoff includes items such as:
 
 - product and profile identifier;
 - target environment and approved provider/region;

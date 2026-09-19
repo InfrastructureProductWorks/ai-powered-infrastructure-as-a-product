@@ -13,7 +13,8 @@ The customer must be able to distinguish source evidence, AI interpretation, det
 | Composite AI | interpret, propose, explain, summarize | approve, execute, accept risk |
 | Deterministic policy | test explicit rules and schemas | infer organizational intent or waive failure |
 | Human authority | authorize material decisions within assigned responsibility | hide or silently override failed controls |
-| Product control plane | reconcile an authorized contract | redefine intent or manufacture approval |
+| Product control plane | bind approved intent, provenance, exact plan/effects, and authenticated execution grants | hold provider credentials, reconcile cloud resources, redefine intent, or manufacture approval |
+| Customer Execution Layer / approved External Execution Authority | reconcile only the exact currently authorized plan/effects | self-approve, silently re-plan/widen effects, or retain write authority after grant completion/expiry/revocation |
 | Cloud control | enforce provider configuration | represent customer governance by itself |
 
 ## Provenance chain
@@ -24,9 +25,12 @@ Each retained result should link:
 source evidence
   → AI proposal and assumptions
   → deterministic validation
-  → named human disposition
-  → authorized product revision
-  → execution and operational evidence
+  → protected desired-state revision
+  → authenticated planning package with no mutation authority
+  → reviewable no-write plan/effect artifact and provider-state preconditions
+  → named human disposition over the exact material/destructive effects
+  → authenticated execution/delegation grant bound to that artifact
+  → execution and authenticated operational evidence
 ```
 
 The record must make later edits, superseded proposals, expired approvals, and incomplete evidence visible.
@@ -46,7 +50,7 @@ One person may hold more than one role only when the customer permits it and the
 
 ## Deterministic validation target
 
-Validation should verify that a proposal identifies its sources and assumptions, the required reviewer roles are populated, approval has not expired, the authorized revision matches the proposed revision, and the execution record points to that authorized revision.
+Validation should verify that a proposal identifies its sources and assumptions, required reviewer roles are populated, the protected desired-state revision is exact, the reviewable no-write plan/effect artifact (or authenticated retrievable reference) was available to the reviewer before approval, approval has not expired, the human decision binds the exact affected resources/effect classes/provider-state preconditions and artifact digest, the final execution grant authenticates those same plan/effect bindings, and the execution record points to the exact authorized grant/attempt rather than merely the desired-state revision.
 
 ## Required evidence
 

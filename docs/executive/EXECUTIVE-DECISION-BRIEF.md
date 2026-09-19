@@ -64,7 +64,7 @@ Those can remain implementation mechanisms or enterprise systems of record. IaaP
 
 The authority model is intentionally bounded:
 
-> **AI proposes and explains. Deterministic controls validate. Authorized people approve. The control plane reconciles. Cloud-native controls enforce the final boundary.**
+> **AI proposes and explains. Deterministic controls validate. Authorized people approve. The product plane binds execution authority. The Customer Execution Layer reconciles the exact authorized effects for a finite execution session. Cloud-native controls enforce the final boundary.**
 
 This keeps AI useful for translation, explanation, diagnosis, evidence assembly, and product learning without allowing a model to become an independent infrastructure authority.
 
