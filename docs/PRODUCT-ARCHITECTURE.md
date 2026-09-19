@@ -241,7 +241,8 @@ sequenceDiagram
   ForgeGate-->>GitHub: Bind passing validation to desired state
   GitHub->>CEL: Authenticated planning package (no mutation)
   CEL->>CEL: Compute immutable plan/effects + provider-state preconditions
-  CEL-->>GitHub: Return planned-effect digest
+  CEL-->>GitHub: Return reviewable immutable plan/effect artifact or authenticated reference + digest
+  GitHub->>Approver: Present affected resources, effect classes, state preconditions, and digest
   Approver->>GitHub: Approve exact material/destructive effects
   GitHub->>CEL: Issue audience-bound execution grant for exact plan/effects
   CEL->>CEL: Verify issuer, audience, state preconditions, expiry/replay
