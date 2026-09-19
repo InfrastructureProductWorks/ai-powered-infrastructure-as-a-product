@@ -95,6 +95,11 @@ At minimum the package binds:
 - FoundationTarget reference;
 - approved execution-adapter identity/version;
 - allowed operation;
+- planning authorization scope;
+- final execution-grant reference when mutation is permitted;
+- planned-effect digest and affected-resource set for write-capable execution;
+- provider-state precondition/version references used to compute the authorized effects;
+- destructive-authorization reference when applicable;
 - authorization issue time and expiration;
 - idempotency/replay identity;
 - rollback/retirement policy reference; and
@@ -138,6 +143,27 @@ Hosted services such as HCP Terraform or an Upbound-managed control plane requir
 
 The CEL remains the sole IPW gateway that may authorize either pattern, but a hosted service with provider authority is not represented as though it were inside the CEL.
 
+### External Execution Authority delegation
+
+The original CEL-audience package must never be forwarded as though it were valid authority for an External Execution Authority (EEA).
+
+When an EEA is selected, the CEL must issue a separately authenticated, narrowly scoped **execution delegation grant** whose audience is the exact EEA identity. The grant must bind at least:
+
+- CEL issuer identity and signing/attestation provenance;
+- exact EEA audience/identity;
+- parent execution-package and execution-grant digests;
+- customer/tenant and FoundationTarget;
+- exact saved-plan or planned-effect digest;
+- affected-resource identities and destructive classifications;
+- provider-state preconditions/version references;
+- permitted effects only;
+- credential/identity mode;
+- issue time, expiry, replay/idempotency identity, and revocation epoch/state;
+- required evidence-return schema/destination; and
+- the CEL identity/audience permitted to accept the returned execution evidence.
+
+The EEA must authenticate this delegation grant before mutation and fail closed on audience mismatch, expired/revoked grant, plan/effect mismatch, changed provider state, replay, or unsupported authority. A normal hosted-service job/API request is transport only and is never sufficient authority without this grant.
+
 Exactly one engine is authoritative for each external resource. Observation by another tool does not confer management authority.
 
 An engine change requires an explicit ownership-transfer plan, state/evidence reconciliation, rollback criteria, and customer approval.
@@ -160,6 +186,30 @@ Effective permissions must be checked against both:
 2. the IPW execution package's authorized scope.
 
 The narrower result wins.
+
+## Two-phase plan and execution authorization
+
+A desired-state authorization is not sufficient by itself for a write-capable apply.
+
+The CEL uses a two-phase protocol:
+
+1. **Plan phase — no provider mutation.**
+   - consume the authenticated desired-state package;
+   - read only the provider state necessary to compute effects;
+   - create an immutable plan/effect artifact;
+   - bind the plan to the exact desired-state digest, FoundationTarget, provider-state preconditions/version references, adapter/engine version, affected-resource identities, effect classifications, and plan expiration;
+   - compute a `plannedEffectDigest`; and
+   - return the plan/effect artifact for authorization.
+
+2. **Execution-grant phase.**
+   - a trusted authorization path approves the exact plan/effect artifact;
+   - destructive effects receive separate destructive authority;
+   - the product/authority plane issues an authenticated execution grant binding the `plannedEffectDigest`, relevant provider-state preconditions, target, operation/effects, audience, expiry, and replay identity;
+   - the CEL may mutate only while those exact bindings remain true.
+
+Where the engine supports an immutable saved plan, the CEL must apply that exact saved plan. Where the engine cannot apply a saved plan, the CEL must recompute immediately before mutation and require the new effect digest and provider-state preconditions to match the authorized grant byte-for-byte/semantically as defined by the contract. Any drift, re-plan difference, changed affected resource, changed destructive classification, changed provider-state precondition, or expired plan invalidates the grant and returns to plan/review.
+
+This prevents an authentic `UPDATE` request from silently becoming an unauthorized replacement after provider drift.
 
 ## Lifecycle operations
 
@@ -194,12 +244,15 @@ Before any provider mutation, the CEL must verify:
 7. region/location is permitted;
 8. workload identity is the expected principal;
 9. effective provider permissions do not exceed the accepted execution profile;
-10. the exact planned-effect set is bound to the approved desired-state revision;
-11. every destructive replace/destroy/irreversible effect has separate, exact destructive authority;
-12. required network, DNS, logging, encryption, evidence, cost, and security dependencies are available;
-13. no competing authoritative reconciler is detected;
-14. rollback/teardown path is available for the requested operation; and
-15. the evidence sink is writable before the first mutation where the profile requires durable audit capture.
+10. an immutable saved plan or equivalent planned-effect artifact exists for the exact desired-state revision;
+11. the final authenticated execution grant binds the exact planned-effect digest, affected resources, and provider-state preconditions;
+12. the current provider state still satisfies those authorized preconditions and any recomputed plan/effects are unchanged;
+13. every destructive replace/destroy/irreversible effect has separate, exact destructive authority;
+14. when an External Execution Authority is used, its audience-specific delegation grant is valid, unexpired, unreplayed, and not revoked;
+15. required network, DNS, logging, encryption, evidence, cost, and security dependencies are available;
+16. no competing authoritative reconciler is detected;
+17. rollback/teardown path is available for the requested operation; and
+18. the evidence sink is writable before the first mutation where the profile requires durable audit capture.
 
 A failed preflight produces evidence and performs no cloud write.
 
@@ -247,8 +300,10 @@ A completed attempt should retain or reference:
 - executor/adapter/engine versions;
 - workload principal and target identity;
 - authorization and change references;
-- operation type and exact planned-effect digest;
+- operation type, exact saved-plan/planned-effect digest, affected-resource set, and provider-state preconditions;
+- final execution-grant digest;
 - destructive-effect classification and separate destructive authorization reference where applicable;
+- External Execution Authority delegation-grant digest and audience where applicable;
 - authenticated package issuer, audience, and approval-provenance verification result;
 - provider request/activity identifiers where safely retainable;
 - resource identities in sanitized form;
@@ -329,13 +384,15 @@ Before runtime CEL development is accepted, reviewers must be able to determine 
 3. how authorization is bound to immutable desired state;
 4. how an operation is restricted to one customer and FoundationTarget;
 5. how execution engines remain replaceable;
-6. how destroy/replace effects are detected and bound to separate destructive authority even when requested as update or rollback;
-7. how package issuer, audience, and human-decision provenance are authenticated;
-8. how external hosted execution authorities are modeled when provider credentials or mutation authority leave the customer-hosted runtime;
-9. how the customer revokes future mutation authority;
-10. how failures and partial state are represented;
-11. what evidence returns to IPW; and
-12. what additional constraints apply under the Government Security Profile.
+6. how a two-phase plan/authorize protocol binds exact effects and provider-state preconditions before any mutation;
+7. how destroy/replace effects are detected and bound to separate destructive authority even when requested as update or rollback;
+8. how package issuer, audience, and human-decision provenance are authenticated;
+9. how external hosted execution authorities receive their own audience-bound delegation grants;
+10. how external hosted execution authorities are modeled when provider credentials or mutation authority leave the customer-hosted runtime;
+11. how the customer revokes future mutation authority;
+12. how failures and partial state are represented;
+13. what evidence returns to IPW; and
+14. what additional constraints apply under the Government Security Profile.
 
 ## Non-goals
 
