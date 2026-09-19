@@ -90,13 +90,15 @@ customer elects to operate inside that boundary.
 | Deterministic controls | Validate public schemas, required fields, allowed values, and stage constraints | Cannot accept organizational risk or substitute for authorization |
 | Accountable people | Decide material architecture, security, operational, and risk questions | Cannot make an undocumented bypass part of the product contract |
 | IaaP Forge | Target consumer of approved evidence and product intent for governed lifecycle work | This package does not extend Forge V1 or permit bypass of policy and approval gates |
-| Crossplane or an approved adapter | Reconcile an authorized product definition | Does not define consumer intent, approve a proposal, or co-manage an externally owned resource |
+| Product control plane | Bind approved product intent, authorization, provenance, and authenticated execution packages | Holds no provider mutation credential and does not reconcile cloud resources directly |
+| Customer Execution Layer / approved execution authority | Reconcile only an authenticated, plan-bound execution grant through the approved engine | Does not define consumer intent, self-approve destructive effects, widen scope, or co-manage an externally owned resource |
 | Cloud-native controls | Enforce final provider identity, network, service, encryption, and resource boundaries | Do not define the customer's complete IaaP operating model |
 
 The fixed authority rule remains:
 
 > Composite AI proposes and explains. Deterministic controls validate.
-> Authorized people approve. The product control plane reconciles. Cloud-native
+> Authorized people approve. The product control plane binds authenticated execution authority.
+> The Customer Execution Layer reconciles the exact authorized plan/effects. Cloud-native
 > controls enforce the final boundary.
 
 ## Readiness decision map
