@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The current architecture makes the **infrastructure product contract** the stable boundary and Crossplane the maintained product control plane.
+The current architecture makes the **infrastructure product contract and governed product state** the stable product-control boundary. Provider mutation is delegated only through the customer-controlled execution boundary; Crossplane is the maintained reference reconciler inside that execution boundary, not the holder of product-plane approval or credential authority.
 
 Backstage is now represented through a separate bounded repository as the optional reference **storefront**. It is deliberately outside the control plane.
 
@@ -108,7 +108,7 @@ remains available without cloud credentials or this runtime.
 
 ### Layer 1 — minimal trusted seed
 
-The seed installs the reference execution/control environment, including Crossplane where selected, and establishes its namespace/security boundary, package/version controls, identity path, and basic auditability. The seed remains deliberately small and independently governed.
+The seed establishes the customer-controlled execution runtime, including Crossplane where selected, and its namespace/security boundary, package/version controls, identity path, and basic auditability. Product definitions, policy, authorization, and execution-package provenance remain logically separate from reconciliation credentials. The seed remains deliberately small and independently governed.
 
 The technical seed is only one subset of the broader
 [customer bootstrap](../bootstrap-foundation-readiness/architecture/bootstrap-reference-architecture.md),
@@ -178,7 +178,7 @@ The storefront does not gain infrastructure authority merely because it initiate
 
 ## Resource ownership
 
-One external resource has one authoritative reconciler. Crossplane may observe dependencies owned elsewhere, but the accelerator does not support active co-management.
+One external resource has one authoritative reconciler. Crossplane or another approved CEL execution engine may observe dependencies owned elsewhere, but the accelerator does not support active co-management.
 
 The same rule applies to experience systems: Backstage owns the storefront experience, not the cloud resource.
 
