@@ -33,24 +33,29 @@ flowchart TB
     PR[GitHub proposal / order history]
     SCHEMA[Schema and contract validation]
     POLICY[Deterministic policy and tests]
-    HUMAN[Authorized approval]
-    AI --> PR --> SCHEMA --> POLICY --> HUMAN
+    HUMAN[Authorized approval of exact plan/effects]
+    AI --> PR --> SCHEMA --> POLICY
   end
 
   subgraph ControlPlane[Product Control Plane]
     API[Stable infrastructure product API]
-    PKG[Verified execution package]
+    PREQ[Authenticated planning package\nNo mutation authority]
+    PLAN[Reviewable plan/effect artifact]
+    GRANT[Authenticated execution grant]
     STATUS[Product conditions and status]
-    HUMAN --> API --> PKG
+    POLICY --> API --> PREQ
+    PLAN --> HUMAN --> GRANT
     STATUS --> AI
     STATUS --> STORE
   end
 
   subgraph CustomerExecution[Customer-Controlled Execution Layer]
-    CEL[Customer Execution Layer]
+    CELPLAN[No-write planning / preflight]
+    CELEXEC[Execution admission]
     XP[Reference reconciler: Crossplane]
     COMP[Compositions / provider adapters]
-    PKG --> CEL --> XP --> COMP
+    PREQ --> CELPLAN --> PLAN
+    GRANT --> CELEXEC --> XP --> COMP
     XP --> STATUS
   end
 
