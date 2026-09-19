@@ -435,9 +435,15 @@ A future Government Security Profile implementation is not accepted until tests 
 23. customer revocation prevents subsequent provider mutation;
 24. partial provider failure remains explicit;
 25. EEA-returned evidence is signed/attested by the exact authorized EEA and linked to the exact delegation grant, plan/effects, attempt identity, provider results, and replay identity;
-26. evidence does not contain credentials/secrets;
-27. restricted-network dependency acquisition is deterministic; and
-28. no test result is promoted into an authorization claim.
+26. replay of an already accepted EEA result nonce/receipt sequence is rejected for current-state projection;
+27. an EEA result outside the permitted receipt window is historical-only unless an explicit late-result rule accepts it without superseding newer state;
+28. a result for a non-outstanding or superseded attempt cannot become the current operational result;
+29. an older signed EEA result cannot replace a newer accepted attempt/result;
+30. required provider-state freshness/reference mismatch prevents the result from being projected as current state;
+31. stale/replayed/superseded results may be retained only as ordered historical evidence with explicit disposition;
+32. evidence does not contain credentials/secrets;
+33. restricted-network dependency acquisition is deterministic; and
+34. no test result is promoted into an authorization claim.
 
 ## Relationship to cloud-provider attestations
 
