@@ -259,8 +259,11 @@ The experience surface is deliberately replaceable. The first-class Storefront, 
 flowchart TB
   S[Storefront captures product intent] --> A[AI proposes and explains]
   A --> D[Schema, policy, and tests validate]
-  D --> H[Authorized people approve]
-  H --> P[Product plane binds execution grant]
+  D --> Q[Authenticated planning package\nNo mutation authority]
+  Q --> L[Customer Execution Layer computes no-write plan/effects]
+  L --> R[Reviewable plan/effect artifact\nEffects • resources • state preconditions]
+  R --> H[Authorized people approve exact plan/effects]
+  H --> P[Product plane binds authenticated execution grant]
   P --> X[Customer Execution Layer reconciles exact authorized effects]
   X --> C[Cloud-native controls enforce]
 
@@ -272,9 +275,9 @@ flowchart TB
   classDef enforcement fill:#123A24,stroke:#22C55E,stroke-width:2px,color:#F8FAFC
   class S experience
   class A intelligence
-  class D governance
+  class D,Q,R,P governance
   class H human
-  class X control
+  class L,X control
   class C enforcement
   linkStyle default stroke:#94A3B8,stroke-width:2px
 ```
@@ -449,16 +452,22 @@ flowchart LR
   AI[Bounded Composite AI]
   CONTRACT[Stable product contract]
   POLICY[Deterministic policy]
-  APPROVAL[Human authorization]
+  PREQ[Authenticated planning package\nNo mutation authority]
+  CELPLAN[CEL no-write plan / preflight]
+  PLAN[Reviewable plan/effect artifact]
+  APPROVAL[Human authorization of exact plan/effects]
   GRANT[Product plane binds authenticated execution authority]
-  CEL[Customer Execution Layer]
+  CEL[Customer Execution Layer execution admission]
   CONTROL[Reference reconciler: Crossplane]
   CLOUD[Cloud implementation]
 
   INTENT --> AI
   AI --> CONTRACT
   CONTRACT --> POLICY
-  POLICY --> APPROVAL
+  POLICY --> PREQ
+  PREQ --> CELPLAN
+  CELPLAN --> PLAN
+  PLAN --> APPROVAL
   APPROVAL --> GRANT
   GRANT --> CEL
   CEL --> CONTROL
@@ -474,10 +483,9 @@ flowchart LR
   class INTENT intent
   class AI intelligence
   class CONTRACT contract
-  class POLICY governance
+  class POLICY,PREQ,PLAN,GRANT governance
   class APPROVAL human
-  class GRANT governance
-  class CEL,CONTROL control
+  class CELPLAN,CEL,CONTROL control
   class CLOUD cloud
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
