@@ -4,9 +4,9 @@
 
 ## Requirement
 
-Composite AI may help a customer understand, design, and improve a cloud foundation only inside a documented advisory boundary. Its outputs are proposals. Deterministic policy validates machine-testable constraints, named humans authorize material decisions, and an approved reconciler executes authorized changes.
+Composite AI may help a customer understand, design, and improve a cloud foundation only inside a documented advisory boundary. Its outputs are proposals. Deterministic policy validates machine-testable constraints, named humans authorize material decisions, the product control plane binds authenticated execution authority, and a customer-controlled execution layer or separately approved External Execution Authority reconciles only the exact authorized plan/effects.
 
-> AI interprets intent and evidence. Policy validates. Humans authorize. The product control plane executes.
+> AI interprets intent and evidence. Policy validates. Humans authorize. The product plane binds authority. The Customer Execution Layer executes.
 
 This is a public architecture contract and implementation target. It does not assert that frozen Guard V1 or Forge V1 already enforces every requirement on this page.
 
