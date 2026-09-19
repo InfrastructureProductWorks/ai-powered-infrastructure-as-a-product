@@ -200,7 +200,9 @@ flowchart TB
   AI[Bounded Composite AI]
   GIT[GitHub proposal, tests, policy, approval, evidence]
   API[Stable infrastructure product API]
-  XP[Crossplane product control plane]
+  GRANT[Authenticated execution grant]
+  CEL[Customer Execution Layer]
+  XP[Reference reconciler: Crossplane]
   AWS[AWS]
   AZ[Azure]
   GCP[GCP]
@@ -215,7 +217,9 @@ flowchart TB
   ORDER --> AI
   AI --> GIT
   GIT --> API
-  API --> XP
+  API --> GRANT
+  GRANT --> CEL
+  CEL --> XP
   XP --> AWS
   XP --> AZ
   XP --> GCP
@@ -238,7 +242,8 @@ flowchart TB
   class AI intelligence
   class GIT governance
   class API contract
-  class XP control
+  class GRANT governance
+  class CEL,XP control
   class AWS,AZ,GCP cloud
   class STATUS evidence
   linkStyle default stroke:#7DD3FC,stroke-width:2px
@@ -246,7 +251,7 @@ flowchart TB
 
 The architectural center is the **product contract**, not a workspace, module, portal, pipeline, or execution engine.
 
-The experience surface is deliberately replaceable. The first-class Storefront, Backstage adapter, CLI, API, service portal, or conversational interface can submit the same product intent without changing the product contract or Crossplane control plane.
+The experience surface is deliberately replaceable. The first-class Storefront, Backstage adapter, CLI, API, service portal, or conversational interface can submit the same product intent without changing the product contract or the selected Customer Execution Layer/reconciler implementation.
 
 ### Authority chain
 
@@ -445,14 +450,18 @@ flowchart LR
   CONTRACT[Stable product contract]
   POLICY[Deterministic policy]
   APPROVAL[Human authorization]
-  CONTROL[Crossplane control plane]
+  GRANT[Product plane binds authenticated execution authority]
+  CEL[Customer Execution Layer]
+  CONTROL[Reference reconciler: Crossplane]
   CLOUD[Cloud implementation]
 
   INTENT --> AI
   AI --> CONTRACT
   CONTRACT --> POLICY
   POLICY --> APPROVAL
-  APPROVAL --> CONTROL
+  APPROVAL --> GRANT
+  GRANT --> CEL
+  CEL --> CONTROL
   CONTROL --> CLOUD
 
   classDef intent fill:#0D2438,stroke:#38BDF8,stroke-width:2px,color:#F8FAFC
@@ -467,7 +476,8 @@ flowchart LR
   class CONTRACT contract
   class POLICY governance
   class APPROVAL human
-  class CONTROL control
+  class GRANT governance
+  class CEL,CONTROL control
   class CLOUD cloud
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
