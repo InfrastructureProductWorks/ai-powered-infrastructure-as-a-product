@@ -39,19 +39,25 @@ flowchart TB
 
   subgraph ControlPlane[Product Control Plane]
     API[Stable infrastructure product API]
-    XP[Crossplane]
-    COMP[Compositions and Functions]
+    PKG[Verified execution package]
     STATUS[Product conditions and status]
-    HUMAN --> API --> XP --> COMP
-    XP --> STATUS
+    HUMAN --> API --> PKG
     STATUS --> AI
     STATUS --> STORE
   end
 
+  subgraph CustomerExecution[Customer-Controlled Execution Layer]
+    CEL[Customer Execution Layer]
+    XP[Reference reconciler: Crossplane]
+    COMP[Compositions / provider adapters]
+    PKG --> CEL --> XP --> COMP
+    XP --> STATUS
+  end
+
   subgraph Clouds[Cloud Implementations]
-    AWS[AWS]
-    AZ[Azure]
-    GCP[GCP]
+    AWS[AWS / AWS GovCloud]
+    AZ[Azure / Azure Government]
+    GCP[Google Cloud]
     COMP --> AWS
     COMP --> AZ
     COMP --> GCP
@@ -102,13 +108,19 @@ remains available without cloud credentials or this runtime.
 
 ### Layer 1 — minimal trusted seed
 
-The seed installs Crossplane, establishes its namespace/security boundary, package/version controls, identity path, and basic auditability. The seed remains deliberately small and independently governed.
+The seed installs the reference execution/control environment, including Crossplane where selected, and establishes its namespace/security boundary, package/version controls, identity path, and basic auditability. The seed remains deliberately small and independently governed.
 
 The technical seed is only one subset of the broader
 [customer bootstrap](../bootstrap-foundation-readiness/architecture/bootstrap-reference-architecture.md),
 which also covers the customer-controlled hosting, authority, data custody,
 operations, recovery, and integration decisions required by the requested
 stage.
+
+### Layer 1.5 — customer-controlled execution boundary
+
+The [Customer Execution Layer](customer-execution-layer.md) is the only write-capable bridge from an authorized IPW execution package to provider APIs. It runs under customer-controlled workload identity, target scope, network controls, and evidence requirements. Crossplane is the reference reconciler inside this boundary, but the execution engine remains replaceable.
+
+A deployment that needs federal-oriented controls may apply the [Government Security Profile](../bootstrap-foundation-readiness/security/government-security-profile.md), which adds explicit identity, least-privilege, network, cryptographic, audit, supply-chain, and government-cloud/environment requirements without itself making an authorization claim.
 
 ### Layer 2 — foundation products
 
@@ -155,13 +167,14 @@ flowchart LR
   AI[AI proposes and explains]
   D[Schema, policy, and tests validate]
   H[Authorized people approve]
-  X[Crossplane reconciles]
+  P[Verified execution package]
+  X[Customer Execution Layer reconciles]
   C[Cloud-native controls enforce]
 
-  STORE --> AI --> D --> H --> X --> C
+  STORE --> AI --> D --> H --> P --> X --> C
 ```
 
-The storefront does not gain infrastructure authority merely because it initiates a request. Composite AI does not gain authority merely because it interprets the request.
+The storefront does not gain infrastructure authority merely because it initiates a request. Composite AI does not gain authority merely because it interprets the request. Human approval does not place cloud credentials into the product plane; provider mutation occurs only through the customer-controlled execution boundary.
 
 ## Resource ownership
 
@@ -180,6 +193,7 @@ GitHub is the product-development and change-governance plane: source, order/pro
 | Program thesis and evidence | `ai-powered-infrastructure-as-a-product` |
 | Consumer storefront | `backstage-infrastructure-product-storefront-poc` |
 | Minimal trusted bootstrap | `crossplane-multicloud-seed-poc` |
+| Customer execution architecture | this repository + protected Forge successor work |
 | Infrastructure product contract | `multicloud-foundation-product-poc` |
 | Bounded composite AI | `composite-ai-infrastructure-product-poc` |
 | End-to-end acceptance/evidence | `multicloud-foundation-poc-integration` |
