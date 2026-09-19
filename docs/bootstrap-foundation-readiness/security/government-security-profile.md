@@ -67,7 +67,8 @@ The CEL must:
 - separate read/discovery permissions from write/execution permissions where practical;
 - prohibit execution by Storefront, Console, Guard, Composite AI, and documentation surfaces;
 - preserve one authoritative reconciler per resource;
-- make deletion a separately authorized operation; and
+- make deletion and destructive replacement/recreation separately authorized effects, regardless of the outer operation label;
+- verify an engine's exact planned-effect set before mutation and fail closed when destructive effects cannot be determined; and
 - support immediate revocation of future execution authority.
 
 ### IA — Identification and Authentication
@@ -80,8 +81,11 @@ Preferred patterns:
 - **Azure:** Microsoft Entra workload identity federation and/or managed identity;
 - **Google Cloud:** Workload Identity Federation, including GKE Workload Identity Federation where appropriate.
 
-The executor must bind:
+The executor must authenticate and bind:
 
+- trusted execution-package issuer and signing/attestation provenance;
+- intended CEL audience/deployment identity;
+- trusted human-decision provenance and approval authority;
 - workload principal;
 - customer/tenant;
 - execution adapter;
@@ -177,9 +181,12 @@ The CEL must:
 
 - fail closed on malformed or unsupported execution packages;
 - reject digest mismatch;
+- reject an unsigned/unauthenticated package, untrusted issuer, wrong CEL audience, or unverifiable approval provenance;
 - reject expired authorization;
 - reject replay or conflicting duplicate operations;
 - detect unsupported adapter/engine versions;
+- inspect and bind planned effects before mutation;
+- require separate exact authority for destroy, replace/recreate, or other irreversible effects even when produced by update/rollback/reconcile;
 - surface drift and degraded reconciliation states;
 - distinguish provider API acceptance from resource readiness;
 - avoid auto-escalating permissions to recover from failure;
@@ -203,6 +210,8 @@ The CEL deployment profile should support:
 - no download-and-execute behavior from untrusted runtime sources.
 
 Third-party adapter inclusion does not transfer customer risk acceptance to IPW.
+
+A hosted orchestration service that receives provider credentials or can directly cause provider mutation is a separate **External Execution Authority**, not merely a software dependency. The customer must explicitly approve its trust boundary, credential custody, data processing, network path, logging/evidence, retention, incident, revocation, and shared-responsibility model. Where feasible, a customer-hosted agent/runtime should keep provider credentials and provider API calls inside the customer-controlled boundary.
 
 ### IR — Incident Response
 
@@ -301,8 +310,10 @@ The execution layer must not weaken those controls merely because a cloud provid
 
 ## Human authorization
 
-A human approval reference must bind to the exact:
+A human approval reference and the resulting execution package must be authenticity-protected and bind to the exact:
 
+- trusted issuer / decision provenance;
+- intended CEL audience;
 - customer/tenant;
 - FoundationTarget;
 - product/revision;
@@ -382,12 +393,15 @@ A future Government Security Profile implementation is not accepted until tests 
 9. artifact tamper fails;
 10. unsupported adapter/engine version fails;
 11. cross-tenant execution fails;
-12. delete cannot be inferred from create/update authority;
-13. customer revocation prevents subsequent provider mutation;
-14. partial provider failure remains explicit;
-15. evidence does not contain credentials/secrets;
-16. restricted-network dependency acquisition is deterministic; and
-17. no test result is promoted into an authorization claim.
+12. destroy or replace/recreate effects cannot be inferred from create/update/rollback/reconcile authority;
+13. the exact planned-effect set is verified before mutation and ambiguous destructive effects fail closed;
+14. untrusted issuer, wrong audience, bad signature/attestation, or fabricated approval provenance fails closed;
+15. a hosted execution service with provider authority is treated as a separate trust zone and cannot bypass CEL authorization;
+16. customer revocation prevents subsequent provider mutation;
+17. partial provider failure remains explicit;
+18. evidence does not contain credentials/secrets;
+19. restricted-network dependency acquisition is deterministic; and
+20. no test result is promoted into an authorization claim.
 
 ## Relationship to cloud-provider attestations
 
