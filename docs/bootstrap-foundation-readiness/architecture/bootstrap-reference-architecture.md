@@ -204,7 +204,7 @@ See
 ## Layer 1 — minimal trusted seed
 
 The minimal trusted seed is the bounded technical runtime for the Customer Execution Layer. It is required before
-Crossplane or another selected CEL engine can establish and manage foundation products. The product control plane remains logically upstream and does not hold provider credentials. It contains:
+Crossplane or another selected CEL engine can establish and manage foundation products. The product control plane remains logically upstream and does not hold provider credentials. The minimal trusted seed contains:
 
 - an approved management-cluster or equivalent runtime;
 - Crossplane and required package lifecycle controls;
