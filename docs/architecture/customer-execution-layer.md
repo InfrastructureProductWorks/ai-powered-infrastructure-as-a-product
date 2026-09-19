@@ -164,6 +164,31 @@ When an EEA is selected, the CEL must issue a separately authenticated, narrowly
 
 The EEA must authenticate this delegation grant before mutation and fail closed on audience mismatch, expired/revoked grant, plan/effect mismatch, changed provider state, replay, or unsupported authority. A normal hosted-service job/API request is transport only and is never sufficient authority without this grant.
 
+A signed grant cannot prove that it has **not been revoked after issuance**. Immediately before every provider mutation, an EEA must therefore satisfy one customer-approved revocation-freshness mechanism:
+
+- query an authoritative CEL/customer revocation service and prove the grant remains active at the current revocation epoch;
+- obtain a fresh, short-lived execution token/attestation minted only for an active grant; or
+- use a grant-scoped provider identity whose provider-side revocation/expiry prevents mutation after cancellation.
+
+If the EEA cannot obtain current revocation state, it must not mutate. An offline copy of an otherwise authentic, unexpired grant is insufficient for a new write.
+
+### External Execution Authority evidence return
+
+An EEA completion/result envelope must itself be authenticated. The EEA must sign or attest an evidence envelope that binds:
+
+- EEA issuer identity and signing/attestation provenance;
+- exact delegation-grant digest;
+- parent execution-grant and planned-effect digests;
+- execution attempt identity and replay/idempotency identity;
+- customer/tenant and FoundationTarget;
+- affected-resource/effect set;
+- provider-state preconditions used at execution;
+- provider request/activity/result identifiers where safely retainable;
+- start/end time, outcome, partial-failure/rollback state, and residual checks; and
+- returned evidence digest and intended CEL evidence audience.
+
+The CEL must authenticate the EEA evidence issuer and verify every binding before accepting the result into Assurance, Console, or retained execution evidence. Schema-valid evidence from an unauthenticated caller is rejected.
+
 Exactly one engine is authoritative for each external resource. Observation by another tool does not confer management authority.
 
 An engine change requires an explicit ownership-transfer plan, state/evidence reconciliation, rollback criteria, and customer approval.
@@ -211,6 +236,21 @@ Where the engine supports an immutable saved plan, the CEL must apply that exact
 
 This prevents an authentic `UPDATE` request from silently becoming an unauthorized replacement after provider drift.
 
+## Reconciliation-session semantics
+
+The CEL baseline does **not** grant a continuously running reconciler perpetual write authority.
+
+A write-capable reconciliation session is bounded to one authenticated execution grant and its exact planned effects. After the authorized effects complete, fail, are rolled back, or the grant expires/revokes:
+
+- write-capable reconciliation for that grant ends;
+- the engine must be paused, suspended, admission-blocked, or reduced to an observe-only posture so it cannot perform a new provider mutation from the old grant;
+- drift detection and status observation may continue through read-only authority; and
+- any corrective mutation caused by later drift must re-enter the plan phase, compute the current provider-state preconditions/effects, receive a fresh authorization, and obtain a new execution grant.
+
+If an engine cannot separate observation from write-capable continuous reconciliation, the CEL must revoke/remove that engine's provider write identity when the authorized execution session ends. It may reacquire write authority only for a new valid execution grant.
+
+A future customer may define a separately approved standing auto-remediation policy, but that is a different authority model with its own bounded effect classes, risk decision, revocation, evidence, and government-profile assessment. It is not part of this baseline.
+
 ## Lifecycle operations
 
 The CEL contract must distinguish at least:
@@ -248,11 +288,12 @@ Before any provider mutation, the CEL must verify:
 11. the final authenticated execution grant binds the exact planned-effect digest, affected resources, and provider-state preconditions;
 12. the current provider state still satisfies those authorized preconditions and any recomputed plan/effects are unchanged;
 13. every destructive replace/destroy/irreversible effect has separate, exact destructive authority;
-14. when an External Execution Authority is used, its audience-specific delegation grant is valid, unexpired, unreplayed, and not revoked;
-15. required network, DNS, logging, encryption, evidence, cost, and security dependencies are available;
-16. no competing authoritative reconciler is detected;
-17. rollback/teardown path is available for the requested operation; and
-18. the evidence sink is writable before the first mutation where the profile requires durable audit capture.
+14. when an External Execution Authority is used, its audience-specific delegation grant is valid, unexpired, unreplayed, and a fresh authoritative revocation check or grant-scoped provider-identity check confirms it is still active;
+15. the reconciler is not carrying forward write authority from a prior completed/expired/revoked execution session;
+16. required network, DNS, logging, encryption, evidence, cost, and security dependencies are available;
+17. no competing authoritative reconciler is detected;
+18. rollback/teardown path is available for the requested operation; and
+19. the evidence sink is writable before the first mutation where the profile requires durable audit capture.
 
 A failed preflight produces evidence and performs no cloud write.
 
@@ -303,7 +344,8 @@ A completed attempt should retain or reference:
 - operation type, exact saved-plan/planned-effect digest, affected-resource set, and provider-state preconditions;
 - final execution-grant digest;
 - destructive-effect classification and separate destructive authorization reference where applicable;
-- External Execution Authority delegation-grant digest and audience where applicable;
+- External Execution Authority delegation-grant digest, audience, and current revocation-freshness proof where applicable;
+- authenticated EEA result-envelope issuer/attestation and exact delegation/attempt binding where applicable;
 - authenticated package issuer, audience, and approval-provenance verification result;
 - provider request/activity identifiers where safely retainable;
 - resource identities in sanitized form;
@@ -389,10 +431,12 @@ Before runtime CEL development is accepted, reviewers must be able to determine 
 8. how package issuer, audience, and human-decision provenance are authenticated;
 9. how external hosted execution authorities receive their own audience-bound delegation grants;
 10. how external hosted execution authorities are modeled when provider credentials or mutation authority leave the customer-hosted runtime;
-11. how the customer revokes future mutation authority;
-12. how failures and partial state are represented;
-13. what evidence returns to IPW; and
-14. what additional constraints apply under the Government Security Profile.
+11. how every later drift-driven write re-enters plan/preflight/grant validation instead of inheriting continuous write authority;
+12. how the customer revokes future mutation authority, including grants already issued to an EEA;
+13. how EEA-returned evidence is authenticated to the exact delegation and attempt;
+14. how failures and partial state are represented;
+15. what evidence returns to IPW; and
+16. what additional constraints apply under the Government Security Profile.
 
 ## Non-goals
 
