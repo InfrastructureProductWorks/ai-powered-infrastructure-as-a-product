@@ -8,7 +8,7 @@
 
 <p align="center"><strong>IaaS is what we buy; infrastructure-as-a-product is what we build.</strong></p>
 
-<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; authorized people decide; Crossplane reconciles authorized product state.</strong></p>
+<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; authorized people decide; the product plane binds execution authority; the Customer Execution Layer reconciles exact authorized effects.</strong></p>
 
 <p align="center">Composite AI • Crossplane • InfrastructureProductWorks Storefront • Backstage adapter • GitHub governance • deterministic policy • multi-cloud evidence</p>
 
@@ -129,7 +129,9 @@ The maintained reference architecture is intentionally small and opinionated:
 - **Infrastructure product contracts** define the stable consumer boundary.
 - **InfrastructureProductWorks Storefront** is the canonical first-class browse, configure, order, track, and handoff-inspection experience.
 - **Backstage Storefront Adapter** gives enterprises already using Backstage the same governed order contract without making Backstage the product boundary.
-- **Crossplane** is the product control plane and reconciliation layer.
+- **The product control plane** binds governed product state, provenance, and authenticated execution authority without holding provider credentials.
+- **The Customer Execution Layer** owns provider-mutation preflight and execution authority inside the customer boundary.
+- **Crossplane** is the maintained reference reconciler inside that execution layer, with writes limited to a current plan-bound execution grant.
 - **Composite AI** interprets intent, proposes changes, explains policy, diagnoses sanitized status, and assembles evidence.
 - **GitHub** governs product change, review, traceability, and evidence.
 - **Deterministic policy and tests** decide what is valid.
@@ -253,7 +255,8 @@ flowchart TB
   S[Storefront captures product intent] --> A[AI proposes and explains]
   A --> D[Schema, policy, and tests validate]
   D --> H[Authorized people approve]
-  H --> X[Crossplane reconciles]
+  H --> P[Product plane binds execution grant]
+  P --> X[Customer Execution Layer reconciles exact authorized effects]
   X --> C[Cloud-native controls enforce]
 
   classDef experience fill:#0D2438,stroke:#38BDF8,stroke-width:2px,color:#F8FAFC
