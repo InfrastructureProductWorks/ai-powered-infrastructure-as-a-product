@@ -174,7 +174,7 @@ flowchart TB
 
 Kubernetes has two distinct roles in this architecture:
 
-1. The **customer management runtime** sits inside the Customer Execution Layer and hosts Crossplane when Crossplane is selected. Crossplane watches only claims admitted from authenticated, plan-bound execution grants and reconciles them through customer-scoped provider identity.
+1. The **customer management runtime** sits inside the Customer Execution Layer and hosts Crossplane when Crossplane is selected. A write-capable claim is admitted only for the finite execution session covered by an authenticated, plan-bound execution grant. Once those exact effects complete, fail, expire, or are revoked, the CEL suspends/blocks provider writes for that claim/identity. Crossplane may continue read-only observation/drift detection, but every later corrective write must return through planning, current-state preconditions, human/destructive authorization as applicable, and a fresh execution grant.
 2. A **workload cluster** may be one of the infrastructure products delivered by Crossplane. It is a destination, not the place where a developer directly operates the management control plane.
 
 Crossplane can also deliver managed services that do not run inside Kubernetes, including networks, databases, storage, identities, DNS, encryption resources, and managed connectivity.
@@ -190,8 +190,8 @@ Crossplane can also deliver managed services that do not run inside Kubernetes, 
 | GitHub / product authority plane | Versioned change, review record, authenticated execution-package/grant provenance | Provider credentials, direct cloud mutation, or hidden policy bypass |
 | Authorized human | Acceptance or rejection of the exact material change and separately required destructive effects | Undocumented override of deterministic gates |
 | Customer Execution Layer | Verify package/grant issuer, audience, target, exact plan/effects, provider-state preconditions, replay/expiry and destructive authority | Consumer intent, self-approval, or silent re-plan widening |
-| Crossplane | Reference reconciliation engine inside the CEL and lifecycle status | Storefront experience, business approval, product selection, or authority beyond the admitted grant |
-| Customer management runtime | Runtime for the selected CEL execution engine | Automatic authority to administer workload environments outside the admitted target/effects |
+| Crossplane | Reference reconciliation engine inside the CEL and lifecycle/status observation | Storefront experience, business approval, product selection, perpetual write authority, or any mutation beyond the current finite execution grant |
+| Customer management runtime | Runtime for the selected CEL execution engine | Automatic or standing authority to administer workload environments outside the current admitted target/effects/session |
 | Cloud-native IAM and controls | Final technical enforcement | Redefinition of the consumer product contract |
 | IaaP Assurance | Authority, custody, safeguard continuity, rollback, and evidence chain | Storefront, proposal generation, or cloud provisioning |
 
@@ -232,7 +232,10 @@ sequenceDiagram
   Approver->>GitHub: Approve exact material/destructive effects
   GitHub->>CEL: Issue audience-bound execution grant for exact plan/effects
   CEL->>CEL: Verify issuer, audience, state preconditions, expiry/replay
-  CEL->>Crossplane: Admit exact saved/unchanged authorized effects
+  CEL->>Crossplane: Admit exact saved/unchanged authorized effects for finite write session
+  Crossplane-->>CEL: Authorized effects converge or terminate
+  CEL->>Crossplane: Suspend provider writes; retain read-only observation
+  Note over CEL,Crossplane: Any later drift-driven write requires a fresh plan and execution grant
 ```
 
 ### Target runtime evidence return
