@@ -205,7 +205,7 @@ The CEL and any EEA receiving a delegation grant must:
 
 - fail closed on malformed or unsupported execution/delegation grants;
 - reject digest mismatch;
-- reject an unsigned/unauthenticated package, untrusted issuer, wrong CEL audience, or unverifiable approval provenance;
+- authenticate the artifact appropriate to its role: a CEL-local executor rejects an unsigned/unauthenticated execution package/grant, untrusted issuer, wrong CEL audience, or unverifiable approval provenance; an EEA rejects an unsigned/unauthenticated CEL delegation grant, untrusted CEL issuer, wrong EEA audience, broken parent-grant chain, or unverifiable carried approval provenance;
 - reject expired authorization;
 - reject replay or conflicting duplicate operations;
 - prevent a completed, expired, or revoked execution grant from becoming standing continuous write authority;
@@ -437,7 +437,7 @@ A future Government Security Profile implementation is not accepted until tests 
 25. EEA-returned evidence is signed/attested by the exact authorized EEA and linked to the exact delegation grant, plan/effects, attempt identity, provider results, and replay identity;
 26. replay of an already accepted EEA result nonce/receipt sequence is rejected for current-state projection;
 27. an EEA result outside the permitted receipt window is historical-only unless an explicit late-result rule accepts it without superseding newer state;
-28. a result for a non-outstanding or superseded attempt cannot become the current operational result;
+28. a result for an attempt that is neither outstanding nor the latest terminal attempt, or that has been superseded by a newer accepted attempt/result, cannot become the current operational result;
 29. an older signed EEA result cannot replace a newer accepted attempt/result;
 30. required provider-state freshness/reference mismatch prevents the result from being projected as current state;
 31. stale/replayed/superseded results may be retained only as ordered historical evidence with explicit disposition;
