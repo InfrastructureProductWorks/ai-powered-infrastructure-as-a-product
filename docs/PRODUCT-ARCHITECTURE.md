@@ -21,8 +21,9 @@ flowchart TB
   FINAL["Protected finalization<br/>Immutable delivery revision"]
   VALIDATE["Forge deterministic gates<br/>Final revision • digest • target • window"]
   APPROVE["Authorized human approval<br/>Same revision • digest • target • window"]
-  DELIVERY["Authorized GitOps delivery<br/>Enforce complete approval binding"]
-  CONTROL["Crossplane in Kubernetes<br/>Reconcile approved product claim"]
+  DELIVERY["Authenticated execution package<br/>Bind revision • target • plan/effects • window"]
+  CEL["Customer Execution Layer<br/>Verify grant • plan • target • effects"]
+  CONTROL["Crossplane in customer execution runtime<br/>Reference reconciler"]
   OUTCOME["Infrastructure product outcome<br/>Kubernetes • network • data • identity • connectivity"]
   ASSURE["IaaP Assurance<br/>Custody • continuity • rollback • evidence"]
 
@@ -39,7 +40,8 @@ flowchart TB
   FINAL --> VALIDATE
   VALIDATE --> APPROVE
   APPROVE --> DELIVERY
-  DELIVERY --> CONTROL
+  DELIVERY --> CEL
+  CEL --> CONTROL
   CONTROL --> OUTCOME
   OUTCOME --> ASSURE
   ASSURE --> CONSOLE
@@ -56,13 +58,13 @@ flowchart TB
   class GUARD,REVISION,FINAL,VALIDATE governance
   class SELECT,APPROVE human
   class DELIVERY governance
-  class CONTROL control
+  class CEL,CONTROL control
   class OUTCOME outcome
   class ASSURE evidence
   linkStyle default stroke:#7DD3FC,stroke-width:2px
 ```
 
-The developer orders an **outcome**, not a collection of provider resources. The first-class Storefront captures product intent; the Backstage Storefront Adapter can capture the same intent through the same closed order contract. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal is finalized through the protected GitHub path into an immutable delivery revision before approval. Forge’s deterministic gates validate that final revision, artifact digest, authorized target, and delivery window; an authorized person approves the same complete binding. GitOps verifies all four values before delivering the claim to Crossplane. There is no content-changing merge after approval. Any change to content, revision, digest, target, or window invalidates the prior validation and approval and restarts the gate. Assurance keeps the authority and custody chain intact.
+The developer orders an **outcome**, not a collection of provider resources. The first-class Storefront captures product intent; the Backstage Storefront Adapter can capture the same intent through the same closed order contract. Separately, Guard produces architecture and planning evidence through its supported GitHub-native boundary; Console presents that evidence for human selection. Forge consumes the order and accepted selection to create an inert proposal. That proposal is finalized through the protected GitHub path into an immutable delivery revision before approval. Forge’s deterministic gates validate the final revision and desired-state binding. The Customer Execution Layer then performs a no-write plan phase so exact effects and provider-state preconditions can be bound. An authorized person approves the material decision and any required destructive effects; the product/authority plane issues an authenticated execution grant for the exact plan/effect digest, target, audience, and window. The CEL verifies that grant before handing the exact saved plan or unchanged effect set to the selected reconciler. There is no content-changing merge or effect-changing re-plan after authorization. Any change to content, plan/effect digest, affected resources, provider-state preconditions, target, audience, or window invalidates the grant and restarts the gate. Assurance keeps the authority and custody chain intact.
 
 ## Technical deployment and reconciliation view
 
@@ -89,15 +91,18 @@ flowchart TB
   subgraph GOV["Governed change boundary"]
     GH["GitHub proposal<br/>Versioned desired state and evidence"]
     PM["Protected finalization<br/>Create immutable delivery revision"]
-    HA["Human approval<br/>Same revision • digest • target • window"]
-    GC["Authorized GitOps delivery<br/>Verify complete approval binding"]
+    HA["Human approval<br/>Material decision + destructive effects"]
+    GC["Product/authority plane<br/>Issue authenticated plan-bound grant"]
   end
 
-  subgraph MGMT["Kubernetes management cluster"]
-    CLAIM["Approved product claim<br/>Per-order desired state"]
-    XP["Crossplane"]
-    PKG["Installed XRDs and Compositions<br/>Stable product APIs"]
-    PRV["Provider packages<br/>Workload identity"]
+  subgraph CELBOUNDARY["Customer Execution Layer"]
+    GRANT["Authenticated execution grant<br/>Exact plan/effects • target • audience • window"]
+    subgraph MGMT["Customer management runtime"]
+      CLAIM["Authorized product claim<br/>Exact desired state"]
+      XP["Crossplane<br/>Reference reconciler"]
+      PKG["Installed XRDs and Compositions<br/>Stable product APIs"]
+      PRV["Provider packages<br/>Customer workload identity"]
+    end
   end
 
   subgraph DEST["Delivery targets"]
@@ -125,7 +130,8 @@ flowchart TB
   PM --> FV
   FV --> HA
   HA --> GC
-  GC -- verified revision, digest, target, window --> CLAIM
+  GC --> GRANT
+  GRANT -- verified audience, plan/effects, target, preconditions, window --> CLAIM
   CLAIM --> XP
   PKG -.-> XP
   XP --> PRV
@@ -157,7 +163,7 @@ flowchart TB
   class BS,UI experience
   class FH,FE,FA service
   class GPR,GAPP,GE,FV,GH,HA,PM,GC governance
-  class CLAIM,XP,PKG,PRV control
+  class GRANT,CLAIM,XP,PKG,PRV control
   class C1,C2,C3,C4 cloud
   class WK,MS outcome
   class IA evidence
@@ -168,7 +174,7 @@ flowchart TB
 
 Kubernetes has two distinct roles in this architecture:
 
-1. The **management cluster** hosts Crossplane and its product APIs. Crossplane watches approved claims and reconciles them through provider packages.
+1. The **customer management runtime** sits inside the Customer Execution Layer and hosts Crossplane when Crossplane is selected. Crossplane watches only claims admitted from authenticated, plan-bound execution grants and reconciles them through customer-scoped provider identity.
 2. A **workload cluster** may be one of the infrastructure products delivered by Crossplane. It is a destination, not the place where a developer directly operates the management control plane.
 
 Crossplane can also deliver managed services that do not run inside Kubernetes, including networks, databases, storage, identities, DNS, encryption resources, and managed connectivity.
@@ -181,10 +187,11 @@ Crossplane can also deliver managed services that do not run inside Kubernetes, 
 | IaaP Console | Order state, proposal and evidence presentation, human workflow | Forge logic, Guard verdicts, silent approval, or reconciliation |
 | IaaP Forge | Deterministic product proposals and lifecycle artifacts | Approval, cloud credentials, apply, or provisioning |
 | IaaP Guard | Deterministic architecture, policy, authority, and evidence validation | Human authorization or infrastructure execution |
-| GitHub and GitOps | Versioned change, review record, approved desired-state delivery | Product definition or hidden policy bypass |
-| Authorized human | Acceptance or rejection of the exact material change | Undocumented override of deterministic gates |
-| Crossplane | Continuous desired-state reconciliation and lifecycle status | Storefront experience, business approval, or product selection |
-| Kubernetes management cluster | Runtime for the Crossplane control plane | Automatic authority to administer workload environments |
+| GitHub / product authority plane | Versioned change, review record, authenticated execution-package/grant provenance | Provider credentials, direct cloud mutation, or hidden policy bypass |
+| Authorized human | Acceptance or rejection of the exact material change and separately required destructive effects | Undocumented override of deterministic gates |
+| Customer Execution Layer | Verify package/grant issuer, audience, target, exact plan/effects, provider-state preconditions, replay/expiry and destructive authority | Consumer intent, self-approval, or silent re-plan widening |
+| Crossplane | Reference reconciliation engine inside the CEL and lifecycle status | Storefront experience, business approval, product selection, or authority beyond the admitted grant |
+| Customer management runtime | Runtime for the selected CEL execution engine | Automatic authority to administer workload environments outside the admitted target/effects |
 | Cloud-native IAM and controls | Final technical enforcement | Redefinition of the consumer product contract |
 | IaaP Assurance | Authority, custody, safeguard continuity, rollback, and evidence chain | Storefront, proposal generation, or cloud provisioning |
 
@@ -213,16 +220,19 @@ sequenceDiagram
   participant ForgeGate as Forge validation
   actor Approver
   participant GitHub
-  participant GitOps
+  participant CEL
   participant Crossplane
 
-  GitHub->>GitHub: Protected finalization creates delivery revision
-  GitHub->>ForgeGate: Present final revision, digest, target, and window
-  ForgeGate-->>GitHub: Bind passing validation to all four values
-  Approver->>GitHub: Approve the same complete binding
-  GitHub->>GitOps: Release exact revision and approval envelope
-  GitOps->>GitOps: Verify revision, digest, target, and window
-  GitOps->>Crossplane: Apply within window to approved management cluster
+  GitHub->>GitHub: Protected finalization creates desired-state revision
+  GitHub->>ForgeGate: Present exact revision and target
+  ForgeGate-->>GitHub: Bind passing validation to desired state
+  GitHub->>CEL: Authenticated planning package (no mutation)
+  CEL->>CEL: Compute immutable plan/effects + provider-state preconditions
+  CEL-->>GitHub: Return planned-effect digest
+  Approver->>GitHub: Approve exact material/destructive effects
+  GitHub->>CEL: Issue audience-bound execution grant for exact plan/effects
+  CEL->>CEL: Verify issuer, audience, state preconditions, expiry/replay
+  CEL->>Crossplane: Admit exact saved/unchanged authorized effects
 ```
 
 ### Target runtime evidence return
@@ -235,7 +245,7 @@ sequenceDiagram
   participant Assurance
   participant Console
 
-  Crossplane->>Cloud: Reconcile through scoped provider identity
+  Crossplane->>Cloud: Reconcile inside CEL through scoped customer provider identity
   Cloud-->>Crossplane: Return conditions and resource status
   Crossplane-->>ForgeAdapter: Supply bounded status facts
   ForgeAdapter-->>Assurance: Normalize and bind evidence
