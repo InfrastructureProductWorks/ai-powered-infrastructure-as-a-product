@@ -63,16 +63,19 @@ flowchart TB
   subgraph Governance["Deterministic governance"]
     SOURCE[Versioned source and proposals]
     POLICY[Schema, policy, and tests]
-    APPROVAL[Recorded authorization]
+    PREQ[Authenticated planning package\nNo mutation authority]
+    PLAN[Reviewable immutable plan/effect artifact]
+    APPROVAL[Recorded authorization of exact plan/effects]
   end
 
   subgraph ProductPlane["Product control plane"]
-    PACKAGE[Authenticated execution package]
+    PACKAGE[Authenticated execution grant]
     STATUS[Product status]
   end
 
   subgraph Seed["Customer Execution Layer / minimal trusted seed"]
-    RUNTIME[Bounded customer runtime]
+    PLANEXEC[No-write planning / preflight]
+    RUNTIME[Bounded customer runtime / execution admission]
     XP[Reference reconciler: Crossplane]
   end
 
@@ -91,7 +94,10 @@ flowchart TB
   GUARD --> AI
   AI --> SOURCE
   SOURCE --> POLICY
-  POLICY --> REVIEW
+  POLICY --> PREQ
+  PREQ --> PLANEXEC
+  PLANEXEC --> PLAN
+  PLAN --> REVIEW
   REVIEW --> APPROVAL
   APPROVAL --> PACKAGE
   PACKAGE --> RUNTIME
@@ -114,9 +120,8 @@ flowchart TB
   class REPO,DOCS,CLOUDVIEW input
   class CONSOLE,ALT experience
   class AI ai
-  class REVIEW,SOURCE,POLICY,APPROVAL governance
-  class PACKAGE governance
-  class RUNTIME,XP control
+  class REVIEW,SOURCE,POLICY,PREQ,PLAN,APPROVAL,PACKAGE governance
+  class PLANEXEC,RUNTIME,XP control
   class IDENTITY,NETWORK,OBSERVE,DATA foundation
   class GUARD,STATUS evidence
   linkStyle default stroke:#94A3B8,stroke-width:2px
