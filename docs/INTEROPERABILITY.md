@@ -18,7 +18,7 @@ A storefront can present product documentation, ownership, approved profiles, re
 
 The program now maintains [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc) as the **reference consumer experience**. It demonstrates how a developer can browse, configure, order, and track `CloudFoundationEnvironment` without learning Crossplane, ProviderConfig, cloud credentials, IAM JSON, Terraform/TFE, or Composition internals.
 
-Backstage is not the product contract and is not the provisioning control plane.
+Backstage is not the product contract and is not the provisioning or execution authority. Provider mutation occurs only through the customer-controlled execution boundary.
 
 ```mermaid
 flowchart LR
@@ -26,7 +26,9 @@ flowchart LR
   STORE --> ORDER[InfrastructureProductOrder]
   ORDER --> GOV[GitHub + AI + deterministic policy + approval]
   GOV --> API[Infrastructure product API]
-  API --> XP[Crossplane]
+  API --> GRANT[Authenticated execution grant]
+  GRANT --> CEL[Customer Execution Layer]
+  CEL --> XP[Reference reconciler: Crossplane]
 ```
 
 The same product contract could be consumed through:
