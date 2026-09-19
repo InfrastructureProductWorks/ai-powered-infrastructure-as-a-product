@@ -32,7 +32,8 @@ flowchart LR
   INTENT[Approved customer intent] --> AI[Composite AI proposes]
   AI --> CONTROL[Schema, policy, and tests validate]
   CONTROL --> HUMAN[Authorized people decide]
-  HUMAN --> RECONCILE[Product control plane reconciles]
+  HUMAN --> PACKAGE[Product plane issues authenticated execution package]
+  PACKAGE --> RECONCILE[Customer Execution Layer reconciles]
   RECONCILE --> CLOUD[Cloud-native controls enforce]
   CLOUD --> EVIDENCE[Status and evidence]
 
@@ -47,6 +48,7 @@ flowchart LR
   class AI ai
   class CONTROL governance
   class HUMAN human
+  class PACKAGE governance
   class RECONCILE control
   class CLOUD enforcement
   class EVIDENCE evidence
@@ -72,7 +74,9 @@ provides an input. In particular:
 | Source and change governance | Versioned requirements, product definitions, proposals, reviews, and approvals | Protected change, provenance, validation, and separation of duties |
 | Assessment and evidence | Approved repository content, findings, planning outputs, and source references | Read-only intake, data classification, least disclosure, and no code execution |
 | Composite AI advisory | Approved context, proposal generation, explanation, diagnosis, and evidence assembly | No execution secrets, no approval, no unrestricted tools, and labeled generated output |
-| Product control plane | Approved product definitions, reconciliation, conditions, and lifecycle state | Dedicated identity, target restriction, one reconciler, and fail-closed operation |
+| Product control plane | Approved product definitions, governed lifecycle intent, authorization bindings, execution-package provenance, and product-level status | No provider credentials; cannot mutate cloud resources directly; authenticates and binds what the CEL may execute |
+| Customer Execution Layer | Reconciliation, provider adapters, execution identity, planned effects, provider conditions, and execution evidence | Customer-controlled workload identity, target restriction, authenticated package/audience, one reconciler, destructive-effect gating, and fail-closed operation |
+| External Execution Authority | Optional hosted service that receives effective provider authority or can directly cause mutation | Separate approved trust zone, credential/data/network/evidence boundary, revocation, and customer authorization; never hidden inside the CEL abstraction |
 | Cloud provider | Provider resources, identities, networks, keys, controls, logs, and service state | Cloud-native policy remains final; no implied authority from an upstream proposal |
 | Evidence store | Inputs, versions, decisions, validation, status, exceptions, and lifecycle records | Integrity, access, retention, export, disposal, and tamper visibility |
 
@@ -81,18 +85,19 @@ environment, but it must not collapse these logical authority zones.
 
 ## Authority matrix
 
-| Action | Composite AI | Deterministic controls | Human authority | Product control plane | Cloud provider controls |
-|---|---:|---:|---:|---:|---:|
-| Interpret approved intent | Propose | Observe | Review | No | No |
-| Request missing information | Propose | Detect required fields | Supply or reject | No | No |
-| Draft architecture alternatives | Propose | Validate testable constraints | Select or reject | No | No |
-| Determine schema conformance | Explain | Authoritative for encoded checks | Review exceptions | Enforce gate result | Enforce final request |
-| Approve a material decision | No | No | Yes | No | No |
-| Accept organizational risk | No | No | Authorized customer role only | No | No |
-| Merge a governed change | No | No | Authorized repository role only | No | No |
-| Reconcile infrastructure | No | No | Authorize scope | Authorized adapter only | Enforce |
-| Grant or expand privilege | No | No | Approved customer process | No self-expansion | Enforce |
-| Declare certification or ATO | No | No | Outside this product contract | No | No |
+| Action | Composite AI | Deterministic controls | Human authority | Product control plane | Customer Execution Layer | Cloud provider controls |
+|---|---:|---:|---:|---:|---:|---:|
+| Interpret approved intent | Propose | Observe | Review | No | No | No |
+| Request missing information | Propose | Detect required fields | Supply or reject | No | No | No |
+| Draft architecture alternatives | Propose | Validate testable constraints | Select or reject | No | No | No |
+| Determine schema conformance | Explain | Authoritative for encoded checks | Review exceptions | Bind gate result | Enforce before mutation | Enforce final request |
+| Approve a material decision | No | No | Yes | Record/bind only | No | No |
+| Accept organizational risk | No | No | Authorized customer role only | No | No | No |
+| Merge a governed change | No | No | Authorized repository role only | No | No | No |
+| Issue authenticated execution package | No | Validate encoded constraints | Authorize scope | Yes, within accepted provenance rules | Verify only | No |
+| Reconcile infrastructure | No | No | Authorize scope | No direct provider mutation | Authorized adapter/engine only | Enforce |
+| Grant or expand privilege | No | No | Approved customer process | No | No self-expansion | Enforce |
+| Declare certification or ATO | No | No | Outside this product contract | No | No | No |
 
 “Yes” in this table means the architecture assigns that responsibility to a
 properly authorized role. It does not claim a current product implementation or
@@ -188,9 +193,9 @@ At minimum, the target model separates:
    infrastructure execution.
 4. **Discovery identity** for separately authorized, revocable cloud read
    access.
-5. **Reconciliation identity** for narrowly scoped nonproduction lifecycle
-   actions.
-6. **Evidence and operations identity** for controlled retention, export,
+5. **Reconciliation identity** held by the Customer Execution Layer for narrowly scoped nonproduction lifecycle actions. It is not a product-plane credential.
+6. **External execution identity** where an explicitly approved hosted execution authority receives provider authority; this identity belongs to that separate trust zone and must not be conflated with CEL or product-plane identity.
+7. **Evidence and operations identity** for controlled retention, export,
    support, and recovery.
 
 The same credential must not be reused simply to make integration easier.
@@ -210,8 +215,8 @@ See [identity and access](../foundation-domains/identity-and-access.md),
 | Assessment | Bounded repository or export read | None | Disabled | Review findings and material decisions |
 | Simulation | Versioned product and policy source | None | Simulated only | Approve the simulated contract and gates |
 | Read-only discovery | Assessment source plus approved exports | Revocable read only | Disabled | Authorize targets, collection, and retention |
-| Live sandbox | Protected product source | Narrow nonproduction write | Enabled only for approved sandbox contracts | Authorize identity, targets, lifecycle, and evidence |
-| Pilot | Protected source and operational records | Explicit pilot scope | Approved product lifecycle only | Separate pilot authorization |
+| Live sandbox | Protected product source | Narrow nonproduction write held by CEL or separately approved External Execution Authority | Enabled only for authenticated, approved sandbox execution packages | Authorize identity, targets, lifecycle, planned effects, and evidence |
+| Pilot | Protected source and operational records | Explicit pilot scope through CEL / approved execution authority | Approved product lifecycle only | Separate pilot authorization |
 | Production consideration | Customer-defined | Not implied | Not implied | Formal customer authorization process |
 
 Access from an earlier stage must not silently persist into a later stage, and
@@ -219,8 +224,8 @@ later-stage identities must not be created in advance of their approval.
 
 ## One authoritative reconciler
 
-Crossplane or another approved adapter may observe dependencies owned by other
-systems, but two active systems must not manage the same external resource.
+Crossplane or another approved CEL execution engine may observe dependencies owned by other
+systems, but two active systems must not manage the same external resource. A hosted service that can mutate provider resources is a separate External Execution Authority, not merely an adapter hidden inside the product control plane.
 
 When a customer already has an authoritative account factory, DNS service,
 network controller, Terraform/TFE estate, or security integration, the product
@@ -271,7 +276,7 @@ The target evidence record includes:
 - supersession or revocation history.
 
 Approval evidence must not be inferred from a model response, deterministic
-pass, source commit, successful deployment, or absence of objection.
+pass, source commit, successful deployment, or absence of objection. Execution-package authenticity must also be verified: content digests alone do not authenticate the issuer, intended CEL audience, or approval provenance.
 
 ## Readiness behavior
 
