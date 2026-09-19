@@ -179,15 +179,28 @@ An EEA completion/result envelope must itself be authenticated. The EEA must sig
 - EEA issuer identity and signing/attestation provenance;
 - exact delegation-grant digest;
 - parent execution-grant and planned-effect digests;
-- execution attempt identity and replay/idempotency identity;
+- execution attempt identity, unique result nonce, monotonic per-delegation attempt/receipt sequence, and replay/idempotency identity;
+- result issuance time and bounded receipt-validity window;
 - customer/tenant and FoundationTarget;
 - affected-resource/effect set;
 - provider-state preconditions used at execution;
 - provider request/activity/result identifiers where safely retainable;
+- provider-state/result freshness reference sufficient to distinguish the observed state from later attempts or observations;
 - start/end time, outcome, partial-failure/rollback state, and residual checks; and
 - returned evidence digest and intended CEL evidence audience.
 
 The CEL must authenticate the EEA evidence issuer and verify every binding before accepting the result into Assurance, Console, or retained execution evidence. Schema-valid evidence from an unauthenticated caller is rejected.
+
+For **operational/current-state acceptance**, the CEL must additionally verify that:
+
+- the result nonce and attempt/receipt sequence have not already been accepted;
+- the result corresponds to an execution attempt that is still outstanding or is the latest terminal attempt for that delegation;
+- the receipt is inside its permitted result window, or an explicit late-result policy marks it historical-only;
+- no newer accepted attempt/result supersedes it;
+- any provider-state freshness/reference required by the profile still matches the state being represented; and
+- replay/idempotency checks do not identify the envelope as a duplicate or stale result.
+
+A correctly signed but stale or replayed result may be retained as **historical evidence** with its original ordering and supersession metadata, but it must not overwrite or present itself as the current operational state in Console, Assurance, or product status projections.
 
 Exactly one engine is authoritative for each external resource. Observation by another tool does not confer management authority.
 
@@ -345,7 +358,7 @@ A completed attempt should retain or reference:
 - final execution-grant digest;
 - destructive-effect classification and separate destructive authorization reference where applicable;
 - External Execution Authority delegation-grant digest, audience, and current revocation-freshness proof where applicable;
-- authenticated EEA result-envelope issuer/attestation and exact delegation/attempt binding where applicable;
+- authenticated EEA result-envelope issuer/attestation, nonce, receipt sequence/window, exact delegation/attempt binding, replay/freshness disposition, and supersession state where applicable;
 - authenticated package issuer, audience, and approval-provenance verification result;
 - provider request/activity identifiers where safely retainable;
 - resource identities in sanitized form;
@@ -434,9 +447,10 @@ Before runtime CEL development is accepted, reviewers must be able to determine 
 11. how every later drift-driven write re-enters plan/preflight/grant validation instead of inheriting continuous write authority;
 12. how the customer revokes future mutation authority, including grants already issued to an EEA;
 13. how EEA-returned evidence is authenticated to the exact delegation and attempt;
-14. how failures and partial state are represented;
-15. what evidence returns to IPW; and
-16. what additional constraints apply under the Government Security Profile.
+14. how stale, replayed, late, or superseded EEA results are retained historically without becoming current operational state;
+15. how failures and partial state are represented;
+16. what evidence returns to IPW; and
+17. what additional constraints apply under the Government Security Profile.
 
 ## Non-goals
 
