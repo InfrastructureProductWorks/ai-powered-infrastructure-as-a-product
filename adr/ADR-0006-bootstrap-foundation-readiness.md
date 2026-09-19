@@ -25,7 +25,7 @@ also establish that:
 
 - repository assessment can begin without customer cloud credentials;
 - the minimal trusted seed is not the complete cloud foundation;
-- Crossplane is the maintained reference product-control-plane mechanism;
+- Crossplane is the maintained reference reconciler inside the customer-controlled execution boundary;
 - Terraform Enterprise is optional rather than mandatory;
 - Composite AI remains proposal-and-evidence-only;
 - deterministic controls and authorized people remain authoritative;
@@ -63,7 +63,7 @@ The package uses these terms:
 - **Customer bootstrap:** the approved environment, prerequisite decisions,
   and operating responsibilities required for the requested IaaP stage.
 - **Layer 1 — minimal trusted seed:** the bounded technical subset that
-  establishes the Crossplane product-control-plane runtime.
+  establishes the Customer Execution Layer runtime, including Crossplane when selected as the reference reconciler.
 - **Layer 2 — foundation products:** governed identity, network, logging,
   security, encryption, cost, recovery, and environment capabilities.
 - **Minimum viable foundation:** the smallest approved combination needed for
@@ -94,7 +94,7 @@ for Guard's supported assessment boundary.
 
 The package defines a customer-hosted target for the IaaP management
 experience, bounded advisory services, evidence, configuration, product state,
-and product-control-plane runtime.
+and the separately controlled execution runtime needed for the requested stage.
 
 Customer-hosted means the customer approves and controls hosting, identity,
 data custody, external integrations, operations, recovery, export, and
@@ -157,7 +157,8 @@ The customer may stop at an earlier stable outcome.
 The fixed authority rule remains:
 
 > Composite AI proposes and explains. Deterministic controls validate.
-> Authorized people approve. The product control plane reconciles. Cloud-native
+> Authorized people approve. The product control plane binds authenticated execution authority.
+> The Customer Execution Layer reconciles exact authorized effects. Cloud-native
 > controls enforce the final boundary.
 
 Composite AI may support discovery, design, review, explanation, diagnosis,
@@ -231,8 +232,8 @@ It must not newly publish:
 
 This decision extends documentation without superseding:
 
-- [ADR-0002](ADR-0002-product-control-plane.md), which places the product
-  contract and Crossplane at the strategic center;
+- [ADR-0002](ADR-0002-product-control-plane.md), which places the stable product
+  contract and Crossplane reference implementation at the strategic center; this decision's later Customer Execution Layer clarification supersedes only older wording that could be read as placing provider credentials or reconciliation authority in the product plane;
 - [ADR-0004](ADR-0004-tfe-optional-for-multicloud-foundation.md), which keeps
   TFE optional and records the minimal-seed and authority guardrails; or
 - [ADR-0005](ADR-0005-supersede-legacy-implementation-stack.md), which prevents
