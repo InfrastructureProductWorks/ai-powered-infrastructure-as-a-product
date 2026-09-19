@@ -65,7 +65,8 @@ The Government Security Profile requires:
 | Audit/evidence | Record authorization, delegation, preflight, result and returned evidence | Record provider mutation, identity, API results, retries/failures and return authenticated evidence to CEL |
 | Replay/idempotency | Reject replay/conflicting grants and track revocation state | Reject replay/conflicting delegation and duplicate mutation beyond defined idempotency |
 | Network/data boundary | Customer-approved ingress/egress, CA, proxy/private endpoint and data handling | Separately approved hosted-service network/data-processing boundary and destinations |
-| Incident/revocation | Revoke package/delegation trust and local identity | Honor revocation and support customer/CEL suspension of subsequent execution |
+| Incident/revocation | Revoke package/delegation trust and local identity; expose authoritative current revocation state | Check current revocation state or rely on grant-scoped provider identity revocation immediately before each mutation; stop when freshness is unavailable |
+| Result authenticity | Verify local engine results and any EEA result envelope | Sign/attest result evidence to exact delegation, plan/effects, attempt identity and provider results |
 | Supply chain | Pin/verify CEL adapters and runtime | Pin/verify hosted agent/runtime and disclose/inherit provider service controls as approved |
 
 Controls may be inherited differently between the CEL and an EEA, but no applicable control disappears merely because execution is delegated.
@@ -97,17 +98,24 @@ Preferred patterns:
 - **Azure:** Microsoft Entra workload identity federation and/or managed identity;
 - **Google Cloud:** Workload Identity Federation, including GKE Workload Identity Federation where appropriate.
 
-Each write-capable executor (CEL-local or EEA) must authenticate and bind:
+Audience validation is role-specific:
 
-- trusted execution-package issuer and signing/attestation provenance;
-- intended CEL audience/deployment identity;
+**A CEL-local executor must authenticate and bind:**
+
+- trusted execution-package / execution-grant issuer and signing/attestation provenance;
+- the exact CEL deployment identity as the intended audience;
 - trusted human-decision provenance and approval authority;
-- workload principal;
-- customer/tenant;
-- execution adapter;
-- FoundationTarget;
-- allowed operations; and
-- authorization lifetime.
+- workload principal, customer/tenant, execution adapter, FoundationTarget, allowed effects, and authorization lifetime.
+
+**An External Execution Authority must authenticate and bind:**
+
+- the CEL as the trusted delegation-grant issuer;
+- the exact EEA service/agent identity as the intended audience;
+- the signed parent execution-grant and planned-effect chain;
+- trusted human/destructive-decision provenance carried through that chain;
+- its grant-scoped workload/provider principal, customer/tenant, FoundationTarget, allowed effects, and authorization lifetime.
+
+An EEA must reject the original CEL-audience package. A CEL-local executor must reject an EEA-audience delegation grant intended for another authority.
 
 Interactive administrator access to the execution environment requires customer-approved strong authentication and privileged-access controls.
 
@@ -200,6 +208,8 @@ The CEL and any EEA receiving a delegation grant must:
 - reject an unsigned/unauthenticated package, untrusted issuer, wrong CEL audience, or unverifiable approval provenance;
 - reject expired authorization;
 - reject replay or conflicting duplicate operations;
+- prevent a completed, expired, or revoked execution grant from becoming standing continuous write authority;
+- require later drift-driven writes to obtain a fresh plan/effect authorization and execution/delegation grant;
 - detect unsupported adapter/engine versions;
 - require a two-phase plan/authorization or immutable saved-plan protocol before mutation;
 - bind exact planned effects, affected resources, and provider-state preconditions into the authenticated execution/delegation grant;
@@ -418,12 +428,16 @@ A future Government Security Profile implementation is not accepted until tests 
 16. the EEA rejects a CEL-audience package and requires its own CEL-signed audience-bound delegation grant;
 17. the EEA delegation grant binds exact planned effects, affected resources, provider-state preconditions, target, expiry, replay identity and revocation state;
 18. CEL or EEA execution fails closed if the plan/effects or provider-state preconditions change after authorization;
-19. customer revocation prevents subsequent provider mutation;
-20. partial provider failure remains explicit;
-21. EEA-returned evidence is authenticated and linked to the exact delegation grant;
-22. evidence does not contain credentials/secrets;
-23. restricted-network dependency acquisition is deterministic; and
-24. no test result is promoted into an authorization claim.
+19. an EEA checks current authoritative revocation state (or uses a grant-scoped provider identity whose revocation is provider-enforced) immediately before each mutation;
+20. inability to establish current revocation freshness prevents an EEA mutation;
+21. completion/expiry/revocation of a grant removes or suspends continuous provider-write capability;
+22. a later drift correction requires a fresh plan, provider-state preconditions, authorization, and execution/delegation grant;
+23. customer revocation prevents subsequent provider mutation;
+24. partial provider failure remains explicit;
+25. EEA-returned evidence is signed/attested by the exact authorized EEA and linked to the exact delegation grant, plan/effects, attempt identity, provider results, and replay identity;
+26. evidence does not contain credentials/secrets;
+27. restricted-network dependency acquisition is deterministic; and
+28. no test result is promoted into an authorization claim.
 
 ## Relationship to cloud-provider attestations
 
