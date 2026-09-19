@@ -19,10 +19,13 @@ flowchart TB
   FORGE["IaaP Forge<br/>Create inert bound proposal"]
   REVISION["Versioned GitHub proposal<br/>Reviewable candidate"]
   FINAL["Protected finalization<br/>Immutable delivery revision"]
-  VALIDATE["Forge deterministic gates<br/>Final revision • digest • target • window"]
-  APPROVE["Authorized human approval<br/>Same revision • digest • target • window"]
-  DELIVERY["Authenticated execution package<br/>Bind revision • target • plan/effects • window"]
-  CEL["Customer Execution Layer<br/>Verify grant • plan • target • effects"]
+  VALIDATE["Forge deterministic gates<br/>Final revision • digest • target"]
+  PLANREQ["Authenticated planning package<br/>No provider mutation"]
+  CELPLAN["Customer Execution Layer<br/>Compute plan/effects + state preconditions"]
+  PLAN["Immutable plan/effect artifact<br/>Digest • resources • preconditions"]
+  APPROVE["Authorized human approval<br/>Exact material/destructive effects"]
+  GRANT["Authenticated execution grant<br/>Bind exact plan/effects • target • audience • window"]
+  CELEXEC["Customer Execution Layer<br/>Verify grant + unchanged plan/state"]
   CONTROL["Crossplane in customer execution runtime<br/>Reference reconciler"]
   OUTCOME["Infrastructure product outcome<br/>Kubernetes • network • data • identity • connectivity"]
   ASSURE["IaaP Assurance<br/>Custody • continuity • rollback • evidence"]
@@ -38,10 +41,13 @@ flowchart TB
   FORGE --> REVISION
   REVISION --> FINAL
   FINAL --> VALIDATE
-  VALIDATE --> APPROVE
-  APPROVE --> DELIVERY
-  DELIVERY --> CEL
-  CEL --> CONTROL
+  VALIDATE --> PLANREQ
+  PLANREQ --> CELPLAN
+  CELPLAN --> PLAN
+  PLAN --> APPROVE
+  APPROVE --> GRANT
+  GRANT --> CELEXEC
+  CELEXEC --> CONTROL
   CONTROL --> OUTCOME
   OUTCOME --> ASSURE
   ASSURE --> CONSOLE
@@ -55,10 +61,9 @@ flowchart TB
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class DEV,STORE,BS,CONSOLE experience
   class ORDER,FORGE product
-  class GUARD,REVISION,FINAL,VALIDATE governance
+  class GUARD,REVISION,FINAL,VALIDATE,PLANREQ,PLAN,GRANT governance
   class SELECT,APPROVE human
-  class DELIVERY governance
-  class CEL,CONTROL control
+  class CELPLAN,CELEXEC,CONTROL control
   class OUTCOME outcome
   class ASSURE evidence
   linkStyle default stroke:#7DD3FC,stroke-width:2px
@@ -91,12 +96,16 @@ flowchart TB
   subgraph GOV["Governed change boundary"]
     GH["GitHub proposal<br/>Versioned desired state and evidence"]
     PM["Protected finalization<br/>Create immutable delivery revision"]
-    HA["Human approval<br/>Material decision + destructive effects"]
+    PREQ["Authenticated planning package<br/>No mutation authority"]
+    PLAN["Returned immutable plan/effect artifact<br/>Digest • resources • state preconditions"]
+    HA["Human approval<br/>Exact material + destructive effects"]
     GC["Product/authority plane<br/>Issue authenticated plan-bound grant"]
   end
 
   subgraph CELBOUNDARY["Customer Execution Layer"]
+    CELPLAN["Planning/preflight<br/>Compute effects without mutation"]
     GRANT["Authenticated execution grant<br/>Exact plan/effects • target • audience • window"]
+    CELEXEC["Execution admission<br/>Verify unchanged plan/state"]
     subgraph MGMT["Customer management runtime"]
       CLAIM["Authorized product claim<br/>Exact desired state"]
       XP["Crossplane<br/>Reference reconciler"]
@@ -128,10 +137,14 @@ flowchart TB
   FE --> GH
   GH --> PM
   PM --> FV
-  FV --> HA
+  FV --> PREQ
+  PREQ --> CELPLAN
+  CELPLAN --> PLAN
+  PLAN --> HA
   HA --> GC
   GC --> GRANT
-  GRANT -- verified audience, plan/effects, target, preconditions, window --> CLAIM
+  GRANT --> CELEXEC
+  CELEXEC -- verified audience, exact plan/effects, target, preconditions, window --> CLAIM
   CLAIM --> XP
   PKG -.-> XP
   XP --> PRV
@@ -162,8 +175,8 @@ flowchart TB
   classDef evidence fill:#3A1530,stroke:#EC4899,stroke-width:2px,color:#F8FAFC
   class BS,UI experience
   class FH,FE,FA service
-  class GPR,GAPP,GE,FV,GH,HA,PM,GC governance
-  class GRANT,CLAIM,XP,PKG,PRV control
+  class GPR,GAPP,GE,FV,GH,PREQ,PLAN,HA,PM,GC governance
+  class CELPLAN,GRANT,CELEXEC,CLAIM,XP,PKG,PRV control
   class C1,C2,C3,C4 cloud
   class WK,MS outcome
   class IA evidence
