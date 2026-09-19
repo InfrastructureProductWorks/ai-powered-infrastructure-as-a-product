@@ -171,15 +171,18 @@ flowchart LR
   STORE[Storefront captures product intent]
   AI[AI proposes and explains]
   D[Schema, policy, and tests validate]
-  H[Authorized people approve]
-  P[Verified execution package]
-  X[Customer Execution Layer reconciles]
+  PREQ[Authenticated planning package\nNo mutation authority]
+  CELPLAN[CEL no-write planning / preflight]
+  PLAN[Reviewable immutable plan/effect artifact\nEffects • resources • state preconditions]
+  H[Authorized people approve exact plan/effects]
+  GRANT[Product plane issues authenticated execution grant]
+  X[Customer Execution Layer reconciles exact authorized effects]
   C[Cloud-native controls enforce]
 
-  STORE --> AI --> D --> H --> P --> X --> C
+  STORE --> AI --> D --> PREQ --> CELPLAN --> PLAN --> H --> GRANT --> X --> C
 ```
 
-The storefront does not gain infrastructure authority merely because it initiates a request. Composite AI does not gain authority merely because it interprets the request. Human approval does not place cloud credentials into the product plane; provider mutation occurs only through the customer-controlled execution boundary.
+The storefront does not gain infrastructure authority merely because it initiates a request. Composite AI does not gain authority merely because it interprets the request. For write-capable changes, human execution approval occurs only after the CEL returns the reviewable plan/effect artifact or an authenticated retrievable reference to it. Human approval does not place cloud credentials into the product plane; provider mutation occurs only through the customer-controlled execution boundary.
 
 ## Resource ownership
 
