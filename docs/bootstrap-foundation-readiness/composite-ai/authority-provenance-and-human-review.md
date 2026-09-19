@@ -25,10 +25,11 @@ Each retained result should link:
 source evidence
   → AI proposal and assumptions
   → deterministic validation
-  → named human disposition
-  → authorized product revision
-  → no-write plan/effect artifact and provider-state preconditions
-  → authenticated execution/delegation grant
+  → protected desired-state revision
+  → authenticated planning package with no mutation authority
+  → reviewable no-write plan/effect artifact and provider-state preconditions
+  → named human disposition over the exact material/destructive effects
+  → authenticated execution/delegation grant bound to that artifact
   → execution and authenticated operational evidence
 ```
 
@@ -49,7 +50,7 @@ One person may hold more than one role only when the customer permits it and the
 
 ## Deterministic validation target
 
-Validation should verify that a proposal identifies its sources and assumptions, required reviewer roles are populated, approval has not expired, the authorized revision matches the proposed revision, the final execution grant authenticates the exact plan/effects and provider-state preconditions, and the execution record points to the exact authorized grant/attempt rather than merely the desired-state revision.
+Validation should verify that a proposal identifies its sources and assumptions, required reviewer roles are populated, the protected desired-state revision is exact, the reviewable no-write plan/effect artifact (or authenticated retrievable reference) was available to the reviewer before approval, approval has not expired, the human decision binds the exact affected resources/effect classes/provider-state preconditions and artifact digest, the final execution grant authenticates those same plan/effect bindings, and the execution record points to the exact authorized grant/attempt rather than merely the desired-state revision.
 
 ## Required evidence
 
