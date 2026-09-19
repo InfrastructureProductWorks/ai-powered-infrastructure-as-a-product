@@ -2,12 +2,12 @@
 
 **Date:** September 19, 2026  
 **Status:** documentation-first security profile  
-**Applies to:** Customer Execution Layer and provider adapters  
+**Applies to:** Customer Execution Layer, provider adapters, and any External Execution Authority that receives effective provider mutation authority  
 **Authority:** design and validation requirements only; this profile does not grant an ATO, cATO, FedRAMP authorization, FISMA authorization, agency approval, or production authority.
 
 ## Purpose
 
-This profile defines federal-oriented security expectations for an Infrastructure Product Works Customer Execution Layer.
+This profile defines federal-oriented security expectations for an Infrastructure Product Works Customer Execution Layer and for any separately approved External Execution Authority (EEA) that receives provider credentials or can directly cause provider mutation.
 
 It is intended to help a customer deploy the execution capability inside an environment where federal controls, agency overlays, restricted networking, strong identity, auditable change, supply-chain controls, and assessor evidence matter from the start.
 
@@ -54,11 +54,27 @@ The Government Security Profile requires:
 11. **fail-closed behavior on missing trust or evidence**; and
 12. **revocable authority without disrupting already-running workloads**.
 
+## Execution-authority responsibility mapping
+
+| Requirement area | Customer Execution Layer | External Execution Authority, when used |
+|---|---|---|
+| Package/grant authentication | Verify trusted issuer, CEL audience, approval provenance, exact plan/effect binding | Verify CEL-issued EEA audience, delegation signature/attestation, parent grant, expiry, replay and revocation state |
+| Least privilege | Enforce IPW scope and local workload identity | Enforce only delegated target/effects and its separately approved provider identity |
+| Destructive-effect gating | Compute/bind or verify exact plan/effects and require destructive authorization | Execute only the exact delegated saved plan/effects; no re-plan widening |
+| Cryptography | Meet the approved profile for CEL transport, storage, signing and evidence | Meet the same applicable approved profile for hosted transport, credential custody, execution and evidence |
+| Audit/evidence | Record authorization, delegation, preflight, result and returned evidence | Record provider mutation, identity, API results, retries/failures and return authenticated evidence to CEL |
+| Replay/idempotency | Reject replay/conflicting grants and track revocation state | Reject replay/conflicting delegation and duplicate mutation beyond defined idempotency |
+| Network/data boundary | Customer-approved ingress/egress, CA, proxy/private endpoint and data handling | Separately approved hosted-service network/data-processing boundary and destinations |
+| Incident/revocation | Revoke package/delegation trust and local identity | Honor revocation and support customer/CEL suspension of subsequent execution |
+| Supply chain | Pin/verify CEL adapters and runtime | Pin/verify hosted agent/runtime and disclose/inherit provider service controls as approved |
+
+Controls may be inherited differently between the CEL and an EEA, but no applicable control disappears merely because execution is delegated.
+
 ## Control-oriented requirements
 
 ### AC — Access Control
 
-The CEL must:
+The CEL and, where the requirement applies to delegated mutation, the EEA must:
 
 - bind each execution to one customer/tenant and one approved FoundationTarget;
 - enforce least privilege at both the cloud IAM layer and the IPW execution-package layer;
@@ -81,7 +97,7 @@ Preferred patterns:
 - **Azure:** Microsoft Entra workload identity federation and/or managed identity;
 - **Google Cloud:** Workload Identity Federation, including GKE Workload Identity Federation where appropriate.
 
-The executor must authenticate and bind:
+Each write-capable executor (CEL-local or EEA) must authenticate and bind:
 
 - trusted execution-package issuer and signing/attestation provenance;
 - intended CEL audience/deployment identity;
@@ -97,7 +113,7 @@ Interactive administrator access to the execution environment requires customer-
 
 ### AU — Audit and Accountability
 
-The CEL must emit enough evidence to reconstruct:
+The CEL must retain the end-to-end evidence chain, and any EEA must emit enough authenticated evidence back to the CEL to reconstruct:
 
 - who or what initiated the operation;
 - which human decision authorized it;
@@ -117,7 +133,7 @@ The customer defines retention, legal/records obligations, SIEM routing, and pro
 
 ### CM — Configuration Management
 
-The CEL must:
+The CEL, and any EEA for the runtime it controls, must:
 
 - pin supported adapter/engine versions;
 - verify configuration/profile integrity;
@@ -177,15 +193,17 @@ SHA-256 or stronger remains the baseline for IPW artifact integrity unless a str
 
 ### SI — System and Information Integrity
 
-The CEL must:
+The CEL and any EEA receiving a delegation grant must:
 
-- fail closed on malformed or unsupported execution packages;
+- fail closed on malformed or unsupported execution/delegation grants;
 - reject digest mismatch;
 - reject an unsigned/unauthenticated package, untrusted issuer, wrong CEL audience, or unverifiable approval provenance;
 - reject expired authorization;
 - reject replay or conflicting duplicate operations;
 - detect unsupported adapter/engine versions;
-- inspect and bind planned effects before mutation;
+- require a two-phase plan/authorization or immutable saved-plan protocol before mutation;
+- bind exact planned effects, affected resources, and provider-state preconditions into the authenticated execution/delegation grant;
+- invalidate authority on re-plan, state-precondition, affected-resource, or effect-digest drift;
 - require separate exact authority for destroy, replace/recreate, or other irreversible effects even when produced by update/rollback/reconcile;
 - surface drift and degraded reconciliation states;
 - distinguish provider API acceptance from resource readiness;
@@ -397,11 +415,15 @@ A future Government Security Profile implementation is not accepted until tests 
 13. the exact planned-effect set is verified before mutation and ambiguous destructive effects fail closed;
 14. untrusted issuer, wrong audience, bad signature/attestation, or fabricated approval provenance fails closed;
 15. a hosted execution service with provider authority is treated as a separate trust zone and cannot bypass CEL authorization;
-16. customer revocation prevents subsequent provider mutation;
-17. partial provider failure remains explicit;
-18. evidence does not contain credentials/secrets;
-19. restricted-network dependency acquisition is deterministic; and
-20. no test result is promoted into an authorization claim.
+16. the EEA rejects a CEL-audience package and requires its own CEL-signed audience-bound delegation grant;
+17. the EEA delegation grant binds exact planned effects, affected resources, provider-state preconditions, target, expiry, replay identity and revocation state;
+18. CEL or EEA execution fails closed if the plan/effects or provider-state preconditions change after authorization;
+19. customer revocation prevents subsequent provider mutation;
+20. partial provider failure remains explicit;
+21. EEA-returned evidence is authenticated and linked to the exact delegation grant;
+22. evidence does not contain credentials/secrets;
+23. restricted-network dependency acquisition is deterministic; and
+24. no test result is promoted into an authorization claim.
 
 ## Relationship to cloud-provider attestations
 
