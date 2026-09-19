@@ -43,13 +43,16 @@ Keeping those concerns separate prevents the Storefront, AI, Console, Guard, For
 flowchart LR
   SF[Storefront / API] --> FG[Forge]
   FG --> GD[Guard]
-  GD --> HR[Human authorization]
-  HR --> AS[Assurance verification]
-  AS --> PKG[Digest-bound execution package]
+  GD --> PREQ[Authenticated planning package\nNo mutation authority]
 
-  PKG --> CEL[Customer Execution Layer]
-  CEL --> POL[Execution policy + preflight]
-  POL --> ENG[Approved execution engine]
+  PREQ --> CELPLAN[Customer Execution Layer\nNo-write plan / preflight]
+  CELPLAN --> PLAN[Reviewable immutable plan/effect artifact\nEffects • resources • state preconditions]
+  PLAN --> HR[Human authorization\nExact material/destructive effects]
+  HR --> AS[Assurance verifies decision / plan binding]
+  AS --> GRANT[Authenticated execution grant\nExact plan/effects • target • audience • window]
+
+  GRANT --> CELEXEC[Customer Execution Layer\nVerify unchanged plan/state + grant]
+  CELEXEC --> ENG[Approved execution engine]
 
   ENG --> AWSA[AWS adapter]
   ENG --> AZA[Azure adapter]
@@ -70,8 +73,8 @@ flowchart LR
   classDef execution fill:#2E1752,stroke:#A855F7,stroke-width:2px,color:#F8FAFC
   classDef cloud fill:#123A24,stroke:#22C55E,stroke-width:2px,color:#F8FAFC
   class SF,FG,GD,AS,CO product
-  class HR,PKG,POL authority
-  class CEL,ENG,AWSA,AZA,GCPA execution
+  class PREQ,PLAN,HR,GRANT authority
+  class CELPLAN,CELEXEC,ENG,AWSA,AZA,GCPA execution
   class AWS,AZ,GCP,OBS cloud
 ```
 
