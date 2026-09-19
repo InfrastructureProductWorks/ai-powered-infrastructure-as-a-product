@@ -98,8 +98,9 @@ The authority chain is fixed:
 1. AI proposes and explains.
 2. Deterministic controls validate.
 3. Authorized people approve.
-4. The control plane reconciles.
-5. Cloud-native controls enforce.
+4. The product plane binds authenticated execution authority.
+5. The Customer Execution Layer reconciles the exact authorized effects for a finite execution session.
+6. Cloud-native controls enforce.
 
 The product model remains viable even when a customer limits or removes AI.
 
