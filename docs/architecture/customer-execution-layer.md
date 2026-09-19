@@ -8,7 +8,9 @@
 
 Infrastructure Product Works separates **governed infrastructure-product intent** from **provider mutation authority**.
 
-IPW products may prepare, validate, authorize, and evidence an exact desired state. A separately deployed **Customer Execution Layer (CEL)** is the only component permitted to translate a verified execution package into customer-cloud API calls.
+IPW products may prepare, validate, authorize, and evidence an exact desired state. A separately deployed **Customer Execution Layer (CEL)** is the sole IPW execution-authorization gateway for provider mutation.
+
+For customer-hosted engines, the CEL and its local adapter perform the provider call. If a customer deliberately selects a hosted execution service that can itself perform provider mutation, that service is modeled as a separate **External Execution Authority** downstream of the CEL with its own identity, credential, network, data-handling, evidence, and revocation boundary. It is never treated as though it were merely an internal CEL library.
 
 The CEL is customer-controlled. IPW does not require a shared multi-customer AWS, Azure, or Google Cloud credential store.
 
@@ -80,13 +82,16 @@ A CEL operation must consume an immutable, versioned execution package. The pack
 At minimum the package binds:
 
 - schema/version;
+- trusted issuer identity and issuer key/attestation reference;
+- intended CEL audience / deployment identity;
+- package issuance identifier and authenticity mechanism;
 - customer/tenant scope;
 - product identifier and version;
 - product/request revision;
 - desired-state digest;
 - Guard assessment/profile reference and digest;
-- human decision reference and digest;
-- Assurance verification reference;
+- human decision reference, decision digest, decision issuer/approver provenance, and decision authority scope;
+- Assurance verification reference and provenance;
 - FoundationTarget reference;
 - approved execution-adapter identity/version;
 - allowed operation;
@@ -95,7 +100,9 @@ At minimum the package binds:
 - rollback/retirement policy reference; and
 - evidence destination/profile reference.
 
-The executor must fail closed if any required binding is missing, stale, unsupported, altered, or inconsistent with the target environment.
+The executor must fail closed if any required binding is missing, stale, unsupported, altered, unauthenticated, or inconsistent with the target environment.
+
+A digest proves content integrity only. It does **not** prove who issued or authorized the package. Before mutation, the CEL must authenticate the package issuer with a customer-approved signature, attestation, or equivalent authenticity mechanism; verify that the package audience identifies this CEL deployment; and verify that the human decision/provenance came from a trusted authority path. A self-consistent package created by an untrusted caller is never sufficient execution authority.
 
 ## Customer-controlled identity
 
@@ -117,12 +124,19 @@ Crossplane is the reference reconciler for the current architecture, not the inf
 
 The CEL may support one approved execution engine per owned resource, including:
 
-- Crossplane / Upbound;
-- Terraform / OpenTofu;
-- HCP Terraform / Terraform Enterprise;
+- customer-hosted Crossplane / Upbound;
+- customer-hosted Terraform / OpenTofu;
+- customer-hosted Terraform Enterprise or a customer-controlled Terraform agent/runtime;
 - provider-native account/project/subscription vending;
 - provider-native declarative orchestration; or
 - another separately accepted adapter.
+
+Hosted services such as HCP Terraform or an Upbound-managed control plane require one of two explicit patterns:
+
+1. **customer-hosted execution agent/runtime:** provider credentials and provider API calls terminate inside the customer's approved boundary while the hosted service supplies orchestration metadata; or
+2. **External Execution Authority:** the hosted service receives effective provider authority or can directly cause provider mutation. It must then be modeled as a separate trust zone with separately approved credential custody, network paths, data handling, least privilege, audit, retention, failure semantics, revocation, and evidence.
+
+The CEL remains the sole IPW gateway that may authorize either pattern, but a hosted service with provider authority is not represented as though it were inside the CEL.
 
 Exactly one engine is authoritative for each external resource. Observation by another tool does not confer management authority.
 
@@ -161,24 +175,31 @@ The CEL contract must distinguish at least:
 
 Approval for one operation does not imply another.
 
-In particular, successful create/update authority does not imply delete authority. Irreversible deletion requires a separately bound decision.
+The operation label alone is not enough to establish destructive authority. Before mutation, the selected engine/adapter must produce or expose a bounded **planned-effect set** for the exact desired-state revision. The CEL classifies effects at least as create, observe, in-place update, detach, replace/recreate, and destroy.
+
+Any planned effect that destroys an existing resource, replaces/recreates it, performs an irreversible data-loss action, or otherwise removes an existing protected capability is **destructive** even when the outer request is labeled `UPDATE`, `ROLLBACK`, or `CREATE_OR_RECONCILE`.
+
+Destructive effects require a separately bound destructive/delete decision that covers the exact resource/effect set and its digest. If the engine cannot determine whether an operation may destroy or replace a protected resource before applying it, the CEL fails closed and requires human review rather than treating the operation as an ordinary update.
 
 ## Preflight
 
 Before any provider mutation, the CEL must verify:
 
 1. executor and adapter version are accepted;
-2. execution package integrity;
-3. current time is inside the authorization window;
-4. target identity matches the FoundationTarget;
-5. provider/cloud partition or environment matches the approved profile;
-6. region/location is permitted;
-7. workload identity is the expected principal;
-8. effective provider permissions do not exceed the accepted execution profile;
-9. required network, DNS, logging, encryption, evidence, cost, and security dependencies are available;
-10. no competing authoritative reconciler is detected;
-11. rollback/teardown path is available for the requested operation; and
-12. the evidence sink is writable before the first mutation where the profile requires durable audit capture.
+2. execution package integrity **and authenticity**;
+3. trusted package issuer, intended CEL audience, issuance identity, and decision/approval provenance;
+4. current time is inside the authorization window;
+5. target identity matches the FoundationTarget;
+6. provider/cloud partition or environment matches the approved profile;
+7. region/location is permitted;
+8. workload identity is the expected principal;
+9. effective provider permissions do not exceed the accepted execution profile;
+10. the exact planned-effect set is bound to the approved desired-state revision;
+11. every destructive replace/destroy/irreversible effect has separate, exact destructive authority;
+12. required network, DNS, logging, encryption, evidence, cost, and security dependencies are available;
+13. no competing authoritative reconciler is detected;
+14. rollback/teardown path is available for the requested operation; and
+15. the evidence sink is writable before the first mutation where the profile requires durable audit capture.
 
 A failed preflight produces evidence and performs no cloud write.
 
@@ -226,7 +247,9 @@ A completed attempt should retain or reference:
 - executor/adapter/engine versions;
 - workload principal and target identity;
 - authorization and change references;
-- operation type;
+- operation type and exact planned-effect digest;
+- destructive-effect classification and separate destructive authorization reference where applicable;
+- authenticated package issuer, audience, and approval-provenance verification result;
 - provider request/activity identifiers where safely retainable;
 - resource identities in sanitized form;
 - preflight result;
@@ -306,11 +329,13 @@ Before runtime CEL development is accepted, reviewers must be able to determine 
 3. how authorization is bound to immutable desired state;
 4. how an operation is restricted to one customer and FoundationTarget;
 5. how execution engines remain replaceable;
-6. how deletion authority remains separate;
-7. how the customer revokes future mutation authority;
-8. how failures and partial state are represented;
-9. what evidence returns to IPW; and
-10. what additional constraints apply under the Government Security Profile.
+6. how destroy/replace effects are detected and bound to separate destructive authority even when requested as update or rollback;
+7. how package issuer, audience, and human-decision provenance are authenticated;
+8. how external hosted execution authorities are modeled when provider credentials or mutation authority leave the customer-hosted runtime;
+9. how the customer revokes future mutation authority;
+10. how failures and partial state are represented;
+11. what evidence returns to IPW; and
+12. what additional constraints apply under the Government Security Profile.
 
 ## Non-goals
 
