@@ -338,20 +338,27 @@ The execution layer must not weaken those controls merely because a cloud provid
 
 ## Human authorization
 
-A human approval reference and the resulting execution package must be authenticity-protected and bind to the exact:
+For any write-capable operation, the CEL must first return a **reviewable immutable plan/effect artifact** or an authenticated retrievable reference to its exact contents. The reviewer must be able to inspect the affected resources, effect classifications, destructive/irreversible effects, provider-state preconditions, target, adapter/engine version, and plan/effect digest before approving execution.
+
+A human approval reference and the resulting execution grant must be authenticity-protected and bind to the exact:
 
 - trusted issuer / decision provenance;
 - intended CEL audience;
 - customer/tenant;
 - FoundationTarget;
-- product/revision;
-- desired-state digest;
+- product/revision and desired-state digest;
+- reviewable plan/effect artifact identity or authenticated retrievable reference;
+- plan/effect digest;
+- affected-resource set;
+- effect classifications, including every destructive/irreversible effect;
+- provider-state preconditions/version references;
+- adapter/engine identity and version used to compute the plan;
 - operation;
 - trusted profile;
 - assessment/evidence set;
 - expiration/validity period.
 
-Approval is invalid if any material binding changes.
+Approval is invalid if the plan/effect artifact was not available for review before the decision, or if any material binding changes. A changed plan, resource set, effect classification, provider-state precondition, adapter/engine version, or plan digest requires a new review and grant.
 
 A prior approval does not authorize:
 
@@ -423,27 +430,29 @@ A future Government Security Profile implementation is not accepted until tests 
 11. cross-tenant execution fails;
 12. destroy or replace/recreate effects cannot be inferred from create/update/rollback/reconcile authority;
 13. the exact planned-effect set is verified before mutation and ambiguous destructive effects fail closed;
-14. untrusted issuer, wrong audience, bad signature/attestation, or fabricated approval provenance fails closed;
-15. a hosted execution service with provider authority is treated as a separate trust zone and cannot bypass CEL authorization;
-16. the EEA rejects a CEL-audience package and requires its own CEL-signed audience-bound delegation grant;
-17. the EEA delegation grant binds exact planned effects, affected resources, provider-state preconditions, target, expiry, replay identity and revocation state;
-18. CEL or EEA execution fails closed if the plan/effects or provider-state preconditions change after authorization;
-19. an EEA checks current authoritative revocation state (or uses a grant-scoped provider identity whose revocation is provider-enforced) immediately before each mutation;
-20. inability to establish current revocation freshness prevents an EEA mutation;
-21. completion/expiry/revocation of a grant removes or suspends continuous provider-write capability;
-22. a later drift correction requires a fresh plan, provider-state preconditions, authorization, and execution/delegation grant;
-23. customer revocation prevents subsequent provider mutation;
-24. partial provider failure remains explicit;
-25. EEA-returned evidence is signed/attested by the exact authorized EEA and linked to the exact delegation grant, plan/effects, attempt identity, provider results, and replay identity;
-26. replay of an already accepted EEA result nonce/receipt sequence is rejected for current-state projection;
-27. an EEA result outside the permitted receipt window is historical-only unless an explicit late-result rule accepts it without superseding newer state;
-28. a result for an attempt that is neither outstanding nor the latest terminal attempt, or that has been superseded by a newer accepted attempt/result, cannot become the current operational result;
-29. an older signed EEA result cannot replace a newer accepted attempt/result;
-30. required provider-state freshness/reference mismatch prevents the result from being projected as current state;
-31. stale/replayed/superseded results may be retained only as ordered historical evidence with explicit disposition;
-32. evidence does not contain credentials/secrets;
-33. restricted-network dependency acquisition is deterministic; and
-34. no test result is promoted into an authorization claim.
+14. write-capable human approval fails if the reviewable plan/effect artifact (or authenticated retrievable reference) was not presented before the decision;
+17. approval and the execution grant bind the exact plan/effect digest, affected-resource set, effect classifications, provider-state preconditions, and adapter/engine version; changing any of them requires re-review and a new grant;
+18. untrusted issuer, wrong audience, bad signature/attestation, or fabricated approval provenance fails closed;
+17. a hosted execution service with provider authority is treated as a separate trust zone and cannot bypass CEL authorization;
+18. the EEA rejects a CEL-audience package and requires its own CEL-signed audience-bound delegation grant;
+19. the EEA delegation grant binds exact planned effects, affected resources, provider-state preconditions, target, expiry, replay identity and revocation state;
+20. CEL or EEA execution fails closed if the plan/effects or provider-state preconditions change after authorization;
+21. an EEA checks current authoritative revocation state (or uses a grant-scoped provider identity whose revocation is provider-enforced) immediately before each mutation;
+22. inability to establish current revocation freshness prevents an EEA mutation;
+23. completion/expiry/revocation of a grant removes or suspends continuous provider-write capability;
+24. a later drift correction requires a fresh plan, provider-state preconditions, authorization, and execution/delegation grant;
+25. customer revocation prevents subsequent provider mutation;
+26. partial provider failure remains explicit;
+27. EEA-returned evidence is signed/attested by the exact authorized EEA and linked to the exact delegation grant, plan/effects, attempt identity, provider results, and replay identity;
+28. replay of an already accepted EEA result nonce/receipt sequence is rejected for current-state projection;
+29. an EEA result outside the permitted receipt window is historical-only unless an explicit late-result rule accepts it without superseding newer state;
+30. a result for an attempt that is neither outstanding nor the latest terminal attempt, or that has been superseded by a newer accepted attempt/result, cannot become the current operational result;
+31. an older signed EEA result cannot replace a newer accepted attempt/result;
+32. required provider-state freshness/reference mismatch prevents the result from being projected as current state;
+33. stale/replayed/superseded results may be retained only as ordered historical evidence with explicit disposition;
+34. evidence does not contain credentials/secrets;
+35. restricted-network dependency acquisition is deterministic; and
+36. no test result is promoted into an authorization claim.
 
 ## Relationship to cloud-provider attestations
 
