@@ -23,7 +23,7 @@ Cloud-foundation advisory is therefore an enabling workstream, not an undocument
 | Infrastructure-product contract | A | C | C/R when contracted | governed product workflow |
 | Provider-specific adapter implementation | A | C | R when contracted | Forge/adapter handoff only after approval |
 | Human approval and risk acceptance | A/R customer authority | I/C | I/C | prohibited authority |
-| Cloud execution | A | provider platform supplies APIs | R only when authorized | approved control plane/adapter executes |
+| Cloud execution | A | provider platform supplies APIs | R only when authorized | Customer Execution Layer or separately approved External Execution Authority executes only the authenticated, plan-bound effects; product plane holds no provider credential |
 | Operations, incident, backup, and cost | A | provider shared-responsibility inputs | R when contracted | evidence/status integration only |
 | Production authorization | A/R customer authority | C | C | cannot authorize |
 
