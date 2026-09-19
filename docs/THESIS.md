@@ -36,8 +36,9 @@ A product-led sequence can instead be:
 
 ```mermaid
 flowchart LR
-  S[Minimal trusted seed] --> C[Crossplane control plane]
-  C --> F[Foundation capabilities as products]
+  S[Minimal trusted seed] --> C[Customer Execution Layer]
+  C --> X[Reference reconciler: Crossplane]
+  X --> F[Foundation capabilities as products]
   F --> M[Minimum viable foundation]
   M --> P[Consumer products]
   P --> E[Evidence-led evolution]
@@ -45,7 +46,7 @@ flowchart LR
 
 The seed is not the complete foundation. It is only the irreducible identity, audit, connectivity, source, management-cluster, and policy boundary needed to operate safely.
 
-Crossplane can then establish and continuously manage selected foundation capabilities as versioned products where provider support and authority allow.
+Crossplane can serve as the reference reconciler inside the Customer Execution Layer. Provider writes are not standing authority: each write-capable session is limited to the exact authenticated plan/effects currently authorized, while ongoing drift observation can remain read-only until a fresh plan and grant authorize another mutation.
 
 ## Composite AI changes the product lifecycle
 
@@ -63,7 +64,7 @@ Bounded agent responsibilities can include:
 
 The authority rule is fixed:
 
-> **AI proposes and explains. Deterministic controls validate. Authorized people approve. Crossplane reconciles. Cloud-native controls enforce the final boundary.**
+> **AI proposes and explains. Deterministic controls validate. Authorized people approve. The product plane binds execution authority. The Customer Execution Layer reconciles the exact authorized effects. Cloud-native controls enforce the final boundary.**
 
 ## Multi-cloud without lowest-common-denominator design
 
@@ -92,7 +93,7 @@ The separation of responsibility is deliberate:
 - Guard owns deterministic infrastructure-product assessment and evidence decisions within its declared scope.
 - Forge converts approved intent into bounded product proposals and lifecycle artifacts.
 - IaaP Assurance carries authority, custody, safeguard-continuity, rollback, and continuous-assurance references across the coexistence path.
-- Crossplane reconciles approved infrastructure-product claims but does not rewrite applications, migrate business data, or authorize retirement.
+- The Customer Execution Layer admits only authenticated, plan-bound execution grants; Crossplane may act as its reference reconciler for those finite authorized effects but does not hold product-plane approval authority, rewrite applications, migrate business data, or authorize retirement.
 
 One system must remain authoritative for each governed transaction and data element at every stage. New applications should integrate through APIs, events, controlled batch contracts, or approved data-replication boundaries rather than creating fresh direct coupling to legacy data stores.
 
@@ -108,4 +109,4 @@ Enterprises may still use them externally when justified. Their absence from the
 
 ## Strategic statement
 
-> **We are moving from building provider-specific foundations and productizing them later to establishing and evolving a multi-cloud foundation through governed product APIs, a persistent Crossplane control plane, bounded composite AI, and executable evidence.**
+> **We are moving from building provider-specific foundations and productizing them later to establishing and evolving a multi-cloud foundation through governed product APIs, a customer-controlled execution layer with replaceable reconciler technology, bounded composite AI, and executable evidence.**
