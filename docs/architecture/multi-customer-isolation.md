@@ -60,7 +60,6 @@ Multiple customers share runtime infrastructure behind hard logical tenant bound
 
 For regulated enterprise adoption, dedicated-enterprise and managed-isolated deployment are the preferred near-term target patterns.
 
-
 ## Shared platform and customer-specific administration boundary
 
 A shared platform operator may own the cloud organization, provider relationship, landing-zone factory, or common management services while each customer retains a separately scoped product and workload boundary. Shared ownership of the substrate does not merge customer identity, approval, evidence, secrets, workload administration, or risk decisions.
@@ -92,6 +91,7 @@ Before a customer-hosted or managed-isolated deployment can advance beyond docum
 7. recovery, incident response, export, and decommissioning ownership for both layers.
 
 These are acceptance requirements. They do not claim that any current deployment has passed them.
+
 ## Trusted profile relationship
 
 Trusted-profile approval binds:
