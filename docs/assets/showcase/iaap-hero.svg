@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
-  <title id="title">Infrastructure Product Works governed human and agent architecture</title>
-  <desc id="desc">Humans use Storefront and enterprise portals while AI agents use an MCP-compatible discovery surface. Both converge on one governed product catalog and stable product contracts before deterministic governance, Forge realization, and replaceable Crossplane Terraform or native API fulfillment across AWS Azure and GCP.</desc>
+  <title id="title">Northstar Signal and Infrastructure Product Works governed human and agent architecture</title>
+  <desc id="desc">Northstar Signal carries leadership outcomes and bounded product intent into a governed product catalog. Humans use Storefront and enterprise portals while AI agents use an MCP-compatible discovery surface. Both converge on stable product contracts before deterministic governance, Forge and Assurance realization, and replaceable Crossplane, Terraform, or native API fulfillment across AWS, Azure, and GCP.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061426"/><stop offset=".55" stop-color="#08213b"/><stop offset="1" stop-color="#071728"/></linearGradient>
     <linearGradient id="catalog" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#079447"/><stop offset="1" stop-color="#16c45d"/></linearGradient>
@@ -12,13 +12,15 @@
   <rect x="25" y="25" width="1550" height="850" rx="46" fill="url(#bg)" stroke="#1e6b94" stroke-width="2"/>
   <text x="90" y="85" class="k">INFRASTRUCTURE-AS-A-PRODUCT</text>
   <text x="90" y="145" class="title">One governed product system. Multiple consumption surfaces.</text>
-  <text x="90" y="187" class="tag">Humans and agents discover the same governed products. Authority stays explicit.</text>
+  <text x="90" y="187" class="tag">Northstar connects leadership outcomes to bounded product intent; humans and agents consume the same catalog.</text>
 
   <g transform="translate(90 235)"><rect width="300" height="42" rx="21" fill="#092238" stroke="#0ea5e9" stroke-width="2"/><text x="150" y="27" text-anchor="middle" class="pill">HUMAN CONSUMPTION</text></g>
   <g transform="translate(90 300)"><rect width="300" height="145" rx="24" fill="#08223a" stroke="#22bdf2" stroke-width="2"/><text x="28" y="48" class="ct">Storefront / Backstage</text><text x="28" y="83" class="cs">browse • configure • order</text><text x="28" y="112" class="cs">stable product experience</text></g>
 
   <g transform="translate(90 485)"><rect width="300" height="42" rx="21" fill="#211333" stroke="#a855f7" stroke-width="2"/><text x="150" y="27" text-anchor="middle" class="pill">AGENT CONSUMPTION</text></g>
   <g transform="translate(90 550)"><rect width="300" height="145" rx="24" fill="url(#ai)" stroke="#c084fc" stroke-width="2"/><text x="28" y="48" class="ct">IPW MCP Surface</text><text x="28" y="83" class="cs">discover governed products</text><text x="28" y="112" class="cs">structured agent interface</text></g>
+
+  <g transform="translate(500 220)"><rect width="355" height="95" rx="22" fill="#102e4b" stroke="#38bdf8" stroke-width="2"/><text x="28" y="34" class="ct">Northstar Signal</text><text x="28" y="61" class="cs">Leadership outcomes • OKRs • decisions</text><text x="28" y="83" class="cs">CAR bounds product intent</text></g>
 
   <g transform="translate(500 330)"><rect width="355" height="270" rx="30" fill="url(#catalog)" stroke="#34d399" stroke-width="2.5"/><text x="34" y="52" class="ct">Governed Product Catalog</text><text x="34" y="90" class="cs">one product identity + version</text><text x="34" y="120" class="cs">security baseline + evidence</text><text x="34" y="150" class="cs">entitlements + cost boundaries</text><text x="34" y="180" class="cs">lifecycle + bounded inputs</text><rect x="34" y="204" width="286" height="42" rx="13" fill="#052e16" opacity=".48"/><text x="177" y="231" text-anchor="middle" class="tiny">OUTCOMES, NOT IMPLEMENTATION TOPOLOGY</text></g>
 
@@ -29,6 +31,7 @@
 
   <g stroke="#7dd3fc" stroke-width="3" fill="none" marker-end="url(#arrow)">
     <path d="M390 372 C438 372 454 400 500 418"/>
+    <path d="M677 315 L677 330"/>
     <path d="M390 622 C438 622 454 560 500 538"/>
     <path d="M855 420 C890 408 900 382 930 370"/>
     <path d="M855 515 C890 528 900 560 930 575"/>
@@ -44,5 +47,5 @@
   <path d="M1390 600 C1390 700 1150 700 1150 755" fill="none" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#arrow)"/>
 
   <g transform="translate(90 760)"><rect width="720" height="58" rx="18" fill="#0b1f2d" stroke="#22c55e" stroke-width="1.7"/><text x="28" y="25" class="tiny">Productize first: raw cloud service → governed service product → composite product → discovery.</text><text x="28" y="45" class="tiny">Security, architecture, FinOps, entitlements, lifecycle and evidence remain part of the product definition.</text></g>
-  <text x="1510" y="845" text-anchor="end" class="foot">Infrastructure Product Works™ • governed agentic interoperability reference architecture</text>
+  <text x="1510" y="845" text-anchor="end" class="foot">Infrastructure Product Works™ • strategy-to-product • governed agentic interoperability reference architecture</text>
 </svg>
