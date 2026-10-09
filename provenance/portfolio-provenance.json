@@ -96,7 +96,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "fab872679716a3b9b33d19e07c985bd34f1201866967d3970131e49bacbb6b14"
+      "sha256": "feb429b798d78768d3d77b3e5181c76097f0b4e8f9e95e8ac9fbb184f747e1e4"
     },
     {
       "path": "docs/assets/showcase/progressive-legacy-modernization.svg",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "bfe6e1a661c6305d73143a3f1e07b43e40207fcb91aba598065034346a932a1e"
+    "digest": "3bb4f23a0f4124b86ccee3a569efcea16fd07dce8fc2c7758bc7a308d85f1bb3"
   }
 }

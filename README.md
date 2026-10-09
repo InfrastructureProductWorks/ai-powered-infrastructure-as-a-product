@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/showcase/iaap-hero.svg" alt="Northstar Signal and governed human and agent Infrastructure-as-a-Product architecture" width="1100"/>
+  <img src="docs/assets/showcase/iaap-hero.svg" alt="Northstar Signal, Composite AI, and the IPW MCP Surface in the governed product architecture" width="1100"/>
 </p>
 
 <h1 align="center">AI-Powered Infrastructure as a Product</h1>
