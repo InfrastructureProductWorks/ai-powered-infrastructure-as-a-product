@@ -8,9 +8,9 @@
 
 <p align="center"><strong>IaaS is what we buy; infrastructure-as-a-product is what we build.</strong></p>
 
-<p align="center"><strong>Storefront is the product experience; Backstage is an adapter; authorized people decide; the product plane binds execution authority; the Customer Execution Layer reconciles exact authorized effects.</strong></p>
+<p align="center"><strong>Northstar Signal™ connects leadership outcomes to bounded product intent; Storefront is the product experience; authorized people decide; the product plane binds execution authority; the Customer Execution Layer reconciles exact authorized effects.</strong></p>
 
-<p align="center">Composite AI • Crossplane • InfrastructureProductWorks Storefront • Backstage adapter • GitHub governance • deterministic policy • multi-cloud evidence</p>
+<p align="center">Northstar Signal™ • Composite AI • Crossplane • InfrastructureProductWorks Storefront • Backstage adapter • GitHub governance • deterministic policy • multi-cloud evidence</p>
 
 <details>
 <summary><strong>Original multi-cloud reference visual</strong></summary>
@@ -58,6 +58,16 @@ Platform value is therefore measured at the consumer boundary. Lines of infrastr
 <p align="center"><em>Measure the developer experience—not the activity behind it.</em></p>
 
 ---
+
+## Northstar Signal™ connects strategy to delivery
+
+**Northstar Signal™** is IPW’s leadership-facing cloud-product strategy, investment, and outcome-governance product. It helps accountable division leaders decide which reusable cloud capabilities should become or materially evolve as IPW-managed products, then carries approved intent into delivery and outcome measurement.
+
+Northstar connects division Objectives and Key Results to a **Strategic Outcome Record**, a **Cloud Product Decision Record**, and a **Capability Authorization Record (CAR)**. Management can translate an authorized outcome into an Epic and assign it to a delivery team; that team keeps using its existing backlog system to decompose the work. Stable identifiers preserve the lineage from outcome and CAR through Epic, product evidence, and measured results.
+
+Composite AI may propose options and draft OKRs, but accountable leaders edit, accept, or reject decisions. A CAR bounds product intent and downstream productization context; it does not authorize funding, procurement, staffing, cloud access, deployment, provisioning, or risk acceptance. Northstar is not a general enterprise portfolio system and does not replace Jira, Azure DevOps, GitHub Projects, or the infrastructure product lifecycle described below.
+
+The portfolio registration is documentation-first with a `CONTINUE_VALIDATION` posture. This thesis does not claim a supported production Northstar deployment or grant operational authority.
 
 ## Get IaaP Guard
 
@@ -126,6 +136,7 @@ This repository is the **thesis, architecture, governance, operating-model, and 
 
 The maintained reference architecture is intentionally small and opinionated:
 
+- **Northstar Signal™** connects leadership outcomes and bounded product intent to authorized backlog work, evidence, and measured outcomes.
 - **Infrastructure product contracts** define the stable consumer boundary.
 - **InfrastructureProductWorks Storefront** is the canonical first-class browse, configure, order, track, and handoff-inspection experience.
 - **Backstage Storefront Adapter** gives enterprises already using Backstage the same governed order contract without making Backstage the product boundary.
@@ -533,7 +544,7 @@ The desired architecture makes the opposite true:
 
 This repository is the public front door for a deliberately separated product system. The inventory below includes every repository that currently implements, operates, demonstrates, or retains acceptance evidence for this Infrastructure-as-a-Product program. Other repositories in the publishing organization are outside this portfolio unless this inventory explicitly includes them.
 
-The current named product family is **IaaP Guard™**, **IaaP Forge™**, **IaaP Console™**, and **IaaP Assurance™**. The names are claimed by Larry Cureton; the GitHub organization is a publishing namespace, not a separately asserted owner. See the [trademark and naming notice](TRADEMARKS.md).
+The current named product family includes **Northstar Signal™**, **IaaP Guard™**, **IaaP Forge™**, **IaaP Console™**, and **IaaP Assurance™**. The names are claimed by Larry Cureton; the GitHub organization is a publishing namespace, not a separately asserted owner. See the [trademark and naming notice](TRADEMARKS.md).
 
 ```mermaid
 flowchart TB
@@ -621,6 +632,7 @@ See [POC Portfolio](docs/poc-portfolio.md) for the implementation boundaries and
 ### Product-system shorthand
 
 ```text
+Northstar Signal = strategy, bounded product decisions, and outcome lineage
 InfrastructureProductWorks Storefront = first-class product experience
 Backstage Storefront Adapter = enterprise portal adapter over the same order contract
 Product API = what the consumer is ordering

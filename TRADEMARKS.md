@@ -9,6 +9,7 @@ software and related services:
 | Mark | Current use |
 |---|---|
 | **Infrastructure Product Works™** | Publishing identity and umbrella for the governed Infrastructure-as-a-Product portfolio. |
+| **Northstar Signal™** | Leadership-facing cloud-product strategy, investment, and outcome governance. |
 | **IaaP Guard™** | Deterministic infrastructure-product architecture and evidence evaluation. |
 | **IaaP Forge™** | Governed infrastructure-product design and lifecycle software. |
 | **IaaP Console™** | Customer-hosted evidence, review, and selection experience. |

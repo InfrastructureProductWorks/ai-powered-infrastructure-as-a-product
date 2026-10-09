@@ -20,6 +20,16 @@ The product is a supported capability with:
 - adoption and cost-to-serve measures; and
 - a roadmap informed by demand and operational evidence.
 
+## Strategy must stay connected to product delivery
+
+**Northstar Signal™** is the leadership-facing strategy, investment, and outcome-governance product for deciding which reusable cloud capabilities should become or materially evolve as IPW-managed products. It connects division Objectives and Key Results to explicit outcome and decision records, then binds approved product intent to a Capability Authorization Record (CAR).
+
+Management translates authorized outcomes into Epics, dependencies, sequencing, and team assignments. Delivery teams decompose assigned Epics in their existing execution systems; Northstar preserves lineage without replacing those backlogs. Delivery and assurance evidence can inform outcome views, while each source remains authoritative for its own records and relationships.
+
+Composite AI may propose options or draft OKRs; accountable leaders retain decision authority. A CAR is a bounded product-intent handoff, not permission to fund, procure, staff, provision, deploy, mutate cloud resources, or accept risk. Northstar is narrower than enterprise portfolio management and does not replace application delivery or infrastructure execution systems.
+
+The portfolio registration is documentation-first with a `CONTINUE_VALIDATION` posture. This thesis makes no supported-production or operational-authority claim for Northstar Signal.
+
 ## Foundation establishment has changed
 
 The traditional sequence often looks like:
