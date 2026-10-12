@@ -7,3 +7,16 @@ These fixtures preserve deterministic negative tests for the bounded AI authorit
 - `prompt-injection/hidden-html.md` must retain obvious injection indicators for detection tests.
 
 The tests do not grant the model any execution authority. They verify that proposed tool actions remain bounded by deterministic controls.
+
+
+## Typed advisory and destination contracts
+
+The action sample now allows only `propose`, `explain`, `diagnose`, and `evidence`, with a nonempty string justification and a low-risk model input. Missing fields, wrong types, unknown verbs, execution verbs, and injection-risk overrides are denied. A `human_approved` field never turns a model request into execution authority. This sample does not govern owner-authorized repository maintenance or impose a second-human gate.
+
+The URL sample defaults to deny without an operator-owned `data.agents.egress.allowed_hosts` array. It requires canonical HTTPS URLs and a separately supplied `trusted_transport` report bound to the exact URL and host: boolean `verified` and `connection_pinned`, `redirect_policy: deny`, and a nonempty array of public resolved IP addresses. Local, private, metadata, reserved, mapped/transition IPv6 and mixed safe/unsafe resolution are denied.
+
+**Runtime boundary:** the adapter must create the trusted report outside model-controlled input, pin the actual connection to the reviewed resolution, deny redirects, validate TLS for the host, and independently enforce customer scope and current authorization. These policies cannot authenticate a report, perform transport enforcement, prevent a transport from resolving again, or prove deployed SSRF protection. No allowlist is shipped, no network request is performed by the tests, and no executor is introduced.
+
+Run `opa check policies/opa` and `opa test policies/opa -v` using CI's pinned OPA version. The prompt-injection grep checks fixture integrity only; runtime injection resistance requires path-specific tests in the bounded implementation repositories.
+
+Address classification additionally denies IPv6 outside the current [IANA global-unicast envelope](https://www.iana.org/assignments/ipv6-address-space), and the retired 6bone and new documentation ranges within it from the [unicast registry](https://www.iana.org/assignments/ipv6-unicast-address-assignments). Tests retain positive ordinary IPv4 and global IPv6 cases while denying legacy site-local, IPv4-compatible, mapped and transition forms. Operators must review policy data against current registries when adding destinations; this conservative sample is not a complete network routing or allocation certificate.

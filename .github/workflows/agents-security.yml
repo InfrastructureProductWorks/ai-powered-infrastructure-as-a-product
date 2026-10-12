@@ -19,6 +19,8 @@ jobs:
           version: v0.64.1
       - name: Validate policy source
         run: opa check policies/opa
+      - name: Exercise typed advisory and egress policy boundaries
+        run: opa test policies/opa -v
       - name: Prove destructive action is denied
         run: |
           opa eval --format=json \
@@ -33,7 +35,7 @@ jobs:
             -d policies/opa \
             'data.agents.ssrf.deny' > ssrf-deny.json
           jq -e '.result[0].expressions[0].value | type == "array" and length > 0' ssrf-deny.json >/dev/null
-      - name: Prove prompt-injection fixture remains detectable
+      - name: Check prompt-injection fixture markers (fixture integrity only)
         run: grep -E -i '<script|on[a-z]+\=|data:|Ignore all prior instructions' tests/agents-evals/prompt-injection/hidden-html.md
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
