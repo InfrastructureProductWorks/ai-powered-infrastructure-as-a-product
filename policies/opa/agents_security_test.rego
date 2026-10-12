@@ -37,6 +37,8 @@ test_injection_risk_cannot_be_overridden {
 test_valid_egress_contract_allowed {
   request := {"tool": {"action": {"url": safe_url}}, "trusted_transport": safe_transport}
   data.agents.ssrf.allow with input as request with data.agents.egress.allowed_hosts as ["api.example.com"]
+  ipv6 := object.union(safe_transport, {"resolved_ips": ["2001:4860:4860::8888"]})
+  data.agents.ssrf.allow with input as {"tool": {"action": {"url": safe_url}}, "trusted_transport": ipv6} with data.agents.egress.allowed_hosts as ["api.example.com"]
 }
 
 test_missing_egress_allowlist_denied {
