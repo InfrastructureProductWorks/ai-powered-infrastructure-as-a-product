@@ -59,7 +59,7 @@ test_noncanonical_and_alternate_urls_denied {
 }
 
 test_private_mixed_and_invalid_resolution_denied {
-  every ips in [[], ["127.0.0.2"], ["10.0.0.1"], ["169.254.169.254"], ["100.64.1.2"], ["172.16.1.1"], ["192.168.1.1"], ["::1"], ["fe80::1"], ["fc00::1"], ["::ffff:127.0.0.1"], ["8.8.8.8", "10.0.0.1"], ["not-an-ip"], [null], ["8.8.8.8/32"]] {
+  every ips in [[], ["127.0.0.2"], ["10.0.0.1"], ["169.254.169.254"], ["100.64.1.2"], ["172.16.1.1"], ["192.168.1.1"], ["::1"], ["fe80::1"], ["fc00::1"], ["::ffff:127.0.0.1"], ["fec0::1"], ["::127.0.0.1"], ["::8.8.8.8"], ["3ffe::1"], ["3fff::1"], ["5f00::1"], ["192.88.99.1"], ["8.8.8.8", "10.0.0.1"], ["not-an-ip"], [null], ["8.8.8.8/32"]] {
     transport := object.union(safe_transport, {"resolved_ips": ips})
     request := {"tool": {"action": {"url": safe_url}}, "trusted_transport": transport}
     not data.agents.ssrf.allow with input as request with data.agents.egress.allowed_hosts as ["api.example.com"]

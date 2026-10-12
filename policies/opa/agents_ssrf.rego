@@ -8,11 +8,11 @@ default allow = false
 blocked_cidrs := {
   "0.0.0.0/8", "10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8",
   "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24",
-  "192.0.2.0/24", "192.168.0.0/16", "198.18.0.0/15",
+  "192.0.2.0/24", "192.88.99.0/24", "192.168.0.0/16", "198.18.0.0/15",
   "198.51.100.0/24", "203.0.113.0/24", "224.0.0.0/4", "240.0.0.0/4",
   "::/128", "::1/128", "64:ff9b::/96",
   "64:ff9b:1::/48", "100::/64", "2001::/23", "2001:db8::/32",
-  "2002::/16", "fc00::/7", "fe80::/10", "ff00::/8"
+  "2002::/16", "3ffe::/16", "3fff::/20", "fc00::/7", "fe80::/10", "fec0::/10", "ff00::/8"
 }
 
 valid_ip(ip) {
@@ -42,6 +42,14 @@ unsafe_ip(ip) {
   is_string(ip)
   contains(ip, ":")
   net.cidr_contains("::ffff:0:0/96", ip)
+}
+
+# Default-deny IPv6 outside the current IANA global-unicast envelope.
+# This also catches IPv4-compatible and other legacy/reserved representations.
+unsafe_ip(ip) {
+  is_string(ip)
+  contains(ip, ":")
+  not net.cidr_contains("2000::/3", ip)
 }
 
 valid_destination {
