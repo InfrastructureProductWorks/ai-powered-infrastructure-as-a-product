@@ -2,33 +2,27 @@ package agents.actions
 
 default allow = false
 
-danger_verbs := {
-  "delete","drop","truncate","transfer","wire","terminate",
-  "revoke","rotate","shutdown","scale_down","change_dns",
-  "open_ingress","disable_mfa","purge","make_public","approve_payment"
+# This bounded AI policy permits advisory work only. Owner-authorized source
+# maintenance and human production execution use their separate trust boundaries.
+advisory_verbs := {"propose", "explain", "diagnose", "evidence"}
+
+valid_request {
+  is_object(input.tool)
+  is_object(input.tool.action)
+  is_string(input.tool.action.verb)
+  advisory_verbs[input.tool.action.verb]
+  is_string(input.tool.justification)
+  count(trim_space(input.tool.justification)) > 0
+  is_object(input.model)
+  input.model.injection_risk == "low"
 }
 
-# Block danger verbs unless there is explicit human approval.
 deny[msg] {
-  v := lower(input.tool.action.verb)
-  danger_verbs[v]
-  not input.tool.approval.human_approved
-  msg := sprintf("Danger verb '%s' requires human approval", [v])
-}
-
-# Require natural-language justification for any tool call.
-deny[msg] {
-  not input.tool.justification
-  msg := "Tool call missing natural-language justification"
-}
-
-# Minimal hygiene: block tool calls when injection risk is high.
-deny[msg] {
-  input.model.injection_risk == "high"
-  not input.tool.approval.human_approved
-  msg := "High injection risk without human approval"
+  not valid_request
+  msg := "A typed, justified low-risk advisory action is required; approval fields cannot grant AI execution authority"
 }
 
 allow {
+  valid_request
   count(deny) == 0
 }
