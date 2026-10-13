@@ -32,7 +32,7 @@ OWNED_COORDINATE=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)
 
 def restricted(text):
     text=normalize(text)
-    return bool(PATTERN.search(text)) or any(posixpath.normpath(m.group(1)).split('/')[0].lower().rstrip('.').removesuffix('.git') not in PUBLIC_SLUGS for m in OWNED_COORDINATE.finditer(text))
+    return bool(PATTERN.search(text)) or any(posixpath.normpath(m.group(1)).split('/')[0].lower().removesuffix('.git') not in PUBLIC_SLUGS for m in OWNED_COORDINATE.finditer(text))
 
 def public_bytes(path):
     if path.is_symlink():return os.readlink(path).encode('utf-8')
