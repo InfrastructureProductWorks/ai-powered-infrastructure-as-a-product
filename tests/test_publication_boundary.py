@@ -13,6 +13,16 @@ class PublicationBoundaryTests(unittest.TestCase):
         for prefix in ['github.com:','alice@github.com:']:
             self.assertTrue(restricted(prefix+''.join(('PrivatePartner/','secret-repo.git'))))
 
+    def test_candidate_validator_tampering_cannot_disable_trusted_audit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir();(root/'scripts').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            (root/'config/publication-history.json').write_text('{}')
+            (root/'scripts/audit_publication_boundary.py').write_text('raise SystemExit(0)')
+            (root/'new.md').write_text('https://github.com/'+''.join(('PrivatePartner/','secret-repo')))
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            self.assertTrue(audit(root))
+
     def test_historical_exception_requires_exact_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);(root/'config').mkdir()
