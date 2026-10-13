@@ -70,6 +70,7 @@ class PublicationBoundaryTests(unittest.TestCase):
 
     def test_foreign_and_wrong_owner_repository_urls_are_rejected(self):
         self.assertTrue(restricted('https://github.com/'+''.join(('PrivatePartner/','secret-repo'))))
+        self.assertTrue(restricted('ssh://git@ssh.github.com:443/'+''.join(('PrivatePartner/','secret-repo.git'))))
         self.assertTrue(restricted(''.join(('SAABOLImpactVenture/','infrastructureproductworks.github.io'))))
         self.assertTrue(restricted(''.join(('https://github.com/','apps/../','PrivatePartner/','secret-repo'))))
         self.assertFalse(restricted('InfrastructureProductWorks/iaap-guard'))
