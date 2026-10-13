@@ -21,7 +21,7 @@ class PublicationBoundaryTests(unittest.TestCase):
             path.write_text(path.read_text()+' new detail')
             self.assertTrue(audit(root))
             path.write_text('Public product guidance')
-            self.assertEqual(audit(root),[])
+            self.assertTrue(audit(root))
     def test_new_reference_has_no_inherited_exception(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);(root/'config').mkdir()
@@ -51,8 +51,30 @@ class PublicationBoundaryTests(unittest.TestCase):
             value=root/'new.md';value.touch()
             subprocess.run(['git','add','.'],cwd=root,check=True)
             name='InfrastructureProductWorks/'+'iaap-'+'forge.git'
-            for text in ['https://github.com/'+name,'git@github.com:'+name,name.replace('/','%2F'),''.join('\\u%04x'%ord(c) for c in name)]:
+            for text in ['https://github.com/'+name,'git@github.com:'+name,name.replace('/','%2F'),name.replace('/', '\\/'),''.join('\\u%04x'%ord(c) for c in name)]:
                 value.write_text(text)
                 self.assertTrue(audit(root),text)
+
+    def test_historical_artifact_and_exception_cannot_both_disappear(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            artifact=root/'historical.json';artifact.write_text('retained evidence')
+            policy=root/'config/publication-history.json'
+            policy.write_text(json.dumps({'historical.json':hashlib.sha256(artifact.read_bytes()).hexdigest()}))
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            subprocess.run(['git','-c','user.name=Test','-c','user.email=test@example.invalid','commit','-qm','base'],cwd=root,check=True)
+            artifact.unlink();policy.write_text('{}')
+            subprocess.run(['git','add','-A'],cwd=root,check=True)
+            self.assertTrue(audit(root,'HEAD'))
+
+    def test_dangling_symlink_discloses_its_target_blob(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            (root/'config/publication-history.json').write_text('{}')
+            (root/'link').symlink_to('InfrastructureProductWorks/'+'iaap-'+'forge')
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            self.assertTrue(audit(root))
 
 if __name__=='__main__':unittest.main()

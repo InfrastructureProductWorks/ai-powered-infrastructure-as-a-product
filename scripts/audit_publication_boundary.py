@@ -19,10 +19,15 @@ PATTERN=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/(?:'+ '|
 def normalize(text):
     for _ in range(8):
         prior=text
-        text=html.unescape(unquote(text))
+        text=html.unescape(unquote(text)).replace('\\/', '/')
         text=re.sub(r'\\u([0-9a-fA-F]{4})',lambda m:chr(int(m.group(1),16)),text)
         if text==prior:break
     return text
+
+def public_bytes(path):
+    if path.is_symlink():return os.readlink(path).encode('utf-8')
+    if path.is_file():return path.read_bytes()
+    return None
 
 def audit(root, base_ref=None):
     exceptions=json.loads((root/'config/publication-history.json').read_text())
@@ -36,6 +41,8 @@ def audit(root, base_ref=None):
             prior=json.loads(subprocess.check_output(['git','show',base_ref+':config/publication-history.json'],cwd=root,stderr=subprocess.DEVNULL))
         except subprocess.CalledProcessError:
             prior=None
+        if prior is not None and set(prior)-set(exceptions):
+            errors.append('historical exception entries were removed')
         for name,digest in exceptions.items():
             if prior is not None:
                 if prior.get(name)!=digest:errors.append(name+': historical exception changed or added in this change')
@@ -45,10 +52,15 @@ def audit(root, base_ref=None):
                 except subprocess.CalledProcessError:old=b''
                 if hashlib.sha256(old).hexdigest()!=digest or not PATTERN.search(normalize(old.decode('utf-8',errors='replace'))):
                     errors.append(name+': exception was not a pre-existing public disclosure')
-    for name in subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines():
+    for name,digest in exceptions.items():
+        raw=public_bytes(root/name)
+        if raw is None or hashlib.sha256(raw).hexdigest()!=digest:
+            errors.append(name+': historical evidence bytes changed or disappeared')
+    for name in subprocess.check_output(['git','ls-files','-z'],cwd=root,text=True).split('\0'):
+        if not name:continue
         path=root/name
-        if not path.is_file():continue
-        raw=path.read_bytes()
+        raw=public_bytes(path)
+        if raw is None:continue
         if PATTERN.search(normalize(raw.decode('utf-8',errors='replace'))):
             if exceptions.get(name)!=hashlib.sha256(raw).hexdigest():
                 errors.append(name+': restricted coordinates are not an unchanged historical disclosure')

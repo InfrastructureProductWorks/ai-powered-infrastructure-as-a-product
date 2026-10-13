@@ -80,7 +80,7 @@
   "coveredArtifacts": [
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "427b060f45734d747330bc8aec80e3459d20daefc2a0279ab15defb11824634f"
+      "sha256": "c5bd127545afe3019458cefbfc1516b52c5a2eb8788d8c0e52c9ab411e7f77ed"
     },
     {
       "path": "CITATION.cff",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "8075fdcef324076223e62cdb261a597673c6636716437657216f30831cb3fd34"
+    "digest": "aa91f35cecb1fcb6bd2f89e633cc5b80f1edb8576ee7b4d596e9c90f20897630"
   }
 }
