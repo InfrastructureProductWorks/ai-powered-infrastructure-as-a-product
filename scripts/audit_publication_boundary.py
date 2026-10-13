@@ -46,9 +46,14 @@ def coordinate_allowed(match, approved):
     return key in approved or match.group(0).lower().startswith(('github.com','www.github.com')) and key in PUBLIC_UI_COORDINATES
 
 
+MARKDOWN_ESCAPE=re.compile(r'\\([!-/:-@\[-`{-~])')
+
 def restricted(text):
-    text=normalize(text)
-    return bool(PATTERN.search(text)) or any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in coordinate_matches(text))
+    for view in (text,MARKDOWN_ESCAPE.sub(lambda m:m.group(1),text)):
+        view=normalize(view)
+        if PATTERN.search(view) or any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in coordinate_matches(view)):
+            return True
+    return False
 
 def public_text(raw):
     if raw.startswith((b'\xff\xfe\x00\x00',b'\x00\x00\xfe\xff')):return raw.decode('utf-32')
