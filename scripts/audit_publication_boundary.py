@@ -55,8 +55,16 @@ def public_bytes(path):
     return None
 
 def audit(root, base_ref=None):
+    format_errors=[]
+    entries=subprocess.check_output(['git','ls-files','--stage','-z'],cwd=root,text=True).split('\0')
+    for entry in entries:
+        if entry and entry.startswith('160000 '):format_errors.append('Submodules are not part of the public thesis surface')
+    tracked=subprocess.check_output(['git','ls-files','-z'],cwd=root,text=True)
+    attributes=subprocess.check_output(['git','check-attr','--stdin','-z','filter'],cwd=root,input=tracked,text=True).split('\0')
+    for index in range(0,len(attributes)-2,3):
+        if attributes[index+2]=='lfs':format_errors.append('Git LFS payloads require a different reviewed publication path')
     exceptions=json.loads((root/'config/publication-history.json').read_text())
-    errors=[]
+    errors=list(format_errors)
     if base_ref:
         try:
             subprocess.check_output(['git','rev-parse','--verify',base_ref+'^{commit}'],cwd=root,stderr=subprocess.DEVNULL)
@@ -86,6 +94,9 @@ def audit(root, base_ref=None):
         path=root/name
         raw=public_bytes(path)
         if raw is None:continue
+        if path.name=='.gitmodules':errors.append(name+': submodule coordinates are not publishable')
+        if raw.startswith(b'version https://' + b'git-lfs.github.com' + b'/spec/v1'):
+            errors.append(name+': opaque Git LFS pointer is not publishable')
         if restricted(raw.decode('utf-8',errors='replace')):
             if exceptions.get(name)!=hashlib.sha256(raw).hexdigest():
                 errors.append(name+': restricted coordinates are not an unchanged historical disclosure')

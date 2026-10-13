@@ -84,4 +84,18 @@ class PublicationBoundaryTests(unittest.TestCase):
             subprocess.run(['git','add','.'],cwd=root,check=True)
             self.assertTrue(audit(root))
 
+    def test_relative_submodules_and_lfs_payloads_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            (root/'config/publication-history.json').write_text('{}')
+            module=root/'.gitmodules';module.write_text('[submodule "engine"]\n path = engine\n url = ../'+''.join(('iaap-','forge'))+'\n')
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            self.assertTrue(audit(root))
+            module.unlink();subprocess.run(['git','rm','--cached','.gitmodules'],cwd=root,check=True,stdout=subprocess.DEVNULL)
+            (root/'.gitattributes').write_text('hidden.md filter=lfs\n')
+            (root/'hidden.md').write_text('ordinary visible text')
+            subprocess.run(['git','add','.gitattributes','hidden.md'],cwd=root,check=True)
+            self.assertTrue(audit(root))
+
 if __name__=='__main__':unittest.main()
