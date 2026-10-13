@@ -17,6 +17,15 @@ NAMES=('iaap-'+'guard-core','iaap-'+'forge','iaap-'+'console','iaap-'+'assurance
        'multicloud-foundation-product-'+'poc','composite-ai-infrastructure-product-'+'poc','multicloud-foundation-poc-'+'integration')
 PATTERN=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/(?:'+ '|'.join(map(re.escape,NAMES))+r')(?![\w-])|\"(?:closureSha|workflowRunId|iamRoleArn|secretArn)\"\s*:',re.I)
 
+
+def normalize_hostnames(text):
+    text=text.translate(str.maketrans({'。':'.','．':'.','｡':'.'}))
+    def host(match):
+        try:normalized=match.group(2).encode('idna').decode('ascii')
+        except UnicodeError:return match.group(0)
+        return match.group(1)+normalized
+    return re.sub(r"((?:[A-Za-z][A-Za-z0-9+.-]*:/+|git@))([^/\s:?#\"'()<>\[\]]+)",host,text)
+
 def normalize(text):
     for normalization_step in range(9):
         prior=text
@@ -24,6 +33,7 @@ def normalize(text):
         text=re.sub(r'\\u([0-9a-fA-F]{4})',lambda m:chr(int(m.group(1),16)),text)
         text=text.replace('\\', '/')
         text=re.sub(r'/+', '/', text)
+        text=normalize_hostnames(text)
         if text==prior:break
         if normalization_step==8:raise ValueError("Publication text exceeds the bounded normalization limit")
     return text

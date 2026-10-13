@@ -75,6 +75,8 @@ class PublicationBoundaryTests(unittest.TestCase):
         self.assertTrue(restricted(''.join(('SAABOLImpactVenture/','infrastructureproductworks.github.io'))))
         self.assertTrue(restricted(''.join(('https://github.com/','apps/../','PrivatePartner/','secret-repo'))))
         self.assertTrue(restricted(r'[private](https://github\.com/'+''.join(('PrivatePartner/','secret-repo'))+')'))
+        for separator in ['。','．','｡']:
+            self.assertTrue(restricted('https://github'+separator+'com/'+''.join(('PrivatePartner/','secret-repo'))))
         self.assertFalse(restricted('InfrastructureProductWorks/iaap-guard'))
 
     def test_over_encoded_text_fails_closed(self):
