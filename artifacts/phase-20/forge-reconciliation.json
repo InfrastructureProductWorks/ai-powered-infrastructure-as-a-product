@@ -1,8 +1,10 @@
 {
-  "schemaVersion": "iaap-architecture-reconciliation-public/v2",
+  "schemaVersion": "iaap-architecture-reconciliation/v1",
   "phase": 20,
   "status": "COMPLETE",
   "forge": {
+    "repository": "SAABOLImpactVenture/iaap-forge",
+    "revision": "6fb587cb3f521e99c33039c61090fe8b738836cc",
     "credentialFreePhasesComplete": [
       11,
       12,
@@ -23,9 +25,7 @@
       "terraformEnterpriseValidated": false,
       "sanitizedEvidenceRetained": true,
       "verifiedTeardown": true
-    },
-    "product": "IaaP Forge",
-    "revisionCommitment": "sha256:1a17995e0363f2996465b5083593fb52d4728928f49bccf489f38f04afcdfa1a"
+    }
   },
   "boundaries": {
     "guardFrozen": true,
@@ -40,5 +40,6 @@
     "assessmentConclusionClaimed": false,
     "atoClaimed": false,
     "publicArchitectureOnly": true
-  }
+  },
+  "sourceEvidence": "https://github.com/SAABOLImpactVenture/iaap-forge/tree/6fb587cb3f521e99c33039c61090fe8b738836cc/evidence"
 }

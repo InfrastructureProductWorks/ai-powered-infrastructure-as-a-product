@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "vanguard-gate6-public-baseline/v2",
+  "fixture": "synthetic",
+  "release": {
+    "tag": "gate-6-bounded-pass-2026-09-02",
+    "prerelease": true,
+    "acceptanceStatus": "PASSED_FOR_BOUNDED_SYNTHETIC_PROOF",
+    "product": "IaaP Assurance (historical Vanguard baseline)",
+    "closureRevisionCommitment": "sha256:e9c601128d172d4e590a9fdc3dd3254b67550a054afb9df0745ac15f5d735255"
+  },
+  "ownership": {
+    "guard": "deterministic architecture and evidence evaluation",
+    "console": "verified evidence import, selection, and customer-hosted experience",
+    "forge": "governed infrastructure-product proposal and lifecycle binding",
+    "storefront": "optional reference consumer experience",
+    "vanguard": [
+      "authority",
+      "custody",
+      "continuous assurance"
+    ]
+  },
+  "claimBoundaries": {
+    "syntheticOnly": true,
+    "pilotAuthorized": false,
+    "liveDataAuthorized": false,
+    "productionAuthority": false
+  }
+}

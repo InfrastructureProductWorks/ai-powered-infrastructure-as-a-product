@@ -96,7 +96,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "bc5c5e30915788d37ab21fc771917a0a0c5b80ca5a5f9cd44b0dbe6bff99d464"
+      "sha256": "6090dbe1937a85cbe459f37c0e6044dbb6ce95cff0c8cc1e458c6aeb926aafd8"
     },
     {
       "path": "docs/assets/showcase/progressive-legacy-modernization.svg",
@@ -108,7 +108,7 @@
     },
     {
       "path": "docs/PUBLICATION-BOUNDARY.md",
-      "sha256": "a11f0690a14cef4da44348f325d6c485701b719f83c3b8b21e8dbdb5a5a81d83"
+      "sha256": "796463d0bedc85412dbdf7c8995edf94282206a37ad9508eac798cb3123c0716"
     },
     {
       "path": "docs/THESIS.md",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "5bcf46d8ae5ca92768d43b12aa76b5f6a6643f0be3b1bf7800e89dc37ec863ac"
+    "digest": "0e5b177c8ab2c0cc788e2dad9058da839110e71b364b22eeadc9382da537e101"
   }
 }

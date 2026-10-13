@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "accepted-release-chain-public/v2",
+  "schemaVersion": "accepted-release-chain-public/v1",
   "fixture": "synthetic",
   "decision": "CONTINUE_VALIDATION",
   "publicContract": {
@@ -14,15 +14,15 @@
   ],
   "vanguardGate6": {
     "baselinePath": "artifacts/phase-22/vanguard-gate6-baseline.json",
-    "baselineDigest": "sha256:cd7dd298f4ce7c27e8284f23ffa67c6eafb04fe928c7ec6e995ad20443b11180",
+    "baselineDigest": "sha256:a8e03e2993f235720e7087eadf3084f333773201845ddfdb0eebdb4c9af5a85f",
     "releaseTag": "gate-6-bounded-pass-2026-09-02",
+    "closureSha": "f96961c47f6866dd12025eca8afc43b376163520",
     "acceptanceStatus": "PASSED_FOR_BOUNDED_SYNTHETIC_PROOF",
     "owns": [
       "authority",
       "custody",
       "continuous assurance"
-    ],
-    "closureRevisionCommitment": "sha256:e9c601128d172d4e590a9fdc3dd3254b67550a054afb9df0745ac15f5d735255"
+    ]
   },
   "verification": {
     "result": "PASS",

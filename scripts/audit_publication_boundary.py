@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parents[1]
 NAMES=('iaap-'+'guard-core','iaap-'+'forge','iaap-'+'console','iaap-'+'assurance','vanguard-'+'suite',
        'backstage-infrastructure-product-'+'storefront-poc','crossplane-multicloud-seed-'+'poc',
        'multicloud-foundation-product-'+'poc','composite-ai-infrastructure-product-'+'poc','multicloud-foundation-poc-'+'integration')
-PATTERN=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/(?:'+ '|'.join(map(re.escape,NAMES))+r')(?![\w.-])',re.I)
+PATTERN=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/(?:'+ '|'.join(map(re.escape,NAMES))+r')(?![\w.-])|\"(?:closureSha|workflowRunId|iamRoleArn|secretArn)\"\s*:',re.I)
 
 def audit(root):
     exceptions=json.loads((root/'config/publication-history.json').read_text())

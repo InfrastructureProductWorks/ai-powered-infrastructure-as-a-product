@@ -1,6 +1,9 @@
 {
   "artifacts/evaluations/six-repo-poc-evaluation-2026-08-07.json": "2c5cc0f69e94e4100a06bc02fad2783d24a4ab1d181aa294b8d7d777d3a194cb",
   "artifacts/phase-12/live-federation-acceptance.json": "6a9d775a62614ae2d0ed762e23019d286ce85a36e4c72907fa9c949a56f2fe22",
+  "artifacts/phase-20/forge-reconciliation.json": "e6263e2f3aa9a20cd0f60727e3a8f7adcb8f6d64a12ec2b09dbf2ae7ca3e6f86",
+  "artifacts/phase-21/accepted-release-lock.json": "1c48756fc713c4b006f1c41afdf841ae5f16eb746b77aa6943b6221a6f577bdb",
+  "artifacts/phase-22/vanguard-gate6-baseline.json": "a8e03e2993f235720e7087eadf3084f333773201845ddfdb0eebdb4c9af5a85f",
   "artifacts/phase-23/managed-interconnect-closure.json": "6836fe052427a5ac2a37ed878a4b9da87f8fdb5022aeaecfb4824597d4ae439b",
   "artifacts/phase-23/snapshots/README.md": "8be40c851371be2f55998f77971fb92610f2a4e51873af1e5a8f93fe6f72a140",
   "artifacts/phase-23/snapshots/docs-poc-portfolio.md": "f9928f2cbdb53875e37d43534c72fbadf717cad8d6ff634651f22dba01d23b0c",
