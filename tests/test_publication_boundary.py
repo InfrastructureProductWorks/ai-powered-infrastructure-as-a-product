@@ -51,7 +51,7 @@ class PublicationBoundaryTests(unittest.TestCase):
             value=root/'new.md';value.touch()
             subprocess.run(['git','add','.'],cwd=root,check=True)
             name='InfrastructureProductWorks/'+'iaap-'+'forge.git'
-            for text in ['https://github.com/'+name,'git@github.com:'+name,name.replace('/','%2F'),name.replace('/', '\\/'),''.join('\\u%04x'%ord(c) for c in name)]:
+            for text in ['https://github.com/'+name,'git@github.com:'+name,'https://github.com/'+name.replace('/', '\\'),name.replace('/','%2F'),'https://github.com/'+''.join(('InfrastructureProductWorks/','iaap-guard/../','private-','producer')),name.replace('/', '\\/'),''.join('\\u%04x'%ord(c) for c in name)]:
                 value.write_text(text)
                 self.assertTrue(audit(root),text)
 

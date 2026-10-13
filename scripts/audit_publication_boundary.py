@@ -7,6 +7,7 @@ from urllib.parse import unquote
 import json
 from pathlib import Path
 import re
+import posixpath
 import subprocess
 import sys
 
@@ -21,15 +22,17 @@ def normalize(text):
         prior=text
         text=html.unescape(unquote(text)).replace('\\/', '/')
         text=re.sub(r'\\u([0-9a-fA-F]{4})',lambda m:chr(int(m.group(1),16)),text)
+        text=text.replace('\\', '/')
+        text=re.sub(r'/+', '/', text)
         if text==prior:break
     return text
 
 PUBLIC_SLUGS={'infrastructureproductworks.github.io','ai-powered-infrastructure-as-a-product','iaap-guard','enterprise-azure-governance','.github'}
-OWNED_COORDINATE=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+)',re.I)
+OWNED_COORDINATE=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
 
 def restricted(text):
     text=normalize(text)
-    return bool(PATTERN.search(text)) or any(m.group(1).lower().removesuffix('.git') not in PUBLIC_SLUGS for m in OWNED_COORDINATE.finditer(text))
+    return bool(PATTERN.search(text)) or any(posixpath.normpath(m.group(1)).split('/')[0].lower().rstrip('.').removesuffix('.git') not in PUBLIC_SLUGS for m in OWNED_COORDINATE.finditer(text))
 
 def public_bytes(path):
     if path.is_symlink():return os.readlink(path).encode('utf-8')
