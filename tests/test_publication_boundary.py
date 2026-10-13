@@ -9,6 +9,10 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from audit_publication_boundary import audit, restricted, normalize
 
 class PublicationBoundaryTests(unittest.TestCase):
+    def test_optional_ssh_username(self):
+        for prefix in ['github.com:','alice@github.com:']:
+            self.assertTrue(restricted(prefix+''.join(('PrivatePartner/','secret-repo.git'))))
+
     def test_historical_exception_requires_exact_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);(root/'config').mkdir()
