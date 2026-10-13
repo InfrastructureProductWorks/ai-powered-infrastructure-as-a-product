@@ -70,6 +70,7 @@ class PublicationBoundaryTests(unittest.TestCase):
 
     def test_foreign_and_wrong_owner_repository_urls_are_rejected(self):
         self.assertTrue(restricted('https://github.com/'+''.join(('PrivatePartner/','secret-repo'))))
+        self.assertTrue(restricted('https://github.com./'+''.join(('PrivatePartner/','secret-repo'))))
         self.assertTrue(restricted('ssh://git@ssh.github.com:443/'+''.join(('PrivatePartner/','secret-repo.git'))))
         self.assertTrue(restricted(''.join(('SAABOLImpactVenture/','infrastructureproductworks.github.io'))))
         self.assertTrue(restricted(''.join(('https://github.com/','apps/../','PrivatePartner/','secret-repo'))))
@@ -89,6 +90,17 @@ class PublicationBoundaryTests(unittest.TestCase):
             (root/'link').symlink_to('InfrastructureProductWorks/'+'iaap-'+'forge')
             subprocess.run(['git','add','.'],cwd=root,check=True)
             self.assertTrue(audit(root))
+
+    def test_bom_marked_text_is_scanned(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            (root/'config/publication-history.json').write_text('{}')
+            path=root/'encoded.md';path.touch()
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            text='https://github.com/'+''.join(('PrivatePartner/','secret-repo'))
+            for encoding in ['utf-16','utf-32','utf-8-sig']:
+                path.write_bytes(text.encode(encoding));self.assertTrue(audit(root),encoding)
 
     def test_relative_submodules_and_lfs_payloads_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

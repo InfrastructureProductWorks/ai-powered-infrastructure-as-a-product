@@ -30,7 +30,7 @@ def normalize(text):
 
 PUBLIC_REPOSITORIES={'infrastructureproductworks/enterprise-azure-governance', 'saabolimpactventure/iaap-guard', 'infrastructureproductworks/infrastructureproductworks.github.io', 'saabolimpactventure/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/.github', 'infrastructureproductworks/iaap-guard'}
 OWNED_COORDINATE=re.compile('(InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
-GITHUB_COORDINATE=re.compile(r'(?<![A-Za-z0-9_.-])(?:api\.github\.com(?::[0-9]+)?/repos/|(?!docs\.github\.com)(?:[A-Za-z0-9-]+\.)*github\.com(?::[0-9]+)?/|raw\.githubusercontent\.com(?::[0-9]+)?/|git@(?:ssh\.)?github\.com(?::[0-9]+)?[:/])([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
+GITHUB_COORDINATE=re.compile(r'(?<![A-Za-z0-9_.-])(?:api\.github\.com\.?(?::[0-9]*)?/repos/|(?!docs\.github\.com)(?:[A-Za-z0-9-]+\.)*github\.com\.?(?::[0-9]*)?/|raw\.githubusercontent\.com\.?(?::[0-9]*)?/|git@(?:ssh\.)?github\.com\.?(?::[0-9]*)?[:/])([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
 PUBLIC_UI_COORDINATES={'apps/iaap-guard'}
 
 def coordinate_matches(text):
@@ -49,6 +49,11 @@ def coordinate_allowed(match, approved):
 def restricted(text):
     text=normalize(text)
     return bool(PATTERN.search(text)) or any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in coordinate_matches(text))
+
+def public_text(raw):
+    if raw.startswith((b'\xff\xfe\x00\x00',b'\x00\x00\xfe\xff')):return raw.decode('utf-32')
+    if raw.startswith((b'\xff\xfe',b'\xfe\xff')):return raw.decode('utf-16')
+    return raw.decode('utf-8-sig',errors='replace')
 
 def public_bytes(path):
     if path.is_symlink():return os.readlink(path).encode('utf-8')
@@ -84,7 +89,7 @@ def audit(root, base_ref=None):
                 # First adoption may grandfather only bytes already present in the trusted base.
                 try:old=subprocess.check_output(['git','show',base_ref+':'+name],cwd=root,stderr=subprocess.DEVNULL)
                 except subprocess.CalledProcessError:old=b''
-                if hashlib.sha256(old).hexdigest()!=digest or not restricted(old.decode('utf-8',errors='replace')):
+                if hashlib.sha256(old).hexdigest()!=digest or not restricted(public_text(old)):
                     errors.append(name+': exception was not a pre-existing public disclosure')
     for name,digest in exceptions.items():
         raw=public_bytes(root/name)
@@ -98,7 +103,7 @@ def audit(root, base_ref=None):
         if path.name=='.gitmodules':errors.append(name+': submodule coordinates are not publishable')
         if raw.startswith(b'version https://' + b'git-lfs.github.com' + b'/spec/v1'):
             errors.append(name+': opaque Git LFS pointer is not publishable')
-        if restricted(raw.decode('utf-8',errors='replace')):
+        if restricted(public_text(raw)):
             if exceptions.get(name)!=hashlib.sha256(raw).hexdigest():
                 errors.append(name+': restricted coordinates are not an unchanged historical disclosure')
     return errors
