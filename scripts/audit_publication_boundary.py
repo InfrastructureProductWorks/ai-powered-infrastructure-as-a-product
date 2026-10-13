@@ -27,12 +27,24 @@ def normalize(text):
         if text==prior:break
     return text
 
-PUBLIC_SLUGS={'infrastructureproductworks.github.io','ai-powered-infrastructure-as-a-product','iaap-guard','enterprise-azure-governance','.github'}
-OWNED_COORDINATE=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
+PUBLIC_REPOSITORIES={'infrastructureproductworks/enterprise-azure-governance', 'saabolimpactventure/iaap-guard', 'infrastructureproductworks/infrastructureproductworks.github.io', 'saabolimpactventure/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/.github', 'infrastructureproductworks/iaap-guard'}
+OWNED_COORDINATE=re.compile('(InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
+GITHUB_COORDINATE=re.compile(r'(?<![A-Za-z0-9_.-])(?:www\.github\.com(?::[0-9]+)?/|github\.com(?::[0-9]+)?/|raw\.githubusercontent\.com(?::[0-9]+)?/|codeload\.github\.com(?::[0-9]+)?/|gist\.github\.com(?::[0-9]+)?/|api\.github\.com(?::[0-9]+)?/repos/|git@github\.com(?::[0-9]+)?[:/])([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
+NON_REPO_ROUTES={'apps','marketplace','orgs','settings','features','topics','search','sponsors','users','collections','about','enterprise','security'}
+
+def coordinate_matches(text):
+    for match in OWNED_COORDINATE.finditer(text):yield match
+    for match in GITHUB_COORDINATE.finditer(text):
+        if match.group(0).lower().startswith(('github.com','www.github.com')) and match.group(1).lower() in NON_REPO_ROUTES:continue
+        yield match
+
+def coordinate_key(match):
+    return match.group(1).lower()+'/'+posixpath.normpath(match.group(2)).split('/')[0].lower().removesuffix('.git')
+
 
 def restricted(text):
     text=normalize(text)
-    return bool(PATTERN.search(text)) or any(posixpath.normpath(m.group(1)).split('/')[0].lower().removesuffix('.git') not in PUBLIC_SLUGS for m in OWNED_COORDINATE.finditer(text))
+    return bool(PATTERN.search(text)) or any(coordinate_key(m) not in PUBLIC_REPOSITORIES for m in coordinate_matches(text))
 
 def public_bytes(path):
     if path.is_symlink():return os.readlink(path).encode('utf-8')
