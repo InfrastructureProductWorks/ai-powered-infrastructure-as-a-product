@@ -31,4 +31,28 @@ class PublicationBoundaryTests(unittest.TestCase):
             subprocess.run(['git','add','.'],cwd=root,check=True)
             self.assertTrue(audit(root))
 
+    def test_exception_cannot_be_added_or_changed_with_disclosure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            policy=root/'config/publication-history.json';policy.write_text('{}')
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            subprocess.run(['git','-c','user.name=Test','-c','user.email=test@example.invalid','commit','-qm','base'],cwd=root,check=True)
+            value=root/'new.md';value.write_text('InfrastructureProductWorks/'+'iaap-'+'forge.git')
+            policy.write_text(json.dumps({'new.md':hashlib.sha256(value.read_bytes()).hexdigest()}))
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            self.assertTrue(audit(root,'HEAD'))
+
+    def test_clone_and_encoded_coordinates_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            (root/'config/publication-history.json').write_text('{}')
+            value=root/'new.md';value.touch()
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            name='InfrastructureProductWorks/'+'iaap-'+'forge.git'
+            for text in ['https://github.com/'+name,'git@github.com:'+name,name.replace('/','%2F'),''.join('\\u%04x'%ord(c) for c in name)]:
+                value.write_text(text)
+                self.assertTrue(audit(root),text)
+
 if __name__=='__main__':unittest.main()

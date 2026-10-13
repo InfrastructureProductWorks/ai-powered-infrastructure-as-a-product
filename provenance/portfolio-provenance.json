@@ -80,7 +80,7 @@
   "coveredArtifacts": [
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "6d41ecfd116d7322436e5b680fd47d010f5c0fc3d9368cf6a90323ae65e2bb87"
+      "sha256": "427b060f45734d747330bc8aec80e3459d20daefc2a0279ab15defb11824634f"
     },
     {
       "path": "CITATION.cff",
@@ -108,7 +108,7 @@
     },
     {
       "path": "docs/PUBLICATION-BOUNDARY.md",
-      "sha256": "796463d0bedc85412dbdf7c8995edf94282206a37ad9508eac798cb3123c0716"
+      "sha256": "e3f5f05ba277cb5b45558abce98e65f5392c3b999e4ae266b7c394f3d1f88354"
     },
     {
       "path": "docs/THESIS.md",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "0e5b177c8ab2c0cc788e2dad9058da839110e71b364b22eeadc9382da537e101"
+    "digest": "8075fdcef324076223e62cdb261a597673c6636716437657216f30831cb3fd34"
   }
 }
