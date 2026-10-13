@@ -79,6 +79,7 @@ class PublicationBoundaryTests(unittest.TestCase):
             self.assertTrue(restricted('https://github'+separator+'com/'+''.join(('PrivatePartner/','secret-repo'))))
         for prefix in ['https://github.dev/','https://vscode.dev/github/']:
             self.assertTrue(restricted(prefix+''.join(('PrivatePartner/','secret-repo'))))
+        self.assertTrue(restricted('<a href="https://git&#x0A;hub.com/'+''.join(('PrivatePartner/','secret-repo'))+'">link</a>'))
         self.assertFalse(restricted('InfrastructureProductWorks/iaap-guard'))
 
     def test_over_encoded_text_fails_closed(self):
@@ -106,6 +107,9 @@ class PublicationBoundaryTests(unittest.TestCase):
             text='https://github.com/'+''.join(('PrivatePartner/','secret-repo'))
             for encoding in ['utf-16','utf-32','utf-8-sig']:
                 path.write_bytes(text.encode(encoding));self.assertTrue(audit(root),encoding)
+            for encoding in ['utf-16-le','utf-16-be','utf-32-le','utf-32-be']:
+                path.write_bytes(text.encode(encoding))
+                with self.assertRaises(ValueError):audit(root)
 
     def test_relative_submodules_and_lfs_payloads_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

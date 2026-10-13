@@ -19,12 +19,15 @@ PATTERN=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/(?:'+ '|
 
 
 def normalize_hostnames(text):
+    controls=str.maketrans({'\t':None,'\n':None,'\r':None})
+    text=re.sub(r'(?is)(\b(?:href|src|action)\s*=\s*)(["\'])(.*?)\2',lambda m:m.group(1)+m.group(2)+m.group(3).translate(controls)+m.group(2),text)
+    text=re.sub(r'\]\(([^)]+)\)',lambda m:']('+m.group(1).translate(controls)+')',text)
     text=text.translate(str.maketrans({'。':'.','．':'.','｡':'.'}))
     def host(match):
-        try:normalized=match.group(2).encode('idna').decode('ascii')
+        try:normalized=match.group(2).translate(controls).encode('idna').decode('ascii')
         except UnicodeError:return match.group(0)
         return match.group(1)+normalized
-    return re.sub(r"((?:[A-Za-z][A-Za-z0-9+.-]*:/+|git@))([^/\s:?#\"'()<>\[\]]+)",host,text)
+    return re.sub(r"((?:[A-Za-z][A-Za-z0-9+.-]*:/+|git@))([^/ :?#\"'()<>\[\]]+)",host,text)
 
 def normalize(text):
     for normalization_step in range(9):
@@ -65,9 +68,11 @@ def restricted(text):
             return True
     return False
 
-def public_text(raw):
+def public_text(raw, path=None):
     if raw.startswith((b'\xff\xfe\x00\x00',b'\x00\x00\xfe\xff')):return raw.decode('utf-32')
     if raw.startswith((b'\xff\xfe',b'\xfe\xff')):return raw.decode('utf-16')
+    if b'\x00' in raw and path and Path(path).suffix.lower() not in {'.png','.jpg','.jpeg','.webp','.gif','.ico','.pdf'}:
+        raise ValueError('NUL-bearing text without a supported BOM is not publishable')
     return raw.decode('utf-8-sig',errors='replace')
 
 def public_bytes(path):
@@ -104,7 +109,7 @@ def audit(root, base_ref=None):
                 # First adoption may grandfather only bytes already present in the trusted base.
                 try:old=subprocess.check_output(['git','show',base_ref+':'+name],cwd=root,stderr=subprocess.DEVNULL)
                 except subprocess.CalledProcessError:old=b''
-                if hashlib.sha256(old).hexdigest()!=digest or not restricted(public_text(old)):
+                if hashlib.sha256(old).hexdigest()!=digest or not restricted(public_text(old,name)):
                     errors.append(name+': exception was not a pre-existing public disclosure')
     for name,digest in exceptions.items():
         raw=public_bytes(root/name)
@@ -118,7 +123,7 @@ def audit(root, base_ref=None):
         if path.name=='.gitmodules':errors.append(name+': submodule coordinates are not publishable')
         if raw.startswith(b'version https://' + b'git-lfs.github.com' + b'/spec/v1'):
             errors.append(name+': opaque Git LFS pointer is not publishable')
-        if restricted(public_text(raw)):
+        if restricted(public_text(raw,name)):
             if exceptions.get(name)!=hashlib.sha256(raw).hexdigest():
                 errors.append(name+': restricted coordinates are not an unchanged historical disclosure')
     return errors
