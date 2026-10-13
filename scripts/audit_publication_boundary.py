@@ -18,13 +18,14 @@ NAMES=('iaap-'+'guard-core','iaap-'+'forge','iaap-'+'console','iaap-'+'assurance
 PATTERN=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/(?:'+ '|'.join(map(re.escape,NAMES))+r')(?![\w-])|\"(?:closureSha|workflowRunId|iamRoleArn|secretArn)\"\s*:',re.I)
 
 def normalize(text):
-    for _ in range(8):
+    for normalization_step in range(9):
         prior=text
         text=html.unescape(unquote(text)).replace('\\/', '/')
         text=re.sub(r'\\u([0-9a-fA-F]{4})',lambda m:chr(int(m.group(1),16)),text)
         text=text.replace('\\', '/')
         text=re.sub(r'/+', '/', text)
         if text==prior:break
+        if normalization_step==8:raise ValueError("Publication text exceeds the bounded normalization limit")
     return text
 
 PUBLIC_REPOSITORIES={'infrastructureproductworks/enterprise-azure-governance', 'saabolimpactventure/iaap-guard', 'infrastructureproductworks/infrastructureproductworks.github.io', 'saabolimpactventure/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/.github', 'infrastructureproductworks/iaap-guard'}

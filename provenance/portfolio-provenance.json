@@ -108,7 +108,7 @@
     },
     {
       "path": "docs/PUBLICATION-BOUNDARY.md",
-      "sha256": "e3f5f05ba277cb5b45558abce98e65f5392c3b999e4ae266b7c394f3d1f88354"
+      "sha256": "3a97226aa6d58c91f5eaaac34ee59661b49c7ea1054a2f03b447fea35de974cb"
     },
     {
       "path": "docs/THESIS.md",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "afc46d875ca9076de805b06205549f336f6ed65f19dbd0b314635a1e3fe108cb"
+    "digest": "b1f15d86a1c882def047c53b50150837dbdb43965d24a6f188e66aa3eb2f3791"
   }
 }

@@ -6,7 +6,7 @@ import sys
 import tempfile
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from audit_publication_boundary import audit, restricted
+from audit_publication_boundary import audit, restricted, normalize
 
 class PublicationBoundaryTests(unittest.TestCase):
     def test_historical_exception_requires_exact_bytes(self):
@@ -74,6 +74,12 @@ class PublicationBoundaryTests(unittest.TestCase):
         self.assertTrue(restricted(''.join(('SAABOLImpactVenture/','infrastructureproductworks.github.io'))))
         self.assertTrue(restricted(''.join(('https://github.com/','apps/../','PrivatePartner/','secret-repo'))))
         self.assertFalse(restricted('InfrastructureProductWorks/iaap-guard'))
+
+    def test_over_encoded_text_fails_closed(self):
+        from urllib.parse import quote
+        text='https://github.com/'+''.join(('PrivatePartner/','secret-repo'))
+        for _ in range(9):text=quote(text,safe='')
+        with self.assertRaises(ValueError):normalize(text)
 
     def test_dangling_symlink_discloses_its_target_blob(self):
         with tempfile.TemporaryDirectory() as directory:
