@@ -24,6 +24,13 @@ def normalize(text):
         if text==prior:break
     return text
 
+PUBLIC_SLUGS={'infrastructureproductworks.github.io','ai-powered-infrastructure-as-a-product','iaap-guard','enterprise-azure-governance','.github'}
+OWNED_COORDINATE=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+)',re.I)
+
+def restricted(text):
+    text=normalize(text)
+    return bool(PATTERN.search(text)) or any(m.group(1).lower().removesuffix('.git') not in PUBLIC_SLUGS for m in OWNED_COORDINATE.finditer(text))
+
 def public_bytes(path):
     if path.is_symlink():return os.readlink(path).encode('utf-8')
     if path.is_file():return path.read_bytes()
@@ -50,7 +57,7 @@ def audit(root, base_ref=None):
                 # First adoption may grandfather only bytes already present in the trusted base.
                 try:old=subprocess.check_output(['git','show',base_ref+':'+name],cwd=root,stderr=subprocess.DEVNULL)
                 except subprocess.CalledProcessError:old=b''
-                if hashlib.sha256(old).hexdigest()!=digest or not PATTERN.search(normalize(old.decode('utf-8',errors='replace'))):
+                if hashlib.sha256(old).hexdigest()!=digest or not restricted(old.decode('utf-8',errors='replace')):
                     errors.append(name+': exception was not a pre-existing public disclosure')
     for name,digest in exceptions.items():
         raw=public_bytes(root/name)
@@ -61,7 +68,7 @@ def audit(root, base_ref=None):
         path=root/name
         raw=public_bytes(path)
         if raw is None:continue
-        if PATTERN.search(normalize(raw.decode('utf-8',errors='replace'))):
+        if restricted(raw.decode('utf-8',errors='replace')):
             if exceptions.get(name)!=hashlib.sha256(raw).hexdigest():
                 errors.append(name+': restricted coordinates are not an unchanged historical disclosure')
     return errors

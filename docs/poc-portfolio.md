@@ -17,7 +17,7 @@ flowchart TB
   PRODUCT["Foundation reference"]
   AI["Composite AI reference"]
   INT["Portfolio integration"]
-  ADOPTER["iaap-guard-adopter-validation<br/>archived proof"]
+  ADOPTER["Guard adopter validation<br/>archived proof"]
   OUT["platform product outcomes<br/>NPS • time • adoption • escape rate"]
 
   HUB --> GUARD
@@ -61,7 +61,7 @@ flowchart TB
 - [IaaP Console](https://infrastructureproductworks.com/console/) owns the customer-hosted evidence, review, selection, and traceability experience.
 - [IaaP Forge](https://infrastructureproductworks.com/forge/) consumes bounded Guard evidence and owns the active product-building, Composite AI, GitHub governance, Crossplane lifecycle, and outcome system.
 - [IaaP Assurance](https://infrastructureproductworks.com/assurance/) owns bounded authority, protected-data custody, and continuous assurance. Its sanitized Gate 6 prerelease was accepted under the former Vanguard Suite name and remains pinned at `gate-6-bounded-pass-2026-09-02` / a retained closure revision commitment; the acceptance is only `PASSED_FOR_BOUNDED_SYNTHETIC_PROOF`.
-- [`iaap-guard-adopter-validation`](https://github.com/InfrastructureProductWorks/iaap-guard-adopter-validation) is archived clean-adopter proof, not an active runtime or supported distribution.
+- [Guard adopter guidance](https://infrastructureproductworks.com/guides/guard/) is archived clean-adopter proof, not an active runtime or supported distribution.
 - [`ai-powered-infrastructure-as-a-product`](https://github.com/InfrastructureProductWorks/ai-powered-infrastructure-as-a-product) remains the public thesis, architecture, evidence, and portfolio front door.
 
 ## Portfolio lifecycle register
@@ -188,7 +188,7 @@ Owns the thesis, architecture, product operating model, decisions, frozen eviden
 | Control plane | Crossplane | Reconciliation and product status. |
 | Bootstrap | `Crossplane reference` | Minimal trusted runtime required for the control plane. |
 | Acceptance | `Portfolio integration` | End-to-end evidence across the bounded components. |
-| Retained validation | `iaap-guard-adopter-validation` | Archived clean-adopter proof for Guard. |
+| Retained validation | `Guard adopter validation` | Archived clean-adopter proof for Guard. |
 | Outcomes | Cross-layer telemetry + developer feedback | Developer NPS, Time-to-Provision, adoption, repeat use, exceptions. |
 | Realization | AWS / Azure / GCP | Cloud-native services and enforcement. |
 

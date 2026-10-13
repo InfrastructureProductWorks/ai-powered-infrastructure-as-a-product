@@ -567,7 +567,7 @@ flowchart TB
   end
 
   subgraph RETAINED["Retained validation"]
-    ADOPTER["iaap-guard-adopter-validation<br/>Archived clean-adopter proof"]
+    ADOPTER["Guard adopter validation<br/>Archived clean-adopter proof"]
   end
 
   FRONT --> GUARD
@@ -625,7 +625,7 @@ flowchart TB
 
 | Repository | Visibility / status | Responsibility |
 |---|---|---|
-| [`iaap-guard-adopter-validation`](https://github.com/InfrastructureProductWorks/iaap-guard-adopter-validation) | Public · archived | Retained clean-adopter validation evidence. It is not a supported runtime, distribution, or active development repository. |
+| [Guard adopter guidance](https://infrastructureproductworks.com/guides/guard/) | Public · archived | Retained clean-adopter validation evidence. It is not a supported runtime, distribution, or active development repository. |
 
 See [POC Portfolio](docs/poc-portfolio.md) for the implementation boundaries and pinned evidence relationships.
 

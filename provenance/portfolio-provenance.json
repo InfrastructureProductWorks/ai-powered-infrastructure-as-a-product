@@ -96,7 +96,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "6090dbe1937a85cbe459f37c0e6044dbb6ce95cff0c8cc1e458c6aeb926aafd8"
+      "sha256": "08332cdf8189849e16711481b061d9dca400c0add77977cd4e2dab417f75644e"
     },
     {
       "path": "docs/assets/showcase/progressive-legacy-modernization.svg",
@@ -116,7 +116,7 @@
     },
     {
       "path": "docs/poc-portfolio.md",
-      "sha256": "452cbaac14cf346ce5c67801e2a3bbdfb852417900a65315e5f294208ceafd57"
+      "sha256": "932e314ca59508a05a9b309b9763bdefc29256fe53dbd0103cb958bda36d2bab"
     },
     {
       "path": "provenance/portfolio-provenance.schema.json",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "aa91f35cecb1fcb6bd2f89e633cc5b80f1edb8576ee7b4d596e9c90f20897630"
+    "digest": "afc46d875ca9076de805b06205549f336f6ed65f19dbd0b314635a1e3fe108cb"
   }
 }
