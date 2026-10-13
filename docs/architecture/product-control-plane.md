@@ -82,7 +82,7 @@ flowchart TB
 
 The experience layer lets a consumer discover, configure, order, and track an infrastructure product.
 
-The reference implementation lives in `backstage-infrastructure-product-storefront-poc` and is intentionally bounded to:
+The reference implementation lives in `Storefront` and is intentionally bounded to:
 
 - product discovery;
 - product-level business inputs;
@@ -199,12 +199,12 @@ GitHub is the product-development and change-governance plane: source, order/pro
 | Architectural responsibility | Repository |
 |---|---|
 | Program thesis and evidence | `ai-powered-infrastructure-as-a-product` |
-| Consumer storefront | `backstage-infrastructure-product-storefront-poc` |
-| Minimal trusted bootstrap | `crossplane-multicloud-seed-poc` |
+| Consumer storefront | `Storefront` |
+| Minimal trusted bootstrap | `Crossplane reference` |
 | Customer execution architecture | this repository + protected Forge successor work |
-| Infrastructure product contract | `multicloud-foundation-product-poc` |
-| Bounded composite AI | `composite-ai-infrastructure-product-poc` |
-| End-to-end acceptance/evidence | `multicloud-foundation-poc-integration` |
+| Infrastructure product contract | `Foundation reference` |
+| Bounded composite AI | `Composite AI reference` |
+| End-to-end acceptance/evidence | `Portfolio integration` |
 
 ## Evidence chain
 

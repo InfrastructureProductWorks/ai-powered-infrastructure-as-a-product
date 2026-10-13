@@ -6,7 +6,7 @@
 
 ## Source coordinate
 
-Repository: `InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc`  
+Product: [Storefront](https://infrastructureproductworks.com/storefront/)
 Protected-main merge: `1b0af539d62a569fe48bcb1f140682a1f9be0c20`  
 Merged PR: `#22 — Storefront: apply drive-thru visual experience`  
 Standalone application version: `0.2.0`  

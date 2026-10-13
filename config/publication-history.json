@@ -1,0 +1,22 @@
+{
+  "artifacts/evaluations/six-repo-poc-evaluation-2026-08-07.json": "2c5cc0f69e94e4100a06bc02fad2783d24a4ab1d181aa294b8d7d777d3a194cb",
+  "artifacts/phase-12/live-federation-acceptance.json": "6a9d775a62614ae2d0ed762e23019d286ce85a36e4c72907fa9c949a56f2fe22",
+  "artifacts/phase-23/managed-interconnect-closure.json": "6836fe052427a5ac2a37ed878a4b9da87f8fdb5022aeaecfb4824597d4ae439b",
+  "artifacts/phase-23/snapshots/README.md": "8be40c851371be2f55998f77971fb92610f2a4e51873af1e5a8f93fe6f72a140",
+  "artifacts/phase-23/snapshots/docs-poc-portfolio.md": "f9928f2cbdb53875e37d43534c72fbadf717cad8d6ff634651f22dba01d23b0c",
+  "artifacts/phase-24/selection-evidence-closure.json": "1891b3bd4291ee195578472e7255e99582965a25a2d857bed8e08b44f87f8d3a",
+  "artifacts/phase-24/snapshots/README.md": "5119bc3c142465c078636ca17f8c9330d16cb6eae3be76dc6113c99058b917ae",
+  "artifacts/phase-24/snapshots/docs-poc-portfolio.md": "c5ae1f91571edd9ff483cf9341ec09297c42f1e7039b7fa8eccd90b2e4df298c",
+  "artifacts/poc-baselines/credential-free-backstage-contract-aligned-v3.json": "99b898fe02760c2232f6d56949bfaa26e6753c187a0f41b38e1e3c43aba5bad6",
+  "artifacts/poc-baselines/credential-free-backstage-multicloud-foundation-v2.json": "d9b9ee02e8ddf340c9e1fb1aea17da901188a9f9b60858ac54c7f5839b03390e",
+  "artifacts/poc-baselines/credential-free-backstage-runtime-proven-v5.json": "8c6157969f309fd90e36198b2974cb6d107d525270d12a9c8352e9a91331060d",
+  "artifacts/poc-baselines/credential-free-backstage-supply-chain-hardened-v4.json": "2fc1dc99b12ffc67e7bdfcb1ccc546e6292be9450bcea714a6d1d742cb65b687",
+  "artifacts/poc-baselines/credential-free-multicloud-foundation-v1.json": "b4e4f65cd8ef0fed0f20c0bd00c7e61793181d299fdc48dcb24fbf179731bbfe",
+  "docs/evaluations/2026-08-07-six-repo-poc-evaluation.md": "3856402569cd3dca553e8cd8f2334b17fd2b51da6b00823489420ab47b488b71",
+  "docs/migrations/2026-09-04-infrastructure-product-works-post-migration-verification.md": "1c916efafa0f2337eadbf90325dfeb8359229c8ba08d102d15d0b6577c82557d",
+  "docs/poc-baselines/2026-08-07-backstage-contract-aligned-v3.md": "1c6c055cbb10f7f549db669f1554fc3f35bc2a0f1edc6cee1bb4d92ed843d345",
+  "docs/poc-baselines/2026-08-07-backstage-multicloud-foundation-v2.md": "5ca7e67ea8fa2ee1fe27fd6f0cfd18d1b0b18596b36a9228e6fe4ee58c1b4a95",
+  "docs/poc-baselines/2026-08-07-backstage-runtime-proven-v5.md": "d4822d47d3ed4901133d198f0bc0e1a9bae5ce1819791fb92b1b26361398bc3e",
+  "docs/poc-baselines/2026-08-07-backstage-supply-chain-hardened-v4.md": "26d6bbaa3bece78b07265337b39ba6887ec7e0ed9f511d5db026e6aa8bacd90a",
+  "docs/poc-baselines/2026-08-07-credential-free-multicloud-foundation.md": "f465cdc0208516addc32bf13e57bd6b09b8d34b89341d504307c85680960cff4"
+}

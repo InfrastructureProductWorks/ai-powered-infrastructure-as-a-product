@@ -182,13 +182,13 @@ A cloud service must receive its required minimum security baseline, approved pa
 | Repository / surface | Responsibility |
 |---|---|
 | `ai-powered-infrastructure-as-a-product` | Canonical architecture, terminology, trust principles, public diagrams, and strategic position |
-| `composite-ai-infrastructure-product-poc` | BYO-MCP client boundary for Composite AI; provider-neutral context/tool consumption |
+| `Composite AI reference` | BYO-MCP client boundary for Composite AI; provider-neutral context/tool consumption |
 | `iaap-guard` | Deterministic trust, provenance, authority-denial, and evidence requirements for MCP-derived context |
-| `iaap-console` | Future registration, trust configuration, ownership, capability policy, and review experience for customer MCP servers |
-| `iaap-forge` | Governed-product discovery schema and implementation-independent fulfillment binding |
-| `backstage-infrastructure-product-storefront-poc` | Human consumption surface and same-catalog parity with future agent discovery |
-| `iaap-assurance` | Authority/custody continuity when agentic context or requests participate in governed decisions |
-| `multicloud-foundation-poc-integration` | Cross-product compatibility, evidence, negative testing, and roadmap reconciliation |
+| `IaaP Console` | Future registration, trust configuration, ownership, capability policy, and review experience for customer MCP servers |
+| `IaaP Forge` | Governed-product discovery schema and implementation-independent fulfillment binding |
+| `Storefront` | Human consumption surface and same-catalog parity with future agent discovery |
+| `IaaP Assurance` | Authority/custody continuity when agentic context or requests participate in governed decisions |
+| `Portfolio integration` | Cross-product compatibility, evidence, negative testing, and roadmap reconciliation |
 | public website | Customer-facing explanation of governed products, human/agent consumption, BYO-MCP, security, entitlement, and authority boundaries |
 
 ## Documentation-first implementation order

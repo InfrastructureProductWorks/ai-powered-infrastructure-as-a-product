@@ -35,7 +35,7 @@ The decision therefore requires executable evidence that a minimum viable founda
 
 ## Evidence
 
-The integration workflow run [31136204337](https://github.com/SAABOLImpactVenture/multicloud-foundation-poc-integration/actions/runs/31136204337) passed across Kubernetes 1.34, 1.35, and 1.36.
+The integration workflow run [Portfolio integration](https://infrastructureproductworks.com/portfolio/) passed across Kubernetes 1.34, 1.35, and 1.36.
 
 Each matrix entry scored **100/100** and proved:
 

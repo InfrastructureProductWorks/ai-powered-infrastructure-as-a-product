@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "vanguard-gate6-public-baseline/v1",
+  "schemaVersion": "vanguard-gate6-public-baseline/v2",
   "fixture": "synthetic",
   "release": {
-    "repository": "SAABOLImpactVenture/vanguard-suite",
     "tag": "gate-6-bounded-pass-2026-09-02",
-    "closureSha": "f96961c47f6866dd12025eca8afc43b376163520",
     "prerelease": true,
-    "acceptanceStatus": "PASSED_FOR_BOUNDED_SYNTHETIC_PROOF"
+    "acceptanceStatus": "PASSED_FOR_BOUNDED_SYNTHETIC_PROOF",
+    "product": "IaaP Assurance (historical Vanguard baseline)",
+    "closureRevisionCommitment": "sha256:e9c601128d172d4e590a9fdc3dd3254b67550a054afb9df0745ac15f5d735255"
   },
   "ownership": {
     "guard": "deterministic architecture and evidence evaluation",

@@ -8,15 +8,15 @@ The program separates responsibilities into bounded repositories so each archite
 flowchart TB
   HUB["ai-powered-infrastructure-as-a-product<br/>thesis • architecture • evidence"]
   GUARD["iaap-guard<br/>public product surface"]
-  CONSOLE["iaap-console<br/>evidence • review • selection"]
-  ASSURANCE["iaap-assurance<br/>authority • custody • continuous assurance"]
-  CORE["iaap-guard-core<br/>private hosted runtime"]
-  FORGE["iaap-forge<br/>product-building system"]
-  STORE["backstage-infrastructure-product-storefront-poc"]
-  SEED["crossplane-multicloud-seed-poc"]
-  PRODUCT["multicloud-foundation-product-poc"]
-  AI["composite-ai-infrastructure-product-poc"]
-  INT["multicloud-foundation-poc-integration"]
+  CONSOLE["IaaP Console<br/>evidence • review • selection"]
+  ASSURANCE["IaaP Assurance<br/>authority • custody • continuous assurance"]
+  CORE["Guard Core<br/>private hosted runtime"]
+  FORGE["IaaP Forge<br/>product-building system"]
+  STORE["Storefront"]
+  SEED["Crossplane reference"]
+  PRODUCT["Foundation reference"]
+  AI["Composite AI reference"]
+  INT["Portfolio integration"]
   ADOPTER["iaap-guard-adopter-validation<br/>archived proof"]
   OUT["platform product outcomes<br/>NPS • time • adoption • escape rate"]
 
@@ -57,10 +57,10 @@ flowchart TB
 ## Product repositories around the POCs
 
 - [`iaap-guard`](https://github.com/InfrastructureProductWorks/iaap-guard) is the active public product, adoption, contract, support, security, and sanitized assurance surface.
-- [`iaap-guard-core`](https://github.com/InfrastructureProductWorks/iaap-guard-core) is the protected private engine, hosted GitHub App runtime, deployment, internal test, and operational-evidence repository.
-- [`iaap-console`](https://github.com/InfrastructureProductWorks/iaap-console) owns the customer-hosted evidence, review, selection, and traceability experience.
-- [`iaap-forge`](https://github.com/InfrastructureProductWorks/iaap-forge) consumes bounded Guard evidence and owns the active product-building, Composite AI, GitHub governance, Crossplane lifecycle, and outcome system.
-- [`iaap-assurance`](https://github.com/InfrastructureProductWorks/iaap-assurance) owns bounded authority, protected-data custody, and continuous assurance. Its sanitized Gate 6 prerelease was accepted under the former Vanguard Suite name and remains pinned at `gate-6-bounded-pass-2026-09-02` / `f96961c47f6866dd12025eca8afc43b376163520`; the acceptance is only `PASSED_FOR_BOUNDED_SYNTHETIC_PROOF`.
+- [Guard Core](https://infrastructureproductworks.com/guard/) is the protected private engine, hosted GitHub App runtime, deployment, internal test, and operational-evidence repository.
+- [IaaP Console](https://infrastructureproductworks.com/console/) owns the customer-hosted evidence, review, selection, and traceability experience.
+- [IaaP Forge](https://infrastructureproductworks.com/forge/) consumes bounded Guard evidence and owns the active product-building, Composite AI, GitHub governance, Crossplane lifecycle, and outcome system.
+- [IaaP Assurance](https://infrastructureproductworks.com/assurance/) owns bounded authority, protected-data custody, and continuous assurance. Its sanitized Gate 6 prerelease was accepted under the former Vanguard Suite name and remains pinned at `gate-6-bounded-pass-2026-09-02` / a retained closure revision commitment; the acceptance is only `PASSED_FOR_BOUNDED_SYNTHETIC_PROOF`.
 - [`iaap-guard-adopter-validation`](https://github.com/InfrastructureProductWorks/iaap-guard-adopter-validation) is archived clean-adopter proof, not an active runtime or supported distribution.
 - [`ai-powered-infrastructure-as-a-product`](https://github.com/InfrastructureProductWorks/ai-powered-infrastructure-as-a-product) remains the public thesis, architecture, evidence, and portfolio front door.
 
@@ -92,11 +92,11 @@ A component advances only when its stated exit gate has objective evidence and t
 
 ## Supporting POC governance
 
-As of September 3, 2026, the default branches of `crossplane-multicloud-seed-poc`, `multicloud-foundation-product-poc`, and `composite-ai-infrastructure-product-poc` are protected by active rulesets with no bypass actors. Each requires pull requests, resolved review conversations, and an up-to-date `validate` check; branch deletion and force pushes are blocked. These controls change repository governance only and add no collaborator, credential, token scope, visibility, runtime, or production access.
+As of September 3, 2026, the default branches of `Crossplane reference`, `Foundation reference`, and `Composite AI reference` are protected by active rulesets with no bypass actors. Each requires pull requests, resolved review conversations, and an up-to-date `validate` check; branch deletion and force pushes are blocked. These controls change repository governance only and add no collaborator, credential, token scope, visibility, runtime, or production access.
 
 ## Responsibilities
 
-### `backstage-infrastructure-product-storefront-poc`
+### `Storefront`
 
 Owns the **first-class InfrastructureProductWorks Storefront application** and the **Backstage Storefront Adapter** over one closed consumer order contract: browse, configure, order, track, and inspect bounded handoff evidence.
 
@@ -112,25 +112,25 @@ The experience layer is therefore replaceable. The first-class Storefront is can
 
 The storefront repository now also carries a bounded runtime smoke that starts an actual Backstage backend, registers the reference template in the Software Catalog, and executes `fetch:template` plus `publish:github:pull-request` through Backstage's supported dry-run path. That runtime evidence deliberately provides no real GitHub write credential and creates no real order PR.
 
-### `crossplane-multicloud-seed-poc`
+### `Crossplane reference`
 
 Owns the minimal trusted Crossplane runtime. No product APIs, cloud credentials, production, consumer storefront, or TFE dependency.
 
-### `multicloud-foundation-product-poc`
+### `Foundation reference`
 
 Owns the `CloudFoundationEnvironment` contract, provider-specific implementations, policy, examples, product status, and lifecycle experiments.
 
-### `composite-ai-infrastructure-product-poc`
+### `Composite AI reference`
 
 Owns bounded request, review, operations, and evidence-agent contracts and evaluations. No direct execution authority.
 
-### `iaap-assurance`
+### `IaaP Assurance`
 
-Owns authority, protected-data custody, and continuous assurance across the bounded portfolio evidence relationship. Gate 6 is accepted only for the deterministic synthetic proof at prerelease `gate-6-bounded-pass-2026-09-02` and closure SHA `f96961c47f6866dd12025eca8afc43b376163520`.
+Owns authority, protected-data custody, and continuous assurance across the bounded portfolio evidence relationship. Gate 6 is accepted only for the deterministic synthetic proof at prerelease `gate-6-bounded-pass-2026-09-02` and a retained closure revision commitment.
 
 That acceptance does not authorize a pilot, live personal data, production connectors, organization-specific policy, live telemetry, credentials, cloud access, external delivery, or autonomous production action. Guard remains the deterministic assessment surface; Console remains the customer-hosted evidence and selection experience; Forge remains the governed product-building lifecycle; Storefront remains the optional reference consumer experience.
 
-### `multicloud-foundation-poc-integration`
+### `Portfolio integration`
 
 Owns pinned upstream integration, including the storefront handoff, clean-cluster acceptance, active network-policy proof, AI authority checks, simulated reconciliation, evidence, teardown, scorecard, cross-repository storefront/product contract compatibility, and workflow/bootstrap reproducibility checks.
 
@@ -178,16 +178,16 @@ Owns the thesis, architecture, product operating model, decisions, frozen eviden
 |---|---|---|
 | Program | `ai-powered-infrastructure-as-a-product` | Thesis, architecture, evidence, decisions, roadmap framing. |
 | Guard product | `iaap-guard` | Public product, contracts, adoption, support, security, and assurance. |
-| Guard implementation | `iaap-guard-core` | Private deterministic engine, hosted runtime, deployment, and regression evidence. |
-| Product builder | `iaap-forge` | Guard consumption, bounded Composite AI, governed proposals, Crossplane lifecycle, and outcomes. |
-| Assurance authority | `iaap-assurance` | Authority, protected-data custody, and continuous assurance within explicitly accepted bounds. |
-| Experience | `backstage-infrastructure-product-storefront-poc` | Browse, configure, order, track. |
-| Intelligence | `composite-ai-infrastructure-product-poc` | Interpret, propose, review, explain, diagnose, evidence. |
+| Guard implementation | `Guard Core` | Private deterministic engine, hosted runtime, deployment, and regression evidence. |
+| Product builder | `IaaP Forge` | Guard consumption, bounded Composite AI, governed proposals, Crossplane lifecycle, and outcomes. |
+| Assurance authority | `IaaP Assurance` | Authority, protected-data custody, and continuous assurance within explicitly accepted bounds. |
+| Experience | `Storefront` | Browse, configure, order, track. |
+| Intelligence | `Composite AI reference` | Interpret, propose, review, explain, diagnose, evidence. |
 | Governance | GitHub + deterministic policy + people | Change, tests, approval, traceability. |
-| Product contract | `multicloud-foundation-product-poc` | Stable infrastructure-product API and lifecycle semantics. |
+| Product contract | `Foundation reference` | Stable infrastructure-product API and lifecycle semantics. |
 | Control plane | Crossplane | Reconciliation and product status. |
-| Bootstrap | `crossplane-multicloud-seed-poc` | Minimal trusted runtime required for the control plane. |
-| Acceptance | `multicloud-foundation-poc-integration` | End-to-end evidence across the bounded components. |
+| Bootstrap | `Crossplane reference` | Minimal trusted runtime required for the control plane. |
+| Acceptance | `Portfolio integration` | End-to-end evidence across the bounded components. |
 | Retained validation | `iaap-guard-adopter-validation` | Archived clean-adopter proof for Guard. |
 | Outcomes | Cross-layer telemetry + developer feedback | Developer NPS, Time-to-Provision, adoption, repeat use, exceptions. |
 | Realization | AWS / Azure / GCP | Cloud-native services and enforcement. |
@@ -205,8 +205,8 @@ Owns the thesis, architecture, product operating model, decisions, frozen eviden
 9. **Live Azure and GCP sandboxes** — **passed** with workload identity, retained sanitized evidence, and verified teardown.
 10. **Live model adapter** — **passed** on Vertex AI in `us-east4` using synthetic fixtures only and a fixed model-usage ceiling.
 11. **HCP Terraform Free remote-run proxy** — **proxy passed** with a zero-resource fixture, protected VCS status, sanitized evidence, workspace deletion, and token revocation. Terraform Enterprise was not accessed or validated.
-12. **Phase 20 architecture reconciliation** — **complete** at pinned Forge revision `6fb587cb3f521e99c33039c61090fe8b738836cc`, preserving the frozen Guard boundary and public sanitized claims.
-13. **IaaP Assurance Gate 6 portfolio custody** — **passed only for the bounded synthetic proof** at prerelease `gate-6-bounded-pass-2026-09-02` and closure SHA `f96961c47f6866dd12025eca8afc43b376163520`. The gate was accepted under the former Vanguard Suite name; versioned historical identifiers remain unchanged. The public map pins the sanitized record by digest and preserves IaaP Assurance ownership of authority, custody, and continuous assurance without changing Guard, Console, Forge, or Storefront responsibilities.
+12. **Phase 20 architecture reconciliation** — **complete** against the retained Forge revision commitment, preserving the frozen Guard boundary and public sanitized claims.
+13. **IaaP Assurance Gate 6 portfolio custody** — **passed only for the bounded synthetic proof** at prerelease `gate-6-bounded-pass-2026-09-02` and a retained closure revision commitment. The gate was accepted under the former Vanguard Suite name; versioned historical identifiers remain unchanged. The public map pins the sanitized record by digest and preserves IaaP Assurance ownership of authority, custody, and continuous assurance without changing Guard, Console, Forge, or Storefront responsibilities.
 14. **Managed AWS/Azure interconnect** — **passed only for one bounded deterministic synthetic profile**. The [Step 4 public closure record](https://github.com/InfrastructureProductWorks/ai-powered-infrastructure-as-a-product/blob/main/artifacts/phase-23/managed-interconnect-closure.json) binds the sanitized proof digests and accepted private revision commitments, records all thirteen unsafe profiles as `FAIL_CLOSED`, and preserves the existing IaaP Assurance custody/authority reference. Forge and Guard Core contain the minimal contract/validation change; IaaP Assurance, Console, and Storefront remain unchanged.
 15. **Versioned human-selection traceability** — **passed only for the bounded synthetic proof**. The [Phase 24 public closure record](https://github.com/InfrastructureProductWorks/ai-powered-infrastructure-as-a-product/blob/main/artifacts/phase-24/selection-evidence-closure.json) binds the accepted Guard source, distinct synthetic subject, recorded selection, Forge product output, producer evidence, complete journey, and IaaP Assurance custody manifest while preserving the existing `v1alpha1` renderer byte-for-byte. Golden and migration cases pass; unsafe substitutions and rewrites fail closed. Guard, Console, Storefront, and IaaP Assurance implementation remain unchanged.
 16. **Production pilot** — future and unauthorized; requires separate authorization, SLOs, recovery, support, lifecycle evidence, Developer NPS, adoption, and repeat-consumption evidence.

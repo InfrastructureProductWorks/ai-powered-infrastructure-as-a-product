@@ -16,7 +16,7 @@ The consumer product contract should not expose workspaces, state, module topolo
 
 A storefront can present product documentation, ownership, approved profiles, request experiences, order history, status, and links.
 
-The program now maintains [`backstage-infrastructure-product-storefront-poc`](https://github.com/InfrastructureProductWorks/backstage-infrastructure-product-storefront-poc) as the **reference consumer experience**. It demonstrates how a developer can browse, configure, order, and track `CloudFoundationEnvironment` without learning Crossplane, ProviderConfig, cloud credentials, IAM JSON, Terraform/TFE, or Composition internals.
+The program now maintains [Storefront](https://infrastructureproductworks.com/storefront/) as the **reference consumer experience**. It demonstrates how a developer can browse, configure, order, and track `CloudFoundationEnvironment` without learning Crossplane, ProviderConfig, cloud credentials, IAM JSON, Terraform/TFE, or Composition internals.
 
 Backstage is not the product contract and is not the provisioning or execution authority. Provider mutation occurs only through the customer-controlled execution boundary.
 

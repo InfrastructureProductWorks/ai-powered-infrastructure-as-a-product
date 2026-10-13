@@ -16,6 +16,10 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Validate self-hosted workflow contract
         run: python3 scripts/validate_self_hosted_workflow.py
+      - name: Validate public publication boundary
+        run: |
+          python3 scripts/audit_publication_boundary.py
+          python3 -m unittest tests/test_publication_boundary.py -v
       - name: Validate modern accelerator boundary
         run: ./scripts/validate-modern-accelerator.sh
       - name: Preview intentional Portfolio Provenance refresh
