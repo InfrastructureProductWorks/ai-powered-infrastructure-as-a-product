@@ -44,6 +44,7 @@ nav:
       - Adoption Model: executive/ADOPTION-MODEL.md
       - Executive FAQ: executive/EXECUTIVE-FAQ.md
   - Thesis: THESIS.md
+  - Infrastructure Product Lifecycle: INFRASTRUCTURE-PRODUCT-LIFECYCLE.md
   - Product and Runtime Architecture: PRODUCT-ARCHITECTURE.md
   - Product Control Plane: architecture/product-control-plane.md
   - Bootstrap and Foundation Readiness:
