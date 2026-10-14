@@ -21,6 +21,10 @@
 
 ---
 
+## Infrastructure product lifecycle
+
+IPW is designed to connect customer need and investment to product definition, validation, publication, ordering, delivery, operation, evolution, and retirement. See the [Infrastructure Product Lifecycle](docs/INFRASTRUCTURE-PRODUCT-LIFECYCLE.md) for application responsibilities, the distinction between a product version and a customer instance, and documentation-first implementation evidence requirements. Complete operational lifecycle coverage remains a target, not a production claim.
+
 ## Infrastructure is experienced as a product
 
 Application developers should order a finished infrastructure product—not assemble the raw cloud resources used to build it. The **InfrastructureProductWorks Storefront** is the canonical first-class product experience. Customers already invested in Backstage can use the **Backstage Storefront Adapter** against the same stable `InfrastructureProductOrder` contract, while Forge, Guard, GitHub governance, Crossplane, and the cloud providers handle the governed lifecycle behind that contract.

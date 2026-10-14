@@ -5,6 +5,10 @@ This is the authoritative end-to-end view of the Infrastructure Product Works™
 > [!IMPORTANT]
 > This is the target operating model. Current portfolio evidence remains bounded. IaaP Guard is the supported GitHub-native product. The [September 11 Storefront evidence](evidence/storefront-drive-thru-2026-09-11.md) pins first-class Storefront `0.2.0` and Backstage Storefront Adapter `0.1.1` as bounded experience surfaces; it does not authorize authenticated downstream transport, pilot, or production operation. Forge remains bounded, and direct Storefront/Backstage → Console → Forge → Crossplane production execution, credentials, customer data, pilot authority, and commercial activation are not claimed here.
 
+## Infrastructure product lifecycle
+
+IPW is designed to connect customer need and investment to product definition, validation, publication, ordering, delivery, operation, evolution, and retirement. See the [Infrastructure Product Lifecycle](INFRASTRUCTURE-PRODUCT-LIFECYCLE.md) for application responsibilities, the distinction between a product version and a customer instance, and documentation-first implementation evidence requirements. Complete operational lifecycle coverage remains a target, not a production claim.
+
 ## Product view
 
 ```mermaid

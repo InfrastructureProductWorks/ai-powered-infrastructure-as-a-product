@@ -15,15 +15,10 @@ Infrastructure becomes a product only when ownership and operations change with 
 
 ## Product lifecycle
 
-```mermaid
-flowchart LR
-  D[Discover demand] --> C[Define contract]
-  C --> B[Build and validate]
-  B --> R[Release]
-  R --> O[Operate]
-  O --> E[Learn from evidence]
-  E --> D
-```
+The [Infrastructure Product Lifecycle](INFRASTRUCTURE-PRODUCT-LIFECYCLE.md) connects seven responsibilities: discover and justify; define and develop; validate and approve; publish and order; deliver and operate; improve and evolve; deprecate and retire.
+
+Product owners remain accountable across the lifecycle. Product versions and customer instances have separate histories and authorizations. Retirement requires dependency, migration, data disposition, and evidence-retention decisions; it is not implied by deprecation. This is the target operating model, not a claim that every stage is implemented.
+
 
 ## Metrics
 
