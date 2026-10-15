@@ -232,6 +232,29 @@ class PublicationBoundaryTests(unittest.TestCase):
         self.assertNotIn('uses: ./candidate',workflow)
         self.assertNotIn('working-directory: candidate',workflow)
 
+    def test_candidate_ci_runs_pinned_validator_with_read_only_data(self):
+        import re
+        root=Path(__file__).resolve().parents[1]
+        workflow=(root/'.github/workflows/ci.yml').read_text()
+        job=workflow.split('  publication-boundary-pinned-candidate:\n')[1].split('\n  docs:')[0]
+        self.assertIn('    permissions:\n      contents: read\n',job)
+        self.assertNotIn('write',job)
+        self.assertEqual(job.count('uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262'),2)
+        self.assertEqual(job.count('persist-credentials: false'),2)
+        self.assertIn('ref: ${{ github.event.pull_request.head.sha || github.sha }}',job)
+        self.assertIn('allow-unsafe-pr-checkout: true',job)
+        self.assertIn('fetch-depth: 0',job)
+        trusted=(root/'.github/workflows/trusted-publication-boundary.yml').read_text().split('- name: Check out independently anchored validator')[1]
+        pin=re.search(r'ref: ([a-f0-9]{40})\n',trusted).group(1)
+        self.assertIn('ref: '+pin+'\n',job)
+        self.assertEqual(job.count('        run: |'),1)
+        self.assertIn("python3 -I - <<'PY'",job)
+        self.assertIn("pathlib.Path('trusted/scripts/audit_publication_boundary.py')",job)
+        self.assertIn("module.audit(pathlib.Path('candidate').resolve(),os.environ['PUBLICATION_BASE_SHA'])",job)
+        self.assertNotIn('uses: ./candidate',job)
+        self.assertNotIn('working-directory: candidate',job)
+        self.assertIn('Candidate-controlled CI rollout evidence',job)
+
     def test_pinned_validator_matches_reviewed_detector(self):
         import re
         root=Path(__file__).resolve().parents[1]
