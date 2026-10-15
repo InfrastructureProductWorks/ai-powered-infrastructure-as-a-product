@@ -255,6 +255,22 @@ class PublicationBoundaryTests(unittest.TestCase):
         self.assertNotIn('working-directory: candidate',job)
         self.assertIn('Candidate-controlled CI rollout evidence',job)
 
+    def test_boundary_ci_fetches_detached_validator_before_parity(self):
+        import re
+        root=Path(__file__).resolve().parents[1]
+        workflow=(root/'.github/workflows/ci.yml').read_text()
+        boundary=workflow.split('  boundary:\n')[1].split('\n  publication-boundary-pinned-candidate:')[0]
+        trusted=(root/'.github/workflows/trusted-publication-boundary.yml').read_text().split('- name: Check out independently anchored validator')[1]
+        pin=re.search(r'ref: ([a-f0-9]{40})\n',trusted).group(1)
+        fetch_marker='      - name: Fetch immutable publication validator for parity\n'
+        fetch=boundary.split(fetch_marker)[1].split('      - name:')[0]
+        self.assertEqual(fetch.strip().splitlines()[-1].strip(),'run: git fetch --no-tags --depth=1 origin '+pin)
+        self.assertNotIn('if:',fetch)
+        self.assertNotIn('continue-on-error:',fetch)
+        self.assertLess(boundary.index('uses: actions/checkout@'),boundary.index(fetch_marker))
+        self.assertLess(boundary.index(fetch_marker),boundary.index('- name: Validate public publication boundary'))
+        self.assertIn('python3 -m unittest tests/test_publication_boundary.py -v',boundary)
+
     def test_pinned_validator_matches_reviewed_detector(self):
         import re
         root=Path(__file__).resolve().parents[1]

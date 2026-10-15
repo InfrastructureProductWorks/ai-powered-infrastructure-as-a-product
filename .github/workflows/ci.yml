@@ -18,6 +18,9 @@ jobs:
           fetch-depth: 0
       - name: Validate self-hosted workflow contract
         run: python3 scripts/validate_self_hosted_workflow.py
+      - name: Fetch immutable publication validator for parity
+        # Squash merges do not retain the detached validator in main's ancestry.
+        run: git fetch --no-tags --depth=1 origin 94f9a7323f7fd565996aac4508d3b9c4639c7f1b
       - name: Validate public publication boundary
         env:
           PUBLICATION_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || format('refs/remotes/origin/{0}', github.event.repository.default_branch) }}
