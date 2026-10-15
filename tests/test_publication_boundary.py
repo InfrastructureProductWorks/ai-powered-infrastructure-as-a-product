@@ -66,11 +66,24 @@ class PublicationBoundaryTests(unittest.TestCase):
         app='apps/'+'iaap-guard'
         for text in [
             'github.com:'+'apps/iaap-guard', 'git@github.com:'+'apps/iaap-guard',
-            'https://github.com/apps/iaap-guard'+'/secret-repo',
+            'https://github.com/apps/'+'iaap-guard'+'/secret-repo',
             'repo:'+app, 'https://github.com/search?q='+app,
         ]:
             self.assertTrue(restricted(text),text)
         self.assertTrue(restricted('https://api.github.com/'+''.join(('PrivatePartner/','secret-repo'))))
+
+    def test_app_route_suffixes_are_not_truncated(self):
+        route='https://github.com/apps/'+'iaap-guard'
+        for suffix in [';private','@private','!private',':private','%3Bprivate','/','/installations/new;private',')private','%22private','%3Eprivate','%29private','?private','#private']:
+            for text in [route+suffix, '[App]('+route+suffix+')', '<a href="'+route+suffix+'">App</a>', '<'+route+suffix+'>', '{"appPage": "'+route+suffix+'"}']:
+                from urllib.parse import quote
+                for _ in range(3):
+                    with self.subTest(text=text):self.assertTrue(restricted(text))
+                    text=quote(text,safe='')
+        self.assertTrue(restricted('<a href="'+route+' private">App</a>'))
+        self.assertTrue(restricted('<a href="'+route+'%20">App</a>'))
+        for text in ['[App]('+route+')','[Install]('+route+'/installations/new)', '<a href="'+route+'">App</a>', '<'+route+'>', '{"appPage": "'+route+'"}']:
+            with self.subTest(public=text):self.assertFalse(restricted(text))
 
     def test_query_disclosure_is_rejected_by_trusted_audit(self):
         with tempfile.TemporaryDirectory() as directory:

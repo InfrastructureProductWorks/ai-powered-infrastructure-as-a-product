@@ -76,7 +76,21 @@ def coordinate_allowed(match, approved):
     # API search routes are not repositories; their queries are scanned separately.
     if re.fullmatch(r'api\.github\.com\.?/search/(?:code|commits|issues|labels|repositories|topics|users)',match.group(0),re.I):return True
     # The public App is one exact web route, never a repository/query/SCP alias.
-    return bool(re.fullmatch(r'(?:www\.)?'+'github'+r'\.com\.?/apps/'+'iaap-guard'+r'(?:/installations/new)?',match.group(0),re.I))
+    if not re.fullmatch(r'(?:www\.)?'+'github'+r'\.com\.?/apps/'+'iaap-guard'+r'(?:/installations/new)?',match.group(0),re.I):return False
+    tail=match.string[match.end():]
+    if not tail or tail[0].isspace():return True
+    # Permit source markup terminators, never an arbitrary route suffix.
+    before=match.string[:match.start()]
+    if tail.startswith(')') and re.search(r'\]\((?:https?:/)?$',before,re.I):
+        return len(tail)==1 or tail[1].isspace() or tail[1] in '.,;:*_)]'
+    attribute=re.search(r"\b(?:href|src|action)\s*=\s*([\"'])(?:https?:/)?$",before,re.I)
+    if attribute and tail.startswith(attribute.group(1)):
+        return len(tail)==1 or tail[1].isspace() or tail[1] in '/>'
+    quoted=re.search(r"([\"'])(?:https?:/)?$",before,re.I)
+    if quoted and tail.startswith(quoted.group(1)):
+        return len(tail)==1 or tail[1].isspace() or tail[1] in ',)}]'
+    if tail.startswith('>') and re.search(r'<(?:https?:/)?$',before,re.I):return True
+    return False
 
 
 MARKDOWN_ESCAPE=re.compile(r'\\([!-/:-@\[-`{-~])')
@@ -89,8 +103,19 @@ def restricted(text):
         # Preserve original URL-token scope when host and query delimiters are
         # decoded together. Decoded controls/angles cannot truncate that token.
         tokens=re.findall(r'[^\s<>]+',view)
-        tokens.extend(m.group(2) for m in re.finditer(r"(?is)\b(?:href|src|action)\s*=\s*([\"'])(.*?)\1",view))
-        tokens.extend(re.findall(r'\]\(([^)]+)\)',view))
+        scoped_urls=[]
+        for scoped_view in views:
+            scoped_urls.extend(m.group(2) for m in re.finditer(r"(?is)\b(?:href|src|action)\s*=\s*([\"'])(.*?)\1",scoped_view))
+            scoped_urls.extend(m.group(2) for m in re.finditer(r"([\"'])((?:https?:/+|github[.]com/).*?)\1",scoped_view,re.I))
+            scoped_urls.extend(re.findall(r'\]\(([^)]+)\)',scoped_view))
+            scoped_urls.extend(re.findall(r'<([^<>\s]+)>',scoped_view))
+        for url in scoped_urls:
+            decoded_url=normalize(url.strip())
+            for match in GITHUB_COORDINATE.finditer(decoded_url):
+                if coordinate_key(match)=='apps/'+'iaap-guard':
+                    tail=decoded_url[match.end():]
+                    if not coordinate_allowed(match,PUBLIC_REPOSITORIES) or tail:return True
+        tokens.extend(scoped_urls)
         for token in tokens:
             if not any(marker in token for marker in ('?', '#', '%', '&', '\\')):continue
             query_view=normalize(token).translate(str.maketrans({'\r':' ','\n':' ','\t':' ','<':' ','>':' '}))
