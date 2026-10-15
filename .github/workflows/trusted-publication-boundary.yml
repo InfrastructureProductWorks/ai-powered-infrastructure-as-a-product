@@ -23,7 +23,7 @@ jobs:
       - name: Check out independently anchored validator
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: a06647c68b29bb5fa094f9270ea5171e14b4f9ff
+          ref: f97bafb503aa0db7737e4879393879bf2b8296cf
           path: trusted
           persist-credentials: false
       - name: Validate candidate with trusted code
