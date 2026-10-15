@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Freeze explicit historical disclosures; reject current restricted coordinates."""
+from collections import Counter
 import hashlib
 import html
 import os
@@ -9,6 +10,7 @@ from pathlib import Path
 import re
 import posixpath
 import subprocess
+import stringprep
 import sys
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -18,32 +20,58 @@ NAMES=('iaap-'+'guard-core','iaap-'+'forge','iaap-'+'console','iaap-'+'assurance
 PATTERN=re.compile(r'(?:InfrastructureProductWorks|SAABOLImpactVenture)/(?:'+ '|'.join(map(re.escape,NAMES))+r')(?![\w-])|\"(?:closureSha|workflowRunId|iamRoleArn|secretArn)\"\s*:',re.I)
 
 
-def normalize_hostnames(text):
+def normalize_hostnames(text, preserve_url_controls=False):
     controls=str.maketrans({'\t':None,'\n':None,'\r':None})
-    text=re.sub(r'(?is)(\b(?:href|src|action)\s*=\s*)(["\'])(.*?)\2',lambda m:m.group(1)+m.group(2)+m.group(3).translate(controls)+m.group(2),text)
-    text=re.sub(r'\]\(([^)]+)\)',lambda m:']('+m.group(1).translate(controls)+')',text)
+    if not preserve_url_controls:
+        text=re.sub(r'(?is)(\b(?:href|src|action)\s*=\s*)(["\'])(.*?)\2',lambda m:m.group(1)+m.group(2)+m.group(3).translate(controls)+m.group(2),text)
+        text=re.sub(r'\]\(([^)]+)\)',lambda m:']('+m.group(1).translate(controls)+')',text)
     text=text.translate(str.maketrans({'。':'.','．':'.','｡':'.'}))
     def host(match):
-        try:normalized=match.group(2).translate(controls).encode('idna').decode('ascii')
+        hostname=match.group(2) if preserve_url_controls else match.group(2).translate(controls)
+        if preserve_url_controls:
+            # An ASCII boundary marker prevents a match from restarting after
+            # a leading control and stops IDNA from silently erasing it.
+            hostname=''.join('_' if c.isspace() or stringprep.in_table_b1(c) or not html.unescape('&#%d;'%ord(c)) else c for c in hostname)
+        try:normalized=hostname.encode('idna').decode('ascii')
         except UnicodeError:return match.group(0)
         return match.group(1)+normalized
     return re.sub(r"((?:[A-Za-z][A-Za-z0-9+.-]*:/+|git@))([^/ :?#\"'()<>\[\]]+)",host,text)
 
-def normalization_views(text):
+def retain_numeric_boundary(match):
+    # HTML unescaping can erase numeric controls and noncharacters entirely.
+    # Retain them and whitespace for the original-token App-route check.
+    try:
+        value=chr(int(match.group(1)[1:],16) if match.group(1).lower().startswith('x') else int(match.group(1)))
+    except (ValueError,OverflowError):return match.group(0)
+    if not html.unescape(match.group(0)):return '_'
+    return value if value.isspace() else match.group(0)
+
+def normalization_views(text, preserve_url_controls=False):
     yield text
     for normalization_step in range(9):
         prior=text
-        text=html.unescape(unquote(text)).replace('\\/', '/')
+        text=unquote(text)
+        # Keep wrapper scopes visible before a different decoder can introduce
+        # a closing delimiter inside their URL destination.
+        if text!=prior:yield text
+        if preserve_url_controls:text=re.sub(r'&#(x[0-9a-f]+|[0-9]+);?',retain_numeric_boundary,text,flags=re.I)
+        html_source=text
+        text=html.unescape(text).replace('\\/', '/')
+        if text!=html_source:yield text
+        unicode_source=text
         text=re.sub(r'\\u([0-9a-fA-F]{4})',lambda m:chr(int(m.group(1),16)),text)
-        text=text.replace('\\', '/')
+        if text!=unicode_source:yield text
+        # A decoded backslash can start another Unicode escape. Preserve it
+        # for the next bounded pass instead of destroying it as a path slash.
+        text=re.sub(r'\\(?!u[0-9a-fA-F]{4})','/',text)
         text=re.sub(r'/+', '/', text)
-        text=normalize_hostnames(text)
+        text=normalize_hostnames(text,preserve_url_controls)
         if text==prior:return
         if normalization_step==8:raise ValueError("Publication text exceeds the bounded normalization limit")
         yield text
 
-def normalize(text):
-    return list(normalization_views(text))[-1]
+def normalize(text, preserve_url_controls=False):
+    return list(normalization_views(text,preserve_url_controls))[-1]
 
 PUBLIC_REPOSITORIES={'infrastructureproductworks/enterprise-azure-governance', 'saabolimpactventure/iaap-guard', 'infrastructureproductworks/infrastructureproductworks.github.io', 'saabolimpactventure/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/.github', 'infrastructureproductworks/iaap-guard'}
 OWNED_COORDINATE=re.compile('(InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
@@ -118,7 +146,20 @@ def restricted(text):
         tokens.extend(scoped_urls)
         for token in tokens:
             if not any(marker in token for marker in ('?', '#', '%', '&', '\\')):continue
-            query_view=normalize(token).translate(str.maketrans({'\r':' ','\n':' ','\t':' ','<':' ','>':' '}))
+            token_view=normalize(token,preserve_url_controls=True)
+            browser_view=normalize(token)
+            retained_apps=Counter(m.group(0).lower() for m in GITHUB_COORDINATE.finditer(token_view) if coordinate_key(m)=='apps/'+'iaap-guard' and coordinate_allowed(m,PUBLIC_REPOSITORIES))
+            browser_apps=Counter(m.group(0).lower() for m in GITHUB_COORDINATE.finditer(browser_view) if coordinate_key(m)=='apps/'+'iaap-guard' and coordinate_allowed(m,PUBLIC_REPOSITORIES))
+            # Erasing a character inside the host or App name must not create
+            # an allowed route. Differences only in surrounding prose are fine.
+            if browser_apps-retained_apps:return True
+            # Whitespace created inside an original token is a route suffix,
+            # not a harmless boundary between the exact App URL and prose.
+            for match in GITHUB_COORDINATE.finditer(token_view):
+                tail=token_view[match.end():]
+                if coordinate_key(match)=='apps/'+'iaap-guard':
+                    if not coordinate_allowed(match,PUBLIC_REPOSITORIES) or (tail and tail[0].isspace()):return True
+            query_view=browser_view.translate(str.maketrans({'\r':' ','\n':' ','\t':' ','<':' ','>':' '}))
             if any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in query_coordinate_matches(query_view)):
                 return True
         for encoded in views[:-1]:

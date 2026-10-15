@@ -85,6 +85,127 @@ class PublicationBoundaryTests(unittest.TestCase):
         for text in ['[App]('+route+')','[Install]('+route+'/installations/new)', '<a href="'+route+'">App</a>', '<'+route+'>', '{"appPage": "'+route+'"}']:
             with self.subTest(public=text):self.assertFalse(restricted(text))
 
+    def test_app_encoded_whitespace_suffixes_are_not_boundaries(self):
+        from urllib.parse import quote
+        route='https://github.com/apps/'+'iaap-guard'
+        whitespace=' \t\n\r\v\f\x1c\x1d\x1e\x1f\x85\xa0\u1680'+''.join(map(chr,range(0x2000,0x200b)))+'\u2028\u2029\u202f\u205f\u3000'
+        separators=['&Tab;','&NewLine;','&nbsp;','&ThinSpace;','&amp;#9;','%26%23x20%3B',r'\u0026#9;']
+        for character in whitespace:
+            separators.extend([quote(character,safe=''),'&#%d;'%ord(character),'&#x%x;'%ord(character),r'\u%04x'%ord(character)])
+        for base in [route,route+'/installations/new']:
+            for separator in separators:
+                for suffix in ['', '/private']:
+                    url=base+separator+suffix
+                    for text in [url,'[App]('+url+')','<a href="'+url+'">App</a>','<'+url+'>','{"appPage": "'+url+'"}']:
+                        for _ in range(3):
+                            with self.subTest(text=text):self.assertTrue(restricted(text))
+                            text=quote(text,safe='')
+
+    def test_app_encoded_controls_cannot_be_erased(self):
+        from urllib.parse import quote
+        route='https://github.com/apps/'+'iaap-guard'
+        # C0/C1 controls and every Unicode noncharacter, including astral planes.
+        codepoints=list(range(0x20))+list(range(0x7f,0xa0))+list(range(0xfdd0,0xfdf0))
+        codepoints.extend(plane*0x10000+end for plane in range(17) for end in [0xfffe,0xffff])
+        for codepoint in codepoints:
+            character=chr(codepoint)
+            for separator in [quote(character,safe=''),'&#%d;'%codepoint,'&#x%x;'%codepoint,json.dumps(character)[1:-1]]:
+                for base in [route,route+'/installations/new']:
+                    for suffix in ['', '/private']:
+                        url=base+separator+suffix
+                        for text in [url,'[App]('+url+')','<a href="'+url+'">App</a>','<'+url+'>','{"appPage": "'+url+'"}']:
+                            for _ in range(3):
+                                with self.subTest(text=text):self.assertTrue(restricted(text))
+                                text=quote(text,safe='')
+
+    def test_erased_entities_cannot_create_app_routes(self):
+        import html
+        from urllib.parse import quote
+        codepoints=list(range(0xa0))+list(range(0xfdd0,0xfdf0))
+        codepoints.extend(plane*0x10000+end for plane in range(17) for end in [0xfffe,0xffff])
+        discarded=[point for point in codepoints if not html.unescape('&#%d;'%point)]
+        for point in discarded:
+            for entity in ['&#%d;'%point,'&#x%x;'%point]:
+                for route in [entity+'github.com/apps/'+'iaap-guard','https://'+entity+'github.com/apps/'+'iaap-guard','https://git'+entity+'hub.com/apps/'+'iaap-guard','https://github.com'+entity+'/apps/'+'iaap-guard','https://github.com/ap'+entity+'ps/'+'iaap-guard','https://github.com/apps/'+'iaap'+entity+'-guard']:
+                    for suffix in ['', '/installations/new']:
+                        url=route+suffix
+                        for text in [url,'[App]('+url+')','<a href="'+url+'">App</a>','<'+url+'>','{"appPage": "'+url+'"}']:
+                            for _ in range(3):
+                                with self.subTest(text=text):self.assertTrue(restricted(text))
+                                text=quote(text,safe='')
+        route='https://github.com/apps/'+'iaap-guard'
+        for entity in ['&#1;','&#xFDD0;','&#x1FFFE;','&#9;']:
+            for text in ['[App]('+route+') label '+entity, '<a href="'+route+'">Label '+entity+'</a>', '{"appPage": "'+route+'", "label": "A'+entity+'B"}']:
+                for _ in range(3):
+                    with self.subTest(prose=text):self.assertFalse(restricted(text))
+                    text=quote(text,safe='')
+
+        for second in [route,route+'/installations/new']:
+            for original,expected in [('[One]('+route+') [Two]('+second+') label &#1;',False),('[One]('+route+') [Two]('+second.replace('github.com','git&#1;hub.com')+')',True),('[One]('+route.replace('iaap-guard','iaap&#1;-guard')+') [Two]('+second+')',True)]:
+                text=original
+                for _ in range(3):
+                    with self.subTest(multiple_apps=text):self.assertEqual(restricted(text),expected)
+                    text=quote(text,safe='')
+
+    def test_idna_cannot_erase_app_hostname_boundaries(self):
+        import stringprep
+        from urllib.parse import quote
+        points=[point for point in range(0x110000) if stringprep.in_table_b1(chr(point))]
+        for point in points+[9,10,13]:
+            character=chr(point)
+            for entity in ['&#%d;'%point,'&#x%x;'%point,quote(character,safe=''),r'\u%04x'%point]:
+                for host in [entity+'github.com','git'+entity+'hub.com','github.com'+entity]:
+                    for suffix in ['', '/installations/new']:
+                        url='https://'+host+'/apps/'+'iaap-guard'+suffix
+                        for text in [url,'[App]('+url+')','<a href="'+url+'">App</a>','<'+url+'>','{"appPage": "'+url+'"}']:
+                            for _ in range(3):
+                                with self.subTest(text=text):self.assertTrue(restricted(text))
+                                text=quote(text,safe='')
+        for host in ['Ｇｉｔｈｕｂ.com','github。com','github．com','github｡com']:
+            with self.subTest(public_host=host):self.assertFalse(restricted('https://'+host+'/apps/'+'iaap-guard'))
+
+    def test_app_decoded_closers_preserve_url_scope(self):
+        from urllib.parse import quote
+        route='https://github.com/apps/'+'iaap-guard'
+        encoders=[lambda text:quote(text,safe=''),lambda text:''.join('&#%d;'%ord(c) for c in text),lambda text:''.join(r'\u%04x'%ord(c) for c in text)]
+        for base in [route,route+'/installations/new']:
+            for character in [')','>','"',"'"]:
+                for separator in [quote(character,safe=''),'&#%d;'%ord(character),'&#x%x;'%ord(character),r'\u%04x'%ord(character)]:
+                    for suffix in ['', '%20/private']:
+                        url=base+separator+suffix
+                        for original in ['[App]('+url+')','<a href="'+url+'">App</a>',"<a href='"+url+"'>App</a>",'<'+url+'>','{"appPage": "'+url+'"}']:
+                            for encode in encoders:
+                                text=original
+                                for _ in range(3):
+                                    with self.subTest(text=text):self.assertTrue(restricted(text))
+                                    text=encode(text)
+
+    def test_app_source_whitespace_and_prose_remain_allowed(self):
+        from urllib.parse import quote
+        for host in ['github.com','www.github.com','github.com.']:
+            for suffix in ['', '/installations/new']:
+                route='https://'+host+'/apps/'+'iaap-guard'+suffix
+                for separator in [' ','\t','\n','\r\n','\u00a0']:
+                    for prose in ['opens the public App.', 'More details: https://example.com/guide.', 'Install with 100% confidence.']:
+                        for text in [route+separator+prose,'See '+route+separator+prose,'[App]('+route+')'+separator+prose,'<a href="'+route+'">App</a>'+separator+prose,'<'+route+'>'+separator+prose]:
+                            with self.subTest(text=text):self.assertFalse(restricted(text))
+                encoders=[lambda text:quote(text,safe=''),lambda text:''.join('&#%d;'%ord(c) for c in text),lambda text:''.join(r'\u%04x'%ord(c) for c in text)]
+                for original in ['[App]('+route+'). More details.', '<a href="'+route+'">App</a> More details.', '<'+route+'> More details.', '{"appPage": "'+route+'", "label": "Public App"}']:
+                    for encode in encoders:
+                        text=original
+                        for _ in range(3):
+                            with self.subTest(encoded_prose=text):self.assertFalse(restricted(text))
+                            text=encode(text)
+
+    def test_app_encoded_whitespace_is_rejected_by_audit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            (root/'config/publication-history.json').write_text('{}')
+            (root/'new.md').write_text('https://github.com/apps/'+'iaap-guard'+'%20/private')
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            self.assertTrue(audit(root))
+
     def test_query_disclosure_is_rejected_by_trusted_audit(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);(root/'config').mkdir();(root/'scripts').mkdir()
@@ -212,6 +333,14 @@ class PublicationBoundaryTests(unittest.TestCase):
         text='https://github.com/'+''.join(('PrivatePartner/','secret-repo'))
         for _ in range(9):text=quote(text,safe='')
         with self.assertRaises(ValueError):normalize(text)
+
+    def test_nested_unicode_encoding_preserves_detection_and_bound(self):
+        for coordinate,expected in [(''.join(('PrivatePartner/','secret-repo')),True),('InfrastructureProductWorks/iaap-guard',False)]:
+            text=''.join(r'\u%04x'%ord(c) for c in 'https://github.com/'+coordinate)
+            for _ in range(8):
+                with self.subTest(text=text):self.assertEqual(restricted(text),expected)
+                text=text.replace('\\',r'\u005c')
+            with self.assertRaises(ValueError):restricted(text)
 
     def test_dangling_symlink_discloses_its_target_blob(self):
         with tempfile.TemporaryDirectory() as directory:
