@@ -29,7 +29,8 @@ def normalize_hostnames(text):
         return match.group(1)+normalized
     return re.sub(r"((?:[A-Za-z][A-Za-z0-9+.-]*:/+|git@))([^/ :?#\"'()<>\[\]]+)",host,text)
 
-def normalize(text):
+def normalization_views(text):
+    yield text
     for normalization_step in range(9):
         prior=text
         text=html.unescape(unquote(text)).replace('\\/', '/')
@@ -37,17 +38,31 @@ def normalize(text):
         text=text.replace('\\', '/')
         text=re.sub(r'/+', '/', text)
         text=normalize_hostnames(text)
-        if text==prior:break
+        if text==prior:return
         if normalization_step==8:raise ValueError("Publication text exceeds the bounded normalization limit")
-    return text
+        yield text
+
+def normalize(text):
+    return list(normalization_views(text))[-1]
 
 PUBLIC_REPOSITORIES={'infrastructureproductworks/enterprise-azure-governance', 'saabolimpactventure/iaap-guard', 'infrastructureproductworks/infrastructureproductworks.github.io', 'saabolimpactventure/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/ai-powered-infrastructure-as-a-product', 'infrastructureproductworks/.github', 'infrastructureproductworks/iaap-guard'}
 OWNED_COORDINATE=re.compile('(InfrastructureProductWorks|SAABOLImpactVenture)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
 GITHUB_COORDINATE=re.compile(r'(?<![A-Za-z0-9_.-])(?:(?:www\.)?github\.dev\.?(?::[0-9]*)?/|vscode\.dev\.?(?::[0-9]*)?/github/|api\.github\.com\.?(?::[0-9]*)?/repos/|(?!docs\.github\.com)(?:[A-Za-z0-9-]+\.)*github\.com\.?(?::[0-9]*)?/|raw\.githubusercontent\.com\.?(?::[0-9]*)?/|(?:[A-Za-z0-9_.-]+@)?(?:ssh\.)?github\.com\.?(?::[0-9]*)?[:/])([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)',re.I)
-PUBLIC_UI_COORDINATES={'apps/iaap-guard'}
+# Search qualifiers carry repository identities even without a GitHub host.
+QUALIFIED_COORDINATE=re.compile(r"(?<![A-Za-z0-9_.-])(?:repo|repository)\s*:\s*[\"']?([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)",re.I)
+# A query or fragment can contain a raw coordinate without a repo: qualifier.
+# Scan the remainder of its line conservatively, including decoded spaces/quotes.
+GITHUB_QUERY=re.compile(r"(?<![A-Za-z0-9_.-])(?:(?:[A-Za-z0-9-]+\.)*github\.(?:com|dev)|raw\.githubusercontent\.com|vscode\.dev)\.?(?::[0-9]*)?/?[^\s<>?#]*[?#]([^\r\n<>]*)",re.I)
+QUERY_COORDINATE=re.compile(r"(?<![A-Za-z0-9_.-])([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)")
+
+def query_coordinate_matches(text):
+    for query in GITHUB_QUERY.finditer(text):
+        for match in QUERY_COORDINATE.finditer(normalize(query.group(1))):yield match
 
 def coordinate_matches(text):
     for match in OWNED_COORDINATE.finditer(text):yield match
+    for match in QUALIFIED_COORDINATE.finditer(text):yield match
+    yield from query_coordinate_matches(text)
     for match in GITHUB_COORDINATE.finditer(text):
         yield match
 
@@ -55,16 +70,37 @@ def coordinate_key(match):
     return '/'.join(posixpath.normpath(match.group(1)+'/'+match.group(2)).lower().split('/')[:2]).removesuffix('.git')
 
 def coordinate_allowed(match, approved):
+    if any(part in {'.','..'} for part in (match.group(1)+'/'+match.group(2)).split('/')):return False
     key=coordinate_key(match)
-    return key in approved or match.group(0).lower().startswith(('github.com','www.github.com')) and key in PUBLIC_UI_COORDINATES
+    if key in approved:return True
+    # API search routes are not repositories; their queries are scanned separately.
+    if re.fullmatch(r'api\.github\.com\.?/search/(?:code|commits|issues|labels|repositories|topics|users)',match.group(0),re.I):return True
+    # The public App is one exact web route, never a repository/query/SCP alias.
+    return bool(re.fullmatch(r'(?:www\.)?'+'github'+r'\.com\.?/apps/'+'iaap-guard'+r'(?:/installations/new)?',match.group(0),re.I))
 
 
 MARKDOWN_ESCAPE=re.compile(r'\\([!-/:-@\[-`{-~])')
 
 def restricted(text):
     for view in (text,MARKDOWN_ESCAPE.sub(lambda m:m.group(1),text)):
-        view=normalize(view)
-        if PATTERN.search(view) or any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in coordinate_matches(view)):
+        # Inspect queries before decoding can introduce a lexical delimiter.
+        # Materialize first so the same normalization bound remains fail-closed.
+        views=list(normalization_views(view))
+        # Preserve original URL-token scope when host and query delimiters are
+        # decoded together. Decoded controls/angles cannot truncate that token.
+        tokens=re.findall(r'[^\s<>]+',view)
+        tokens.extend(m.group(2) for m in re.finditer(r"(?is)\b(?:href|src|action)\s*=\s*([\"'])(.*?)\1",view))
+        tokens.extend(re.findall(r'\]\(([^)]+)\)',view))
+        for token in tokens:
+            if not any(marker in token for marker in ('?', '#', '%', '&', '\\')):continue
+            query_view=normalize(token).translate(str.maketrans({'\r':' ','\n':' ','\t':' ','<':' ','>':' '}))
+            if any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in query_coordinate_matches(query_view)):
+                return True
+        for encoded in views[:-1]:
+            if any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in query_coordinate_matches(encoded)):
+                return True
+        decoded=views[-1]
+        if PATTERN.search(decoded) or any(not coordinate_allowed(m, PUBLIC_REPOSITORIES) for m in coordinate_matches(decoded)):
             return True
     return False
 

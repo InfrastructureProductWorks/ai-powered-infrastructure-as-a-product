@@ -9,6 +9,104 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from audit_publication_boundary import audit, restricted, normalize
 
 class PublicationBoundaryTests(unittest.TestCase):
+    def test_repository_search_and_query_coordinates(self):
+        from urllib.parse import quote
+        private=''.join(('PrivatePartner/', 'secret-repo'))
+        public='InfrastructureProductWorks/iaap-guard'
+        forms=[
+            'repo:{coordinate}', 'repository: "{coordinate}"',
+            'https://github.com/search?q=repo:{coordinate}',
+            'https://github.com/search?q=repo:%22{coordinate}%22&type=code',
+            'https://github.com/search?q={coordinate}',
+            'https://github.com/search?repository={coordinate}',
+            'https://github.com/search#q={coordinate}',
+            'https://api.github.com/search/code?q=repo:{coordinate}',
+            'https://api.github.com/search/repositories?q=repo:{coordinate}',
+            'https://github.dev/?repo={coordinate}',
+            'https://vscode.dev/github?repository={coordinate}',
+            'https://github.com/search?q=label:bug+repo:{coordinate}',
+        ]
+        for form in forms:
+            for coordinate in [private, private+'.git', 'InfrastructureProductWorks/iaap-guard'+'/../../'+private, private+'/../../'+'InfrastructureProductWorks/iaap-guard']:
+                text=form.format(coordinate=coordinate)
+                for _ in range(4):
+                    with self.subTest(text=text):self.assertTrue(restricted(text))
+                    text=quote(text,safe='')
+            public_text=form.format(coordinate=public)
+            for _ in range(4):
+                with self.subTest(public=public_text):self.assertFalse(restricted(public_text))
+                public_text=quote(public_text,safe='')
+
+    def test_encoded_query_delimiters_do_not_hide_coordinates(self):
+        from urllib.parse import quote
+        private=''.join(('PrivatePartner/','secret-repo'))
+        for host in ['https://github.com','https://github.com/search','https://api.github.com/search/code']:
+            for delimiter in ['%0A','%0D','%09','%3C','%3E','%22','%27']:
+                text=host+'?q='+delimiter+private
+                for _ in range(4):
+                    with self.subTest(text=text):self.assertTrue(restricted(text))
+                    text=quote(text,safe='')
+                from urllib.parse import unquote
+                text=quote(host+'?q='+unquote(delimiter)+private,safe='')
+                for _ in range(4):
+                    with self.subTest(encoded_host=text):self.assertTrue(restricted(text))
+                    text=quote(text,safe='')
+
+    def test_quoted_url_scope_survives_literal_angles(self):
+        private=''.join(('PrivatePartner/','secret-repo'))
+        for delimiter in ['<','>','\r','\n','\t']:
+            url='https://github.com/search?q='+delimiter+private
+            for text in ['<a href="'+url+'">Search</a>', "<a href='"+url+"'>Search</a>", '[Search]('+url+')']:
+                with self.subTest(text=text):self.assertTrue(restricted(text))
+
+    def test_app_exception_is_an_exact_web_route(self):
+        for host in ['github.com','www.github.com','github.com.']:
+            for suffix in ['', '/installations/new']:
+                self.assertFalse(restricted('https://'+host+'/apps/iaap-guard'+suffix))
+        app='apps/'+'iaap-guard'
+        for text in [
+            'github.com:'+'apps/iaap-guard', 'git@github.com:'+'apps/iaap-guard',
+            'https://github.com/apps/iaap-guard'+'/secret-repo',
+            'repo:'+app, 'https://github.com/search?q='+app,
+        ]:
+            self.assertTrue(restricted(text),text)
+        self.assertTrue(restricted('https://api.github.com/'+''.join(('PrivatePartner/','secret-repo'))))
+
+    def test_query_disclosure_is_rejected_by_trusted_audit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'config').mkdir();(root/'scripts').mkdir()
+            subprocess.run(['git','init','-q',directory],check=True)
+            (root/'config/publication-history.json').write_text('{}')
+            (root/'scripts/audit_publication_boundary.py').write_text('raise SystemExit(0)')
+            value='https://github.com/search?q=repo%3A'+''.join(('PrivatePartner%2F','secret-repo'))
+            (root/'new.md').write_text(value)
+            subprocess.run(['git','add','.'],cwd=root,check=True)
+            self.assertTrue(audit(root))
+
+    def test_trusted_workflow_keeps_candidate_data_only(self):
+        workflow=(Path(__file__).resolve().parents[1]/'.github/workflows/trusted-publication-boundary.yml').read_text()
+        candidate=workflow.split('- name: Check out candidate bytes without executing them')[1].split('- name:')[0]
+        trusted=workflow.split('- name: Check out independently anchored validator')[1].split('- name:')[0]
+        self.assertIn('allow-unsafe-pr-checkout: true',candidate)
+        self.assertIn('persist-credentials: false',candidate)
+        self.assertIn('persist-credentials: false',trusted)
+        self.assertIn('contents: read',workflow)
+        self.assertNotIn('write',workflow)
+        self.assertRegex(trusted,r'ref: [a-f0-9]{40}\n')
+        self.assertIn("python3 -I - <<'PY'",workflow)
+        self.assertIn("pathlib.Path('trusted/scripts/audit_publication_boundary.py')",workflow)
+        self.assertNotIn('uses: ./candidate',workflow)
+        self.assertNotIn('working-directory: candidate',workflow)
+
+    def test_pinned_validator_matches_reviewed_detector(self):
+        import re
+        root=Path(__file__).resolve().parents[1]
+        workflow=(root/'.github/workflows/trusted-publication-boundary.yml').read_text()
+        trusted=workflow.split('- name: Check out independently anchored validator')[1].split('- name:')[0]
+        revision=re.search(r'ref: ([a-f0-9]{40})\n',trusted).group(1)
+        pinned=subprocess.check_output(['git','show',revision+':scripts/audit_publication_boundary.py'],cwd=root)
+        self.assertEqual(pinned,(root/'scripts/audit_publication_boundary.py').read_bytes())
+
     def test_optional_ssh_username(self):
         for prefix in ['github.com:','alice@github.com:']:
             self.assertTrue(restricted(prefix+''.join(('PrivatePartner/','secret-repo.git'))))

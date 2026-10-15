@@ -2,6 +2,10 @@
 
 > **IaaS is what we buy; infrastructure-as-a-product is what we build.**
 
+## Infrastructure product lifecycle
+
+IPW is designed to connect customer need and investment to product definition, validation, publication, ordering, delivery, operation, evolution, and retirement. See the [Infrastructure Product Lifecycle](INFRASTRUCTURE-PRODUCT-LIFECYCLE.md) for application responsibilities, the distinction between a product version and a customer instance, and documentation-first implementation evidence requirements. Complete operational lifecycle coverage remains a target, not a production claim.
+
 ## Position
 
 Cloud providers sell infrastructure services. Enterprises still have to build the governed product that makes those services safe, supportable, consumable, evolvable, and measurable.
