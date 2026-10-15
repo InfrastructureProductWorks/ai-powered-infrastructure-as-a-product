@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "iaap-architecture-reconciliation-public/v2",
+  "phase": 20,
+  "status": "COMPLETE",
+  "forge": {
+    "credentialFreePhasesComplete": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "phase19": {
+      "status": "COMPLETE",
+      "awsNonProduction": "PASS",
+      "azureNonProduction": "PASS",
+      "gcpNonProduction": "PASS",
+      "vertexAiSyntheticModelAdapter": "PASS",
+      "hcpTerraformFreeRemoteRunProxy": "PROXY_PASS",
+      "terraformEnterpriseValidated": false,
+      "sanitizedEvidenceRetained": true,
+      "verifiedTeardown": true
+    },
+    "product": "IaaP Forge",
+    "revisionCommitment": "sha256:1a17995e0363f2996465b5083593fb52d4728928f49bccf489f38f04afcdfa1a"
+  },
+  "boundaries": {
+    "guardFrozen": true,
+    "crossplaneAuthoritative": true,
+    "compositeAiAdvisory": true,
+    "humanApprovalRequired": true,
+    "productionAuthorized": false,
+    "liveCloudEvidence": true,
+    "syntheticModelFixturesOnly": true,
+    "terraformEnterpriseAccessed": false,
+    "certificationClaimed": false,
+    "assessmentConclusionClaimed": false,
+    "atoClaimed": false,
+    "publicArchitectureOnly": true
+  }
+}

@@ -2,6 +2,9 @@ name: Trusted publication boundary
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -20,7 +23,7 @@ jobs:
       - name: Check out independently anchored validator
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: f97bafb503aa0db7737e4879393879bf2b8296cf
+          ref: 94f9a7323f7fd565996aac4508d3b9c4639c7f1b
           path: trusted
           persist-credentials: false
       - name: Validate candidate with trusted code

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "accepted-release-chain-public/v2",
+  "fixture": "synthetic",
+  "decision": "CONTINUE_VALIDATION",
+  "publicContract": {
+    "repository": "SAABOLImpactVenture/iaap-guard",
+    "release": "v1.0.2",
+    "commit": "03587c5c806fc659ad7b54e60069a30d08ddb184"
+  },
+  "acceptedPrivateChain": [
+    "Guard Core",
+    "Console",
+    "Forge"
+  ],
+  "vanguardGate6": {
+    "baselinePath": "artifacts/publication/assurance-gate6-baseline.json",
+    "baselineDigest": "sha256:cd7dd298f4ce7c27e8284f23ffa67c6eafb04fe928c7ec6e995ad20443b11180",
+    "releaseTag": "gate-6-bounded-pass-2026-09-02",
+    "acceptanceStatus": "PASSED_FOR_BOUNDED_SYNTHETIC_PROOF",
+    "owns": [
+      "authority",
+      "custody",
+      "continuous assurance"
+    ],
+    "closureRevisionCommitment": "sha256:e9c601128d172d4e590a9fdc3dd3254b67550a054afb9df0745ac15f5d735255"
+  },
+  "verification": {
+    "result": "PASS",
+    "artifactDigest": "sha256:9640a78691bcfc445b45ca9dc12981955d80013aea609b1bd17136ecf37a788d",
+    "assertions": {
+      "guardPlanningEvidence": "ACTUAL_PRODUCER_VERIFIED",
+      "consoleImport": "VERIFIED",
+      "crossLanguageSelectionParity": true,
+      "forgeProductBinding": "VERIFIED",
+      "renderedProductAuthority": "INERT_NO_APPLY"
+    }
+  },
+  "authority": {
+    "approve": false,
+    "merge": false,
+    "apply": false,
+    "execute": false,
+    "provision": false,
+    "grantPolicy": false,
+    "grantProduction": false,
+    "grantPrivileges": false
+  }
+}

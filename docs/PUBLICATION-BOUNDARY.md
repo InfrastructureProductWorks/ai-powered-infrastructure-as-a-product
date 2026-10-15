@@ -33,3 +33,19 @@ Historical public material is not made secret by this policy. Do not rewrite Git
 ## Legal status
 
 This document is a publication-control policy, not a legal ownership statement. It does not identify an IP owner, change the repository's existing license, revoke rights previously granted, determine patentability, or make a trademark or copyright-registration decision.
+
+## Publication review and historical exceptions
+
+Guard remains free and this thesis remains public. Public architecture, adoption guidance, deliberately public integration contracts, and sanitized acceptance results remain available. Private runtime algorithms, prompts, entitlement mechanics, regression fixtures and operational coordinates belong in restricted implementation or integration records.
+
+The publication gate rejects restricted repository coordinates unless the entire file matches an explicit SHA-256 historical exception in `config/publication-history.json`. These exceptions preserve previously published historical baseline and immutable evidence records; CI anchors the exception set to the trusted base revision and rejects additions or changed digests in the same change. First adoption permits only exact bytes already present in that base. They are not permission to add private implementation details. A sole owner may perform the review; a second human is not required.
+
+Current Forge reconciliation and Assurance baseline summaries use domain-separated revision commitments. Original records are retained in restricted integration documentation. Commitments support correspondence with retained evidence; they do not authenticate a publisher or conceal historical disclosures. Existing licenses and legal status remain unchanged. Public demo examples remain disclosed synthetic source; substantive changes must state their public or synthetic purpose rather than importing private runtime logic.
+
+Historical accepted artifact paths and bytes remain available so earlier phase evidence can still be verified. Current guidance points to the sanitized v2 summaries under `artifacts/publication/`. The original records are also retained in the restricted disclosure inventory.
+
+The maintained public surface uses directly inspectable Git files. Submodules, relative submodule configuration, LFS-tracked content and opaque LFS pointers are rejected. Repository references use complete organization/repository pairs; the two historical public Guard/thesis aliases resolve to the verified current public repository IDs. Unsupported deep encoding fails closed when normalization cannot reach a stable representation within its bound. These controls support publication review and do not certify arbitrary hidden data or retroactive secrecy.
+
+GitHub search qualifiers and query or fragment coordinates are checked after bounded decoding, including foreign-owner references. Only explicitly approved public repositories and the exact public Guard App and installation routes are allowed; an App route is not a repository or search-coordinate exception. Query scanning preserves original URL tokens, quoted HTML attributes, and Markdown destinations before decoding, so encoded delimiters cannot hide the rest of a query. Dot path components are rejected rather than allowing path normalization to erase a disclosed coordinate. Scanning is deliberately conservative through the end of a line, so keep unrelated slash-bearing prose on separate lines.
+
+The trusted workflow checks out candidate bytes with read-only permissions, no persisted credentials, and the pinned checkout action's explicit fork-head opt-in. Candidate code is never executed. The independently pinned validator must be advanced deliberately when its reviewed implementation changes; final-head tests verify that the pinned validator matches the candidate detector and rejects candidate-validator tampering.

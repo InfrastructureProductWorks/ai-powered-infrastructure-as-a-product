@@ -80,7 +80,7 @@
   "coveredArtifacts": [
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "ac559ec3b436a4d42efee1418a57ec48f9d3213c076b40ec15b92a3a9f1b6486"
+      "sha256": "a8b6fce808cf41e22b212593d49e57d14db7112199a13cea64f3ecddb9b0a594"
     },
     {
       "path": "CITATION.cff",
@@ -96,7 +96,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "b266b67565abebfb21c13d3cb7300063c8bc405859a9b916eb1e6df756300d7d"
+      "sha256": "57594f1fde35aa1d644b8fc3a12fd9738a20f56bef922b5722fd3979a16b7b84"
     },
     {
       "path": "docs/assets/showcase/progressive-legacy-modernization.svg",
@@ -108,7 +108,7 @@
     },
     {
       "path": "docs/PUBLICATION-BOUNDARY.md",
-      "sha256": "d0692d1888990e44bcde7aa87056b2d8cca4293d2ec0ef9a632c7a2364a60e3a"
+      "sha256": "f5e375eceae0f21b5da32fb8e7eb6945faccea29bd98f60ab3c0ff8f712b3f0b"
     },
     {
       "path": "docs/THESIS.md",
@@ -116,7 +116,7 @@
     },
     {
       "path": "docs/poc-portfolio.md",
-      "sha256": "62c5fc12395fad04953c29d610183b3969fc9c20e0e5a38b5abc75b45143d31a"
+      "sha256": "932e314ca59508a05a9b309b9763bdefc29256fe53dbd0103cb958bda36d2bab"
     },
     {
       "path": "provenance/portfolio-provenance.schema.json",
@@ -134,6 +134,6 @@
   "integrity": {
     "algorithm": "sha256",
     "canonicalization": "python-json-sort-keys-v1",
-    "digest": "6f9a8bcce0804fc6efc606e4873fb82c15c0b25d3dd53c9a21fe05f68ae1a98d"
+    "digest": "8c0cd563ad5d5a7039c312908c0731f974b47d5b134561e7427aa02fd6859171"
   }
 }

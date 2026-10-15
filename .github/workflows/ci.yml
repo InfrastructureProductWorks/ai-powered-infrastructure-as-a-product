@@ -14,8 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
       - name: Validate self-hosted workflow contract
         run: python3 scripts/validate_self_hosted_workflow.py
+      - name: Validate public publication boundary
+        env:
+          PUBLICATION_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || format('refs/remotes/origin/{0}', github.event.repository.default_branch) }}
+        run: |
+          python3 scripts/audit_publication_boundary.py
+          python3 -m unittest tests/test_publication_boundary.py -v
       - name: Validate modern accelerator boundary
         run: ./scripts/validate-modern-accelerator.sh
       - name: Verify Portfolio Provenance Gate
@@ -48,6 +56,43 @@ jobs:
             test -f "$manifest"
             sha256sum --check "$manifest"
           done
+
+  publication-boundary-pinned-candidate:
+    # Candidate-controlled CI rollout evidence; the independent target gate is separate.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out candidate bytes without executing them
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          # Intentional data-only checkout: no candidate code or actions execute.
+          allow-unsafe-pr-checkout: true
+          path: candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out independently anchored validator
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 94f9a7323f7fd565996aac4508d3b9c4639c7f1b
+          path: trusted
+          persist-credentials: false
+      - name: Validate candidate with trusted code
+        env:
+          PUBLICATION_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || format('refs/remotes/origin/{0}', github.event.repository.default_branch) }}
+        run: |
+          python3 -I - <<'PY'
+          import importlib.util, os, pathlib, sys
+          path=pathlib.Path('trusted/scripts/audit_publication_boundary.py').resolve()
+          spec=importlib.util.spec_from_file_location('trusted_boundary',path)
+          module=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          errors=module.audit(pathlib.Path('candidate').resolve(),os.environ['PUBLICATION_BASE_SHA'])
+          for error in errors: print(error)
+          print('Pinned candidate publication boundary: '+('FAIL' if errors else 'PASS'))
+          sys.exit(bool(errors))
+          PY
 
   docs:
     runs-on: ubuntu-latest

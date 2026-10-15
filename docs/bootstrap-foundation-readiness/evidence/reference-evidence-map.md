@@ -14,10 +14,10 @@
 
 | Repository | Canonical evidence areas |
 |---|---|
-| `crossplane-multicloud-seed-poc` | `README.md`, `VALIDATION.md`, `docs/ARCHITECTURE.md`, `docs/POC_BOUNDARIES.md`, `docs/SECURITY.md`, `docs/adr/0001-seed-not-foundation.md`, `docs/adr/0003-network-policy-runtime-evidence.md` |
-| `multicloud-foundation-product-poc` | `README.md`, `VALIDATION.md`, `docs/PRODUCT_CONTRACT.md`, `docs/POC_BOUNDARIES.md`, `api/xrd-cloud-foundation-environment.yaml`, `policies/validating-admission-policy.yaml`, `provider-configs/README.md`, `compositions/` |
-| `composite-ai-infrastructure-product-poc` | `README.md`, `VALIDATION.md`, `docs/POC_BOUNDARIES.md`, `docs/SECURITY.md`, `docs/THREAT_MODEL.md`, `docs/EVALUATION.md`, `config/`, `contracts/`, `policies/`, `tests/` |
-| `multicloud-foundation-poc-integration` | `README.md`, `VALIDATION.md`, `docs/BOUNDARIES.md`, `docs/EVIDENCE_MODEL.md`, `config/acceptance.json`, `evidence/`, `scorecard/`, `tests/` |
+| `Crossplane reference` | `README.md`, `VALIDATION.md`, `docs/ARCHITECTURE.md`, `docs/POC_BOUNDARIES.md`, `docs/SECURITY.md`, `docs/adr/0001-seed-not-foundation.md`, `docs/adr/0003-network-policy-runtime-evidence.md` |
+| `Foundation reference` | `README.md`, `VALIDATION.md`, `docs/PRODUCT_CONTRACT.md`, `docs/POC_BOUNDARIES.md`, `api/xrd-cloud-foundation-environment.yaml`, `policies/validating-admission-policy.yaml`, `provider-configs/README.md`, `compositions/` |
+| `Composite AI reference` | `README.md`, `VALIDATION.md`, `docs/POC_BOUNDARIES.md`, `docs/SECURITY.md`, `docs/THREAT_MODEL.md`, `docs/EVALUATION.md`, `config/`, `contracts/`, `policies/`, `tests/` |
+| `Portfolio integration` | `README.md`, `VALIDATION.md`, `docs/BOUNDARIES.md`, `docs/EVIDENCE_MODEL.md`, `config/acceptance.json`, `evidence/`, `scorecard/`, `tests/` |
 
 The [public POC baseline index](../../poc-baselines/README.md) preserves externally reviewable scope and outcome records without making the implementation repositories part of the customer runtime.
 
