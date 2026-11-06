@@ -3,7 +3,7 @@
 **Status:** Version-controlled reusable procedures, not runtime activation or delegated legal authority.
 
 ## Purpose and routing
-IPW virtual executive functions use a minimum set of focused repeatable skills in [the local skills library](../../.agents/skills/README.md). Skills drive better decisions; they do not create independent executives, tools, model instances, budget authority, customer consents or privileged runtime access.
+IPW virtual executive functions use a minimum set of focused repeatable skills in [the repository skills library](https://github.com/InfrastructureProductWorks/ai-powered-infrastructure-as-a-product/tree/main/.agents/skills). Skills drive better decisions; they do not create independent executives, tools, model instances, budget authority, customer consents or privileged runtime access.
 
 | Task | Lead skill | Supporting skill | Evidence gate |
 | --- | --- | --- | --- |
