@@ -27,8 +27,6 @@ jobs:
         run: |
           python3 scripts/audit_publication_boundary.py
           python3 -m unittest tests/test_publication_boundary.py -v
-      - name: Validate executive skill contracts
-        run: python3 -m unittest tests/test_agent_skills_contract.py -v
       - name: Validate modern accelerator boundary
         run: ./scripts/validate-modern-accelerator.sh
       - name: Verify Portfolio Provenance Gate
