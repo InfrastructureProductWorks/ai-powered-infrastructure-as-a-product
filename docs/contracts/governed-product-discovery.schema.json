@@ -1,0 +1,893 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://infrastructureproductworks.github.io/ai-powered-infrastructure-as-a-product/contracts/governed-product-discovery.schema.json",
+  "title": "GovernedProductDiscoveryContract v1alpha1",
+  "description": "Provider-neutral, public-safe contract for unified human, API, and read-only MCP governed infrastructure product discovery. Read-only discovery only; grants zero execution, approval, deployment, provisioning, privilege, or policy-change authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "posture",
+    "authority",
+    "redactionPolicy",
+    "entitlementScopeContract",
+    "mcpDiscoveryCatalog",
+    "hardDenyList",
+    "products"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "ipw.governed-product-discovery/v1alpha1"
+    },
+    "posture": {
+      "const": "SYNTHETIC_ONLY"
+    },
+    "authority": {
+      "$ref": "#/$defs/AuthorityFlags"
+    },
+    "redactionPolicy": {
+      "$ref": "#/$defs/RedactionPolicy"
+    },
+    "entitlementScopeContract": {
+      "$ref": "#/$defs/EntitlementScopeContract"
+    },
+    "mcpDiscoveryCatalog": {
+      "$ref": "#/$defs/McpDiscoveryCatalog"
+    },
+    "hardDenyList": {
+      "$ref": "#/$defs/HardDenyList"
+    },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/GovernedProduct"
+      }
+    }
+  },
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "AuthorityFlags": {
+      "title": "ReadOnlyAuthorityFlags",
+      "description": "All six execution and governance authority flags are fixed to false for read-only product discovery.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mayApprove",
+        "mayMerge",
+        "mayApply",
+        "mayProvision",
+        "mayGrantPrivilege",
+        "mayChangePolicy"
+      ],
+      "properties": {
+        "mayApprove": {
+          "const": false
+        },
+        "mayMerge": {
+          "const": false
+        },
+        "mayApply": {
+          "const": false
+        },
+        "mayProvision": {
+          "const": false
+        },
+        "mayGrantPrivilege": {
+          "const": false
+        },
+        "mayChangePolicy": {
+          "const": false
+        }
+      }
+    },
+    "RequiredCustomerScopeFields": {
+      "title": "EP18RequiredCustomerScopeFields",
+      "description": "Mandatory EP-18 multi-customer entitlement scope fields required on all discovery and entitlement checks.",
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "customerId"
+        },
+        {
+          "const": "organizationId"
+        },
+        {
+          "const": "environmentId"
+        }
+      ],
+      "items": false,
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true
+    },
+    "CustomerScope": {
+      "title": "EP18CustomerScope",
+      "description": "Concrete customer, organization, and environment scope required for entitled discovery queries.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "customerId",
+        "organizationId",
+        "environmentId"
+      ],
+      "properties": {
+        "customerId": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "environmentId": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "EntitlementScopeContract": {
+      "title": "EntitlementScopeContract",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requiredScopeFields",
+        "crossCustomerAccess",
+        "retainNegativeEvidence"
+      ],
+      "properties": {
+        "requiredScopeFields": {
+          "$ref": "#/$defs/RequiredCustomerScopeFields"
+        },
+        "crossCustomerAccess": {
+          "const": "DENY_FAIL_CLOSED"
+        },
+        "retainNegativeEvidence": {
+          "const": true
+        }
+      }
+    },
+    "RedactionPolicy": {
+      "title": "InternalRealizationRedactionPolicy",
+      "description": "Explicitly prohibits fulfillmentBinding and internal Crossplane, Terraform, IAM, or provider-admin fields from consumer, API, or MCP discovery responses.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fulfillmentBindingExposed",
+        "implementationDetailsExposed",
+        "failClosedOnUnknownFields",
+        "forbiddenConsumerFields"
+      ],
+      "properties": {
+        "fulfillmentBindingExposed": {
+          "const": false
+        },
+        "implementationDetailsExposed": {
+          "const": false
+        },
+        "failClosedOnUnknownFields": {
+          "const": true
+        },
+        "forbiddenConsumerFields": {
+          "type": "array",
+          "minItems": 9,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/NonEmptyString"
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "fulfillmentBinding"
+              }
+            },
+            {
+              "contains": {
+                "const": "crossplaneAdmin"
+              }
+            },
+            {
+              "contains": {
+                "const": "xrdRef"
+              }
+            },
+            {
+              "contains": {
+                "const": "compositionRef"
+              }
+            },
+            {
+              "contains": {
+                "const": "providerConfigRef"
+              }
+            },
+            {
+              "contains": {
+                "const": "terraformState"
+              }
+            },
+            {
+              "contains": {
+                "const": "terraformApply"
+              }
+            },
+            {
+              "contains": {
+                "const": "iamPolicy"
+              }
+            },
+            {
+              "contains": {
+                "const": "credentials"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "SecurityBaseline": {
+      "title": "GovernedSecurityBaseline",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baselineId",
+        "version",
+        "mandatoryControls",
+        "consumerOverridable"
+      ],
+      "properties": {
+        "baselineId": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "mandatoryControls": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/NonEmptyString"
+          }
+        },
+        "consumerOverridable": {
+          "const": false
+        }
+      }
+    },
+    "NetworkProfile": {
+      "title": "GovernedNetworkProfile",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "connectivityMode",
+        "restrictedNetworkSupported"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "connectivityMode": {
+          "type": "string",
+          "enum": [
+            "private-only",
+            "restricted-egress",
+            "hub-spoke-managed"
+          ]
+        },
+        "restrictedNetworkSupported": {
+          "type": "boolean"
+        }
+      }
+    },
+    "EntitlementRequirements": {
+      "title": "GovernedEntitlementRequirements",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entitlementId",
+        "requiredScopeFields",
+        "allowedEnvironments",
+        "commercialEntitlementGrantsExecution",
+        "crossCustomerSubstitutionAllowed"
+      ],
+      "properties": {
+        "entitlementId": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "requiredScopeFields": {
+          "$ref": "#/$defs/RequiredCustomerScopeFields"
+        },
+        "allowedEnvironments": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/NonEmptyString"
+          }
+        },
+        "commercialEntitlementGrantsExecution": {
+          "const": false
+        },
+        "crossCustomerSubstitutionAllowed": {
+          "const": false
+        }
+      }
+    },
+    "CostClassification": {
+      "title": "GovernedCostClassification",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tier",
+        "currency",
+        "chargebackRequired",
+        "budgetGuardrailRequired"
+      ],
+      "properties": {
+        "tier": {
+          "type": "string",
+          "enum": [
+            "standard",
+            "elevated",
+            "regulated"
+          ]
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "chargebackRequired": {
+          "type": "boolean"
+        },
+        "budgetGuardrailRequired": {
+          "type": "boolean"
+        }
+      }
+    },
+    "InputContract": {
+      "title": "GovernedInputContract",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaRef",
+        "version",
+        "closedObject",
+        "requiredInputs"
+      ],
+      "properties": {
+        "schemaRef": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "closedObject": {
+          "const": true
+        },
+        "requiredInputs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/NonEmptyString"
+          }
+        }
+      }
+    },
+    "EvidenceRequirements": {
+      "title": "GovernedEvidenceRequirements",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requiredArtifacts",
+        "digestAlgorithm",
+        "customerScopedLineage",
+        "humanReviewRequiredForExceptions"
+      ],
+      "properties": {
+        "requiredArtifacts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/NonEmptyString"
+          }
+        },
+        "digestAlgorithm": {
+          "const": "sha256"
+        },
+        "customerScopedLineage": {
+          "const": true
+        },
+        "humanReviewRequiredForExceptions": {
+          "const": true
+        }
+      }
+    },
+    "GovernedProduct": {
+      "title": "GovernedProduct",
+      "description": "Canonical consumer-visible governed infrastructure product descriptor shared across Storefront, API, and read-only MCP discovery. Internal fulfillmentBinding and provider-implementation primitives are strictly prohibited.",
+      "type": "object",
+      "additionalProperties": false,
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "fulfillmentBinding"
+            ]
+          },
+          {
+            "required": [
+              "crossplaneAdmin"
+            ]
+          },
+          {
+            "required": [
+              "xrdRef"
+            ]
+          },
+          {
+            "required": [
+              "compositionRef"
+            ]
+          },
+          {
+            "required": [
+              "providerConfigRef"
+            ]
+          },
+          {
+            "required": [
+              "terraformState"
+            ]
+          },
+          {
+            "required": [
+              "terraformApply"
+            ]
+          },
+          {
+            "required": [
+              "iamPolicy"
+            ]
+          },
+          {
+            "required": [
+              "credentials"
+            ]
+          },
+          {
+            "required": [
+              "secretRef"
+            ]
+          }
+        ]
+      },
+      "required": [
+        "productId",
+        "version",
+        "lifecycleStatus",
+        "capabilities",
+        "supportedClouds",
+        "securityBaseline",
+        "networkProfiles",
+        "entitlementRequirements",
+        "costClassification",
+        "inputContract",
+        "evidenceRequirements"
+      ],
+      "properties": {
+        "productId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+        },
+        "lifecycleStatus": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "PREVIEW",
+            "ACTIVE",
+            "DEPRECATED",
+            "RETIRED"
+          ]
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/NonEmptyString"
+          }
+        },
+        "supportedClouds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "aws",
+              "azure",
+              "gcp",
+              "on-prem"
+            ]
+          }
+        },
+        "securityBaseline": {
+          "$ref": "#/$defs/SecurityBaseline"
+        },
+        "networkProfiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/NetworkProfile"
+          }
+        },
+        "entitlementRequirements": {
+          "$ref": "#/$defs/EntitlementRequirements"
+        },
+        "costClassification": {
+          "$ref": "#/$defs/CostClassification"
+        },
+        "inputContract": {
+          "$ref": "#/$defs/InputContract"
+        },
+        "evidenceRequirements": {
+          "$ref": "#/$defs/EvidenceRequirements"
+        }
+      }
+    },
+    "McpDiscoveryToolName": {
+      "title": "ClosedReadOnlyMcpDiscoveryToolName",
+      "description": "Closed 8-tool read-only MCP discovery catalog. Mutation, approval, provisioning, Crossplane, Terraform, IAM, and secret-access tools are excluded.",
+      "type": "string",
+      "enum": [
+        "list_products",
+        "search_products",
+        "get_product",
+        "get_product_version",
+        "get_product_requirements",
+        "check_entitlement",
+        "get_product_evidence",
+        "get_lifecycle_status"
+      ]
+    },
+    "McpDiscoveryToolDescriptor": {
+      "title": "McpDiscoveryToolDescriptor",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "readOnly",
+        "requiresCustomerScope",
+        "description",
+        "authority",
+        "requiredScopeFields",
+        "outputRedaction"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/McpDiscoveryToolName"
+        },
+        "readOnly": {
+          "const": true
+        },
+        "requiresCustomerScope": {
+          "const": true
+        },
+        "description": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "authority": {
+          "$ref": "#/$defs/AuthorityFlags"
+        },
+        "requiredScopeFields": {
+          "$ref": "#/$defs/RequiredCustomerScopeFields"
+        },
+        "outputRedaction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stripFulfillmentBinding",
+            "stripImplementationPrimitives"
+          ],
+          "properties": {
+            "stripFulfillmentBinding": {
+              "const": true
+            },
+            "stripImplementationPrimitives": {
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "McpDiscoveryCatalog": {
+      "title": "ClosedReadOnlyMcpDiscoveryCatalog",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol",
+        "surfaceMode",
+        "readOnly",
+        "authority",
+        "tools"
+      ],
+      "properties": {
+        "protocol": {
+          "const": "MCP"
+        },
+        "surfaceMode": {
+          "const": "READ_ONLY_DISCOVERY"
+        },
+        "readOnly": {
+          "const": true
+        },
+        "authority": {
+          "$ref": "#/$defs/AuthorityFlags"
+        },
+        "tools": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/McpDiscoveryToolDescriptor"
+          },
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "list_products"
+                  }
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "search_products"
+                  }
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "get_product"
+                  }
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "get_product_version"
+                  }
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "get_product_requirements"
+                  }
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "check_entitlement"
+                  }
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "get_product_evidence"
+                  }
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "get_lifecycle_status"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "HardDenyOperationId": {
+      "type": "string",
+      "enum": [
+        "CROSSPLANE_ADMIN_MUTATION",
+        "TERRAFORM_APPLY_OR_STATE",
+        "PROVIDER_PRIVILEGED_API",
+        "IAM_MODIFICATION",
+        "DIRECT_INFRASTRUCTURE_PROVISION",
+        "SELF_APPROVAL",
+        "CREDENTIAL_OR_SECRET_ACCESS"
+      ]
+    },
+    "HardDenyRule": {
+      "title": "HardDenyRule",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationId",
+        "decision",
+        "overridePermitted",
+        "rationale"
+      ],
+      "properties": {
+        "operationId": {
+          "$ref": "#/$defs/HardDenyOperationId"
+        },
+        "decision": {
+          "const": "DENY"
+        },
+        "overridePermitted": {
+          "const": false
+        },
+        "rationale": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "HardDenyList": {
+      "title": "MandatoryHardDenyList",
+      "description": "Exhaustive set of prohibited operations that are unconditionally denied at the discovery boundary.",
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/HardDenyRule"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "operationId"
+            ],
+            "properties": {
+              "operationId": {
+                "const": "CROSSPLANE_ADMIN_MUTATION"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "operationId"
+            ],
+            "properties": {
+              "operationId": {
+                "const": "TERRAFORM_APPLY_OR_STATE"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "operationId"
+            ],
+            "properties": {
+              "operationId": {
+                "const": "PROVIDER_PRIVILEGED_API"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "operationId"
+            ],
+            "properties": {
+              "operationId": {
+                "const": "IAM_MODIFICATION"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "operationId"
+            ],
+            "properties": {
+              "operationId": {
+                "const": "DIRECT_INFRASTRUCTURE_PROVISION"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "operationId"
+            ],
+            "properties": {
+              "operationId": {
+                "const": "SELF_APPROVAL"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "operationId"
+            ],
+            "properties": {
+              "operationId": {
+                "const": "CREDENTIAL_OR_SECRET_ACCESS"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
