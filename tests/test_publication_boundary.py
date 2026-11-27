@@ -239,7 +239,7 @@ class PublicationBoundaryTests(unittest.TestCase):
         job=workflow.split('  publication-boundary-pinned-candidate:\n')[1].split('\n  docs:')[0]
         self.assertIn('    permissions:\n      contents: read\n',job)
         self.assertNotIn('write',job)
-        self.assertEqual(job.count('uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262'),2)
+        self.assertEqual(job.count('uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'),2)
         self.assertEqual(job.count('persist-credentials: false'),2)
         self.assertIn('ref: ${{ github.event.pull_request.head.sha || github.sha }}',job)
         self.assertIn('allow-unsafe-pr-checkout: true',job)

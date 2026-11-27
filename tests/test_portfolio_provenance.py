@@ -56,6 +56,32 @@ class PortfolioProvenanceTests(unittest.TestCase):
             with self.assertRaises(provenance.ProvenanceError):
                 provenance.verify(root)
 
+    def test_ci_workflow_tamper_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = self.copied_root(temporary_directory)
+            with (root / ".github/workflows/ci.yml").open(
+                "a", encoding="utf-8"
+            ) as handle:
+                handle.write("\n# unrefreshed workflow change\n")
+            with self.assertRaisesRegex(
+                provenance.ProvenanceError,
+                r"artifact digest changed: \.github/workflows/ci\.yml",
+            ):
+                provenance.verify(root)
+
+    def test_ci_workflow_refresh_then_verify_passes(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = self.copied_root(temporary_directory)
+            with (root / ".github/workflows/ci.yml").open(
+                "a", encoding="utf-8"
+            ) as handle:
+                handle.write("\n# authorized workflow update\n")
+            provenance.refresh_manifest(root)
+            result = provenance.verify(root)
+            self.assertEqual(result["result"], "PASS")
+            self.assertFalse(result["networkUsed"])
+            self.assertFalse(result["authorityAdded"])
+
     def test_modernization_visual_tamper_fails_closed(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = self.copied_root(temporary_directory)

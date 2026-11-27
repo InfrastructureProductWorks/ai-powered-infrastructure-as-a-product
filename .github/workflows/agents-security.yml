@@ -13,7 +13,7 @@ jobs:
   policy-evals:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: open-policy-agent/setup-opa@34a30e8a924d1b03ce2cf7abe97250bbb1f332b5
         with:
           version: v0.64.1
@@ -37,7 +37,7 @@ jobs:
           jq -e '.result[0].expressions[0].value | type == "array" and length > 0' ssrf-deny.json >/dev/null
       - name: Check prompt-injection fixture markers (fixture integrity only)
         run: grep -E -i '<script|on[a-z]+\=|data:|Ignore all prior instructions' tests/agents-evals/prompt-injection/hidden-html.md
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: composite-ai-policy-evidence
           path: |
